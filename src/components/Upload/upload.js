@@ -132,7 +132,7 @@ class GbUpload extends React.Component {
           : [],
       accept: props.accept ? props.accept : 'image/*',
 
-      action: props.action ? props.action : '/file/uploadImage',
+      action: props.action ? props.action : '/upload/uploadImage',
       fileHead: props.fileHead ? props.fileHead : 'image://',
     };
     this.setState(newState);

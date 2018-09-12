@@ -22,9 +22,10 @@ import {
 import StandardTable from 'components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from '../../assets/styles.less';
-const FormItem = Form.Item;
 import CreateEditForm from './imageEdit';
 import CreateFindForm from './imageFind';
+
+const FormItem = Form.Item;
 
 @connect(({ restTableData, loading }) => ({
   restTableData,
@@ -38,6 +39,7 @@ export default class TableList extends PureComponent {
     selectedRows: [],
     formValues: {},
   };
+
   refresh() {
     const { dispatch } = this.props;
     dispatch({
@@ -54,6 +56,7 @@ export default class TableList extends PureComponent {
       modalVisible: false,
     });
   }
+
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
@@ -137,6 +140,7 @@ export default class TableList extends PureComponent {
       modalVisible: false,
     });
   };
+
   add = fields => {
     const { dispatch } = this.props;
     dispatch({
@@ -165,7 +169,7 @@ export default class TableList extends PureComponent {
     const { dispatch } = this.props;
     dispatch({
       type: 'restTableData/getById',
-      path: 'media/image/' + record.mediaImageId,
+      path: `media/image/${  record.mediaImageId}`,
     });
     this.setState({
       modalTitle: '修改图片',

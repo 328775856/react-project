@@ -25,7 +25,9 @@ export default {
   },
   proxy: {
     '/': {
-      target: 'http://192.168.10.173:8765/api/GbManager_shenwei/GbManager',
+      // target: 'http://192.168.10.102:8765/api/GbManager/GbManager',
+      target: 'http://192.168.10.173:8765/api/GbManager/GbManager',
+      // target: "http://192.168.10.102:8765/api/GbManager_liujianshi/GbManager",
       changeOrigin: true,
       pathRewrite: { '^/': '' },
     },

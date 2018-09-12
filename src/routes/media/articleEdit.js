@@ -26,6 +26,7 @@ form.validateFields((err, fieldsValue) => {
 if (err) return;
 form.resetFields();
 const content = UE.getEditor('content').getContent();
+console.log(content)
 fieldsValue.content = content;
 if(formData.mediaArticleId>=0){
 fieldsValue.mediaArticleId=formData.mediaArticleId;

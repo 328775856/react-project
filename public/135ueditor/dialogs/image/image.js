@@ -81,14 +81,13 @@
                     break;
                 }
             }
-
             switch (id) {
                 case 'remote':
                     list = remoteImage.getInsertList();
                     break;
                 case 'upload':
                     list = uploadImage.getInsertList();
-                    var count = uploadImage.getQueueCount();
+                  var count = uploadImage.getQueueCount();
                     if (count) {
                         $('.info', '#queueList').html('<span style="color:red;">' + '还有2个未上传文件'.replace(/[\d]/, count) + '</span>');
                         return false;
@@ -102,18 +101,18 @@
                     remote = true;
                     break;
             }
-
-            if(list) {
+          if(list) {
             	var width = null;
             	if(list[0]['width']) {
-            		if( list[0]['width'].indexOf('%') > 0 || list[0]['width'] == 'auto' || list[0]['width'].indexOf('em') > 0 ) { 
-            			width = list[0]['width']; 
+            		if( list[0]['width'].indexOf('%') > 0 || list[0]['width'] == 'auto' || list[0]['width'].indexOf('em') > 0 ) {
+            			width = list[0]['width'];
             		}
             		else{
-            			width = list[0]['width']+'px'; 
+            			width = list[0]['width']+'px';
             		}
             	}
-                editor.execCommand('insertimage', list);                
+            	// console.log(list)
+                editor.execCommand('insertimage', list);
                 	var img = editor.selection.getRange().getClosedNode();
                     if (img && img.tagName && img.tagName.toLowerCase() == 'img') {
                         var p = $(img).parent();
@@ -140,8 +139,8 @@
                     		}
                         }
                     }
-                    
-                
+
+
                 remote && editor.fireEvent("catchRemoteImage");
             }
         };
@@ -517,10 +516,8 @@
                         percentages[ file.id ][ 1 ] = 0;
                     } else if (cur === 'progress') {
                         $info.hide();
-                        $prgress.css('display', 'block');
                     } else if (cur === 'complete') {
                     }
-
                     $li.removeClass('state-' + prev).addClass('state-' + cur);
                 });
 
@@ -756,7 +753,8 @@
                 try {
                     var responseText = (ret._raw || ret),
                         json = utils.str2json(responseText);
-                    if (json.state == 'SUCCESS') {
+
+                  if (json.success) {
                         _this.imageList.push(json);
 
                         if(editor.options.uploadCallback && typeof(editor.options.uploadCallback) == 'function') {
@@ -816,9 +814,10 @@
                 prefix = editor.getOpt('imageUrlPrefix');
             for (i = 0; i < this.imageList.length; i++) {
                 data = this.imageList[i];
+                // console.log(data.data)
                 var obj = {
-                    src: prefix + data.url,
-                    _src: prefix + data.url,
+                    src: prefix + data.data.fileName,
+                    _src: prefix + data.data.fileName,
                     title: data.title,
                     alt: data.original,
                     floatStyle: align
@@ -828,7 +827,7 @@
                 }
                 list.push(obj);
             }
-            return list;
+          return list;
         }
     };
 
@@ -905,6 +904,7 @@
                 this.isLoadingData = true;
                 var url = editor.getActionUrl(editor.getOpt('imageManagerActionName')),
                     isJsonp = utils.isCrossDomainUrl(url);
+                alert(url2)
                 ajax.request(url, {
                     'timeout': 100000,
                     'dataType': isJsonp ? 'jsonp':'',
