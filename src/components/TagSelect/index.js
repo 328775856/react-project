@@ -7,7 +7,11 @@ import styles from './index.less';
 const { CheckableTag } = Tag;
 
 const TagSelectOption = ({ children, checked, onChange, value }) => (
-  <CheckableTag checked={checked} key={value} onChange={state => onChange(value, state)}>
+  <CheckableTag
+    checked={checked}
+    key={value}
+    onChange={state => onChange(value, state)}
+  >
     {children}
   </CheckableTag>
 );
@@ -19,7 +23,7 @@ class TagSelect extends Component {
     super(props);
     this.state = {
       expand: false,
-      value: props.value || props.defaultValue || [],
+      value: props.value || props.defaultValue || []
     };
   }
 
@@ -72,17 +76,14 @@ class TagSelect extends Component {
   handleExpand = () => {
     const { expand } = this.state;
     this.setState({
-      expand: !expand,
+      expand: !expand
     });
   };
 
-  isTagSelectOption = node => {
-    return (
-      node &&
-      node.type &&
-      (node.type.isTagSelectOption || node.type.displayName === 'TagSelectOption')
-    );
-  };
+  isTagSelectOption = node =>
+    node &&
+    node.type &&
+    (node.type.isTagSelectOption || node.type.displayName === 'TagSelectOption');
 
   render() {
     const { value, expand } = this.state;
@@ -92,11 +93,18 @@ class TagSelect extends Component {
 
     const cls = classNames(styles.tagSelect, className, {
       [styles.hasExpandTag]: expandable,
-      [styles.expanded]: expand,
+      [styles.expanded]: expand
     });
     return (
-      <div className={cls} style={style}>
-        <CheckableTag checked={checkedAll} key="tag-select-__all__" onChange={this.onSelectAll}>
+      <div
+        className={cls}
+        style={style}
+      >
+        <CheckableTag
+          checked={checkedAll}
+          key="tag-select-__all__"
+          onChange={this.onSelectAll}
+        >
           全部
         </CheckableTag>
         {value &&
@@ -106,13 +114,16 @@ class TagSelect extends Component {
                 key: `tag-select-${child.props.value}`,
                 value: child.props.value,
                 checked: value.indexOf(child.props.value) > -1,
-                onChange: this.handleTagChange,
+                onChange: this.handleTagChange
               });
             }
             return child;
           })}
         {expandable && (
-          <a className={styles.trigger} onClick={this.handleExpand}>
+          <a
+            className={styles.trigger}
+            onClick={this.handleExpand}
+          >
             {expand ? '收起' : '展开'} <Icon type={expand ? 'up' : 'down'} />
           </a>
         )}

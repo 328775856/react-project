@@ -17,7 +17,7 @@ import {
   message,
   Badge,
   Divider,
-  Table,
+  Table
 } from 'antd';
 import StandardTable from 'components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
@@ -25,10 +25,11 @@ import styles from '../../assets/styles.less';
 import CreateEditForm from './SysLabel_edit';
 import CreateFindForm from './SysLabel_find';
 import { defaultPage } from '../../utils/utils.js';
+
 const FormItem = Form.Item;
 @connect(({ tableData, loading }) => ({
   tableData,
-  loading: loading.models.crud,
+  loading: loading.models.crud
 }))
 @Form.create()
 export default class SysLabel extends PureComponent {
@@ -36,7 +37,7 @@ export default class SysLabel extends PureComponent {
     modalVisible: false,
     modalTitle: '',
     formValues: {},
-    page: defaultPage(),
+    page: defaultPage()
   };
 
   refresh = (values, page) => {
@@ -46,11 +47,11 @@ export default class SysLabel extends PureComponent {
       path: 'sysLabel/page',
       payload: {
         data: values,
-        page: page,
-      },
+        page
+      }
     });
     this.setState({
-      modalVisible: false,
+      modalVisible: false
     });
   };
 
@@ -61,12 +62,12 @@ export default class SysLabel extends PureComponent {
 
   tableChange = (pagination, filtersArg, sorter) => {
     const { formValues } = this.state;
-    let page = {
+    const page = {
       pageSize: pagination.pageSize,
-      pageNo: pagination.current,
+      pageNo: pagination.current
     };
     this.setState({
-      page: page,
+      page
     });
     this.refresh(formValues, page);
   };
@@ -96,12 +97,13 @@ export default class SysLabel extends PureComponent {
           type: 'tableData/remove',
           path: 'sysLabel/remove',
           payload: { sysLabelId: record.sysLabelId },
-          callback: cb,
+          callback: cb
         });
       },
-      onCancel() {},
+      onCancel() {}
     });
   };
+
   query = e => {
     e.preventDefault();
     const { dispatch, form } = this.props;
@@ -109,12 +111,12 @@ export default class SysLabel extends PureComponent {
       if (err) return;
 
       const values = {
-        ...fieldsValue,
+        ...fieldsValue
       };
       const page = defaultPage();
       this.setState({
         formValues: values,
-        page: page,
+        page
       });
       this.refresh(values, page);
     });
@@ -122,19 +124,20 @@ export default class SysLabel extends PureComponent {
 
   closeModal = () => {
     this.setState({
-      modalVisible: false,
+      modalVisible: false
     });
   };
+
   getDataForAdd = fields => {
     const { dispatch } = this.props;
-     dispatch({
+    dispatch({
       type: 'tableData/getDataForAdd',
       path: 'sysLabel/getDataForAdd',
-      payload: fields,
+      payload: fields
     });
     this.setState({
       modalTitle: '新增',
-      modalVisible: true,
+      modalVisible: true
     });
   };
 
@@ -144,7 +147,7 @@ export default class SysLabel extends PureComponent {
       type: 'tableData/add',
       path: 'sysLabel/add',
       payload: fields,
-      callback: this.callback,
+      callback: this.callback
     });
   };
 
@@ -153,25 +156,25 @@ export default class SysLabel extends PureComponent {
     dispatch({
       type: 'tableData/getDataForUpdate',
       path: 'sysLabel/getDataForUpdate',
-      payload: { sysLabelId: record.sysLabelId },
+      payload: { sysLabelId: record.sysLabelId }
     });
     this.setState({
       modalTitle: '修改',
-      modalVisible: true,
+      modalVisible: true
     });
   };
 
   update = fields => {
     const { dispatch, tableData } = this.props;
-    let payload = {
+    const payload = {
       ...tableData.formData,
-      ...fields,
+      ...fields
     };
     dispatch({
       type: 'tableData/update',
       path: 'sysLabel/update',
-      payload: payload,
-      callback: this.callback,
+      payload,
+      callback: this.callback
     });
   };
 
@@ -186,22 +189,24 @@ export default class SysLabel extends PureComponent {
     const columns = [
       {
         title: '系统id',
-        dataIndex: 'sysLabelId',
+        dataIndex: 'sysLabelId'
       },
       {
         title: '标签名称',
-        dataIndex: 'labelName',
+        dataIndex: 'labelName'
       },
       {
         title: '标签图片',
 
-        render : (text,record) => (
+        render: (text, record) => (
           <Fragment>
-
-            <img alt="" style={{width:100,height:100}} src={record.wholeLabelPath}  />
-
+            <img
+              alt=""
+              style={{ width: 100, height: 100 }}
+              src={record.wholeLabelPath}
+            />
           </Fragment>
-        ),
+        )
       },
       {
         title: '操作',
@@ -211,15 +216,15 @@ export default class SysLabel extends PureComponent {
             <Divider type="vertical" />
             <a onClick={() => this.remove(record)}>删除</a>
           </Fragment>
-        ),
-      },
+        )
+      }
     ];
 
     const parentMethods = {
       add: this.add,
       update: this.update,
       closeModal: this.closeModal,
-      dispatch: this.props.dispatch,
+      dispatch: this.props.dispatch
     };
     return (
       <PageHeaderLayout>
@@ -227,7 +232,10 @@ export default class SysLabel extends PureComponent {
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
             <div className={styles.tableListOperator}>
-              <Button type="primary" onClick={() => this.getDataForAdd()}>
+              <Button
+                type="primary"
+                onClick={() => this.getDataForAdd()}
+              >
                 新建
               </Button>
             </div>

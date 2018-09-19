@@ -5,12 +5,12 @@ body{word-break: break-all;	word-wrap: break-word;cursor:text;}
 
 p{clear:both;margin:0 0;white-space: normal;}
 a{color:#607fa6;text-decoration:none}
-/*img{*zoom:1;max-width:100%;*max-width:96%;height:auto !important;}*/
+img{*zoom:1;max-width:100%;*max-width:96%;height:auto !important;}
 
-img {
-  width: 20%;
-  height: 20%;
-}
+/*img {*/
+  /*width: 20%;*/
+  /*height: 20%;*/
+/*}*/
 
 iframe{width:301px !important;border:0;background-color:none;}
 iframe,.video_iframe {background-color: #000000;width: 100% !important;position: static;}

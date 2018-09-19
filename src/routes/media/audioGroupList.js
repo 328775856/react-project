@@ -17,7 +17,7 @@ import {
   message,
   Badge,
   Divider,
-  Table,
+  Table
 } from 'antd';
 import StandardTable from 'components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
@@ -25,10 +25,11 @@ import styles from '../../assets/styles.less';
 import CreateEditForm from './audioGroupEdit';
 import CreateFindForm from './audioGroupFind';
 import { defaultPage } from '../../utils/utils.js';
+
 const FormItem = Form.Item;
 @connect(({ restTableData, loading }) => ({
   restTableData,
-  loading: loading.models.crud,
+  loading: loading.models.crud
 }))
 @Form.create()
 export default class MediaAudioGroup extends PureComponent {
@@ -36,7 +37,7 @@ export default class MediaAudioGroup extends PureComponent {
     modalVisible: false,
     modalTitle: '',
     formValues: {},
-    page: defaultPage(),
+    page: defaultPage()
   };
 
   refresh = (values, page) => {
@@ -46,11 +47,11 @@ export default class MediaAudioGroup extends PureComponent {
       path: 'media/audioGroup/page',
       payload: {
         data: values,
-        page: page,
-      },
+        page
+      }
     });
     this.setState({
-      modalVisible: false,
+      modalVisible: false
     });
   };
 
@@ -61,12 +62,12 @@ export default class MediaAudioGroup extends PureComponent {
 
   tableChange = (pagination, filtersArg, sorter) => {
     const { formValues } = this.state;
-    let page = {
+    const page = {
       pageSize: pagination.pageSize,
-      pageNo: pagination.current,
+      pageNo: pagination.current
     };
     this.setState({
-      page: page,
+      page
     });
     this.refresh(formValues, page);
   };
@@ -96,12 +97,13 @@ export default class MediaAudioGroup extends PureComponent {
           type: 'restTableData/delete',
           path: 'media/audioGroup',
           payload: { mediaAudioGroupId: record.mediaAudioGroupId },
-          callback: cb,
+          callback: cb
         });
       },
-      onCancel() {},
+      onCancel() {}
     });
   };
+
   query = e => {
     e.preventDefault();
     const { dispatch, form } = this.props;
@@ -109,12 +111,12 @@ export default class MediaAudioGroup extends PureComponent {
       if (err) return;
 
       const values = {
-        ...fieldsValue,
+        ...fieldsValue
       };
       const page = defaultPage();
       this.setState({
         formValues: values,
-        page: page,
+        page
       });
       this.refresh(values, page);
     });
@@ -122,19 +124,20 @@ export default class MediaAudioGroup extends PureComponent {
 
   closeModal = () => {
     this.setState({
-      modalVisible: false,
+      modalVisible: false
     });
   };
+
   getDataForAdd = fields => {
     const { dispatch } = this.props;
     dispatch({
       type: 'restTableData/getDataForAdd',
       path: 'media/audioGroup/getDataForAdd',
-      payload: fields,
+      payload: fields
     });
     this.setState({
       modalTitle: '新增',
-      modalVisible: true,
+      modalVisible: true
     });
   };
 
@@ -144,7 +147,7 @@ export default class MediaAudioGroup extends PureComponent {
       type: 'restTableData/add',
       path: 'media/audioGroup',
       payload: fields,
-      callback: this.callback,
+      callback: this.callback
     });
   };
 
@@ -153,25 +156,25 @@ export default class MediaAudioGroup extends PureComponent {
     dispatch({
       type: 'restTableData/getDataForUpdate',
       path: 'media/audioGroup/getDataForUpdate',
-      payload: { mediaAudioGroupId: record.mediaAudioGroupId },
+      payload: { mediaAudioGroupId: record.mediaAudioGroupId }
     });
     this.setState({
       modalTitle: '修改',
-      modalVisible: true,
+      modalVisible: true
     });
   };
 
   update = fields => {
     const { dispatch, restTableData } = this.props;
-    let payload = {
+    const payload = {
       ...restTableData.formData,
-      ...fields,
+      ...fields
     };
     dispatch({
       type: 'restTableData/update',
       path: 'media/audioGroup',
-      payload: payload,
-      callback: this.callback,
+      payload,
+      callback: this.callback
     });
   };
 
@@ -186,24 +189,20 @@ export default class MediaAudioGroup extends PureComponent {
     const columns = [
       {
         title: '系统id',
-        dataIndex: 'mediaAudioGroupId',
+        dataIndex: 'mediaAudioGroupId'
       },
       {
         title: '名称',
-        dataIndex: 'audioGroupName',
+        dataIndex: 'audioGroupName'
       },
       {
         title: '顺序',
-        dataIndex: 'indexNo',
+        dataIndex: 'indexNo'
       },
       {
         title: '是否默认分组',
         dataIndex: 'isDefault',
-        render: (text, record) => (
-           <Fragment>
-           {text === 1 ? '是' : '否'}
-         </Fragment>
-        ),
+        render: (text, record) => <Fragment>{text === 1 ? '是' : '否'}</Fragment>
       },
       {
         title: '操作',
@@ -213,14 +212,14 @@ export default class MediaAudioGroup extends PureComponent {
             <Divider type="vertical" />
             <a onClick={() => this.delete(record)}>删除</a>
           </Fragment>
-        ),
-      },
+        )
+      }
     ];
 
     const parentMethods = {
       add: this.add,
       update: this.update,
-      closeModal: this.closeModal,
+      closeModal: this.closeModal
     };
     return (
       <PageHeaderLayout>
@@ -228,7 +227,10 @@ export default class MediaAudioGroup extends PureComponent {
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
             <div className={styles.tableListOperator}>
-              <Button type="primary" onClick={() => this.getDataForAdd()}>
+              <Button
+                type="primary"
+                onClick={() => this.getDataForAdd()}
+              >
                 新建
               </Button>
             </div>

@@ -11,18 +11,18 @@ const links = [
   {
     key: 'help',
     title: '帮助',
-    href: '',
+    href: ''
   },
   {
     key: 'privacy',
     title: '隐私',
-    href: '',
+    href: ''
   },
   {
     key: 'terms',
     title: '条款',
-    href: '',
-  },
+    href: ''
+  }
 ];
 
 const copyright = (
@@ -35,7 +35,7 @@ function getLoginPathWithRedirectPath() {
   const params = getPageQuery();
   const { redirect } = params;
   return getQueryPath('/user/login', {
-    redirect,
+    redirect
   });
 }
 
@@ -59,11 +59,15 @@ class UserLayout extends React.PureComponent {
             <div className={styles.top}>
               <div className={styles.header}>
                 <Link to="/">
-                  <img alt="logo" className={styles.logo} src={logo} />
+                  <img
+                    alt="logo"
+                    className={styles.logo}
+                    src={logo}
+                  />
                   <span className={styles.title}>简帛管理平台</span>
                 </Link>
               </div>
-              <div className={styles.desc}></div>
+              <div className={styles.desc} />
             </div>
             <Switch>
               {getRoutes(match.path, routerData).map(item => (
@@ -74,10 +78,16 @@ class UserLayout extends React.PureComponent {
                   exact={item.exact}
                 />
               ))}
-              <Redirect from="/user" to={getLoginPathWithRedirectPath()} />
+              <Redirect
+                from="/user"
+                to={getLoginPathWithRedirectPath()}
+              />
             </Switch>
           </div>
-          <GlobalFooter links={links} copyright={copyright} />
+          <GlobalFooter
+            links={links}
+            copyright={copyright}
+          />
         </div>
       </DocumentTitle>
     );

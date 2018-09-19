@@ -8,7 +8,7 @@ import styles from './index.less';
 @autoHeight()
 export default class Radar extends Component {
   state = {
-    legendData: [],
+    legendData: []
   };
 
   componentDidMount() {
@@ -39,14 +39,14 @@ export default class Radar extends Component {
         name: origins[0].name,
         color: item[0].color,
         checked: true,
-        value: origins.reduce((p, n) => p + n.value, 0),
+        value: origins.reduce((p, n) => p + n.value, 0)
       };
 
       return result;
     });
 
     this.setState({
-      legendData,
+      legendData
     });
   };
 
@@ -69,7 +69,7 @@ export default class Radar extends Component {
     }
 
     this.setState({
-      legendData,
+      legendData
     });
   };
 
@@ -82,7 +82,7 @@ export default class Radar extends Component {
       '#F04864',
       '#13C2C2',
       '#fa8c16',
-      '#a0d911',
+      '#a0d911'
     ];
 
     const {
@@ -94,7 +94,7 @@ export default class Radar extends Component {
       tickCount = 4,
       padding = [35, 30, 16, 30],
       animate = true,
-      colors = defaultColors,
+      colors = defaultColors
     } = this.props;
 
     const { legendData } = this.state;
@@ -102,14 +102,17 @@ export default class Radar extends Component {
     const scale = {
       value: {
         min: 0,
-        tickCount,
-      },
+        tickCount
+      }
     };
 
     const chartHeight = height - (hasLegend ? 80 : 22);
 
     return (
-      <div className={styles.radar} style={{ height }}>
+      <div
+        className={styles.radar}
+        style={{ height }}
+      >
         {title && <h4>{title}</h4>}
         <Chart
           scale={scale}
@@ -128,9 +131,9 @@ export default class Radar extends Component {
             tickLine={null}
             grid={{
               lineStyle: {
-                lineDash: null,
+                lineDash: null
               },
-              hideFirstLine: false,
+              hideFirstLine: false
             }}
           />
           <Axis
@@ -138,11 +141,16 @@ export default class Radar extends Component {
             grid={{
               type: 'polygon',
               lineStyle: {
-                lineDash: null,
-              },
+                lineDash: null
+              }
             }}
           />
-          <Geom type="line" position="label*value" color={['name', colors]} size={1} />
+          <Geom
+            type="line"
+            position="label*value"
+            color={['name', colors]}
+            size={1}
+          />
           <Geom
             type="point"
             position="label*value"
@@ -164,7 +172,7 @@ export default class Radar extends Component {
                     <span
                       className={styles.dot}
                       style={{
-                        backgroundColor: !item.checked ? '#aaa' : item.color,
+                        backgroundColor: !item.checked ? '#aaa' : item.color
                       }}
                     />
                     <span>{item.name}</span>

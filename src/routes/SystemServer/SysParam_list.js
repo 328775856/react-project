@@ -10,7 +10,7 @@ import { defaultPage } from '../../utils/utils.js';
 const FormItem = Form.Item;
 @connect(({ tableData, loading }) => ({
   tableData,
-  loading: loading.models.crud,
+  loading: loading.models.crud
 }))
 @Form.create()
 export default class SysParam extends PureComponent {
@@ -18,7 +18,7 @@ export default class SysParam extends PureComponent {
     modalVisible: false,
     modalTitle: '',
     formValues: {},
-    page: defaultPage(),
+    page: defaultPage()
   };
 
   refresh = (values, page) => {
@@ -28,11 +28,11 @@ export default class SysParam extends PureComponent {
       path: 'sysParam/page',
       payload: {
         data: values,
-        page: page,
-      },
+        page
+      }
     });
     this.setState({
-      modalVisible: false,
+      modalVisible: false
     });
   };
 
@@ -43,12 +43,12 @@ export default class SysParam extends PureComponent {
 
   tableChange = (pagination, filtersArg, sorter) => {
     const { formValues } = this.state;
-    let page = {
+    const page = {
       pageSize: pagination.pageSize,
-      pageNo: pagination.current,
+      pageNo: pagination.current
     };
     this.setState({
-      page: page,
+      page
     });
     this.refresh(formValues, page);
   };
@@ -78,12 +78,13 @@ export default class SysParam extends PureComponent {
           type: 'tableData/remove',
           path: 'sysParam/remove',
           payload: { sysParamId: record.sysParamId },
-          callback: cb,
+          callback: cb
         });
       },
-      onCancel() {},
+      onCancel() {}
     });
   };
+
   query = e => {
     e.preventDefault();
     const { dispatch, form } = this.props;
@@ -91,12 +92,12 @@ export default class SysParam extends PureComponent {
       if (err) return;
 
       const values = {
-        ...fieldsValue,
+        ...fieldsValue
       };
       const page = defaultPage();
       this.setState({
         formValues: values,
-        page: page,
+        page
       });
       this.refresh(values, page);
     });
@@ -104,19 +105,20 @@ export default class SysParam extends PureComponent {
 
   closeModal = () => {
     this.setState({
-      modalVisible: false,
+      modalVisible: false
     });
   };
+
   getDataForAdd = fields => {
     const { dispatch } = this.props;
     dispatch({
       type: 'tableData/getDataForAdd',
       path: 'sysParam/getDataForAdd',
-      payload: fields,
+      payload: fields
     });
     this.setState({
       modalTitle: '新增',
-      modalVisible: true,
+      modalVisible: true
     });
   };
 
@@ -126,7 +128,7 @@ export default class SysParam extends PureComponent {
       type: 'tableData/add',
       path: 'sysParam/add',
       payload: fields,
-      callback: this.callback,
+      callback: this.callback
     });
   };
 
@@ -135,25 +137,25 @@ export default class SysParam extends PureComponent {
     dispatch({
       type: 'tableData/getDataForUpdate',
       path: 'sysParam/getDataForUpdate',
-      payload: { sysParamId: record.sysParamId },
+      payload: { sysParamId: record.sysParamId }
     });
     this.setState({
       modalTitle: '修改',
-      modalVisible: true,
+      modalVisible: true
     });
   };
 
   update = fields => {
     const { dispatch, tableData } = this.props;
-    let payload = {
+    const payload = {
       ...tableData.formData,
-      ...fields,
+      ...fields
     };
     dispatch({
       type: 'tableData/update',
       path: 'sysParam/update',
-      payload: payload,
-      callback: this.callback,
+      payload,
+      callback: this.callback
     });
   };
 
@@ -168,15 +170,15 @@ export default class SysParam extends PureComponent {
     const columns = [
       {
         title: '参数编码',
-        dataIndex: 'sysParamId',
+        dataIndex: 'sysParamId'
       },
       {
         title: '参数值',
-        dataIndex: 'paramValue',
+        dataIndex: 'paramValue'
       },
       {
         title: '备注',
-        dataIndex: 'remark',
+        dataIndex: 'remark'
       },
       {
         title: '操作',
@@ -184,14 +186,14 @@ export default class SysParam extends PureComponent {
           <Fragment>
             <a onClick={() => this.getDataForUpdate(record)}>修改</a>
           </Fragment>
-        ),
-      },
+        )
+      }
     ];
 
     const parentMethods = {
       add: this.add,
       update: this.update,
-      closeModal: this.closeModal,
+      closeModal: this.closeModal
     };
     return (
       <PageHeaderLayout>
@@ -199,7 +201,10 @@ export default class SysParam extends PureComponent {
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
             <div className={styles.tableListOperator}>
-              <Button type="primary" onClick={() => this.getDataForAdd()}>
+              <Button
+                type="primary"
+                onClick={() => this.getDataForAdd()}
+              >
                 新建
               </Button>
             </div>

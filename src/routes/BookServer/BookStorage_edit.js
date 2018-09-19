@@ -1,4 +1,4 @@
-import React, {PureComponent} from 'react';
+import React, { PureComponent } from 'react';
 import {
   Row,
   Col,
@@ -15,7 +15,7 @@ import {
   Modal,
   message,
   Badge,
-  Divider,
+  Divider
 } from 'antd';
 
 import SelectBookStyle from '../Select/SelectBookStyle';
@@ -24,72 +24,81 @@ const FormItem = Form.Item;
 @Form.create()
 export default class CreateEditForm extends PureComponent {
   state = {
-    bookStyleModalVisible: false,
+    bookStyleModalVisible: false
   };
 
   componentDidMount() {
     let opt1 = [];
-    const { isEmptyObject} = this.props;
+    const { isEmptyObject } = this.props;
     if (!isEmptyObject(this.props.options)) {
       opt1 = this.props.map(item => <Option key={item.itemNo}>{item.itemLabel}</Option>);
     }
     this.setState({
-      opt:opt1,
+      opt: opt1
     });
   }
 
   closeSelectBookStyleModal = () => {
     this.setState({
-      bookStyleModalVisible: false,
+      bookStyleModalVisible: false
     });
   };
-
 
   callSelectBookStyleReturn = record => {
     if (record != null) {
       const { dispatch } = this.props;
       const myFormData = {
         bookStyleId: record[0].bookStyleId,
-        bookStyleName: record[0].styleName,
+        bookStyleName: record[0].styleName
       };
       dispatch({
         type: 'tableData/select',
-        payload: myFormData,
+        payload: myFormData
       });
     }
     this.closeSelectBookStyleModal();
   };
 
-
   selectBookStyleModel = () => {
     this.setState({
-      bookStyleModalVisible: true,
+      bookStyleModalVisible: true
     });
   };
 
   render() {
-    const { modalVisible, form, add, update, closeModal, formData, title, dispatch,options,isEmptyObject } = this.props;
+    const {
+      modalVisible,
+      form,
+      add,
+      update,
+      closeModal,
+      formData,
+      title,
+      dispatch,
+      options,
+      isEmptyObject
+    } = this.props;
     let opt1 = [];
     let opt2 = [];
     if (!isEmptyObject(options)) {
-      opt1 = options["32"].map(item => <Option key={item.itemNo}>{item.itemLabel}</Option>);
-      opt2 = options["36"].map(item => <Option key={item.itemNo}>{item.itemLabel}</Option>);
+      opt1 = options['32'].map(item => <Option key={item.itemNo}>{item.itemLabel}</Option>);
+      opt2 = options['36'].map(item => <Option key={item.itemNo}>{item.itemLabel}</Option>);
     }
-    let opt10 = [];
+    const opt10 = [];
     opt10.push(<Option key="-1">请选择</Option>);
     opt10.push(opt1);
 
-    let opt20 = [];
+    const opt20 = [];
     opt20.push(<Option key="-1">请选择</Option>);
     opt20.push(opt2);
     const okHandle = () => {
       form.validateFields((err, fieldsValue) => {
         if (err) return;
         form.resetFields();
-        if(formData.bookStorageId>=0){
-          fieldsValue.bookStorageId=formData.bookStorageId;
+        if (formData.bookStorageId >= 0) {
+          fieldsValue.bookStorageId = formData.bookStorageId;
           update(fieldsValue);
-        }else{
+        } else {
           add(fieldsValue);
         }
       });
@@ -97,28 +106,28 @@ export default class CreateEditForm extends PureComponent {
 
     const parentMethodsForBookStyle = {
       callReturn: this.callSelectBookStyleReturn,
-      closeModal: this.closeSelectBookStyleModal,
+      closeModal: this.closeSelectBookStyleModal
     };
 
     const formItemLayout = {
       labelCol: {
         xs: { span: 24 },
         sm: { span: 7 },
-        md: { span: 5 },
+        md: { span: 5 }
       },
       wrapperCol: {
         xs: { span: 24 },
         sm: { span: 12 },
-        md: { span: 13 },
-      },
+        md: { span: 13 }
+      }
     };
-    const checkContent = (rule,value,callback)=> {
-      if(value === '-1') {
-        callback("请选择!");
+    const checkContent = (rule, value, callback) => {
+      if (value === '-1') {
+        callback('请选择!');
         return;
       }
       callback();
-    }
+    };
 
     return (
       <Modal
@@ -127,19 +136,28 @@ export default class CreateEditForm extends PureComponent {
         onOk={okHandle}
         onCancel={() => closeModal()}
       >
-        <FormItem {...formItemLayout} label="图书存放类型">
-          {form.getFieldDecorator('bookStorageType', {initialValue:formData.bookStorageType === undefined ? '-1' : `${formData.bookStorageType  }` || '',
+        <FormItem
+          {...formItemLayout}
+          label="图书存放类型"
+        >
+          {form.getFieldDecorator('bookStorageType', {
+            initialValue:
+              formData.bookStorageType === undefined ? '-1' : `${formData.bookStorageType}` || '',
             rules: [
               {
                 required: true,
-                message: '请选择图书存放类型...',
-              },{
-                validator: checkContent.bind(this),
+                message: '请选择图书存放类型...'
               },
-            ],
+              {
+                validator: checkContent.bind(this)
+              }
+            ]
           })(<Select style={{ width: '150px' }}>{opt10}</Select>)}
         </FormItem>
-        <FormItem {...formItemLayout} label="图书格式">
+        <FormItem
+          {...formItemLayout}
+          label="图书格式"
+        >
           <Row gutter={0}>
             <Col span={22}>
               {form.getFieldDecorator('bookStyleName', {
@@ -147,13 +165,16 @@ export default class CreateEditForm extends PureComponent {
                 rules: [
                   {
                     required: true,
-                    message: '请选择图书格式...',
-                  },
-                ],
+                    message: '请选择图书格式...'
+                  }
+                ]
               })(<Input />)}
             </Col>
             <Col span={2}>
-              <Button onClick={this.selectBookStyleModel} icon="search" />
+              <Button
+                onClick={this.selectBookStyleModel}
+                icon="search"
+              />
             </Col>
           </Row>
         </FormItem>
@@ -167,49 +188,69 @@ export default class CreateEditForm extends PureComponent {
             <Input />
           )}
         </FormItem>
-        <FormItem {...formItemLayout} label="存储名">
-          {form.getFieldDecorator('storageName', {initialValue:formData.storageName ||'',
+        <FormItem
+          {...formItemLayout}
+          label="存储名"
+        >
+          {form.getFieldDecorator('storageName', {
+            initialValue: formData.storageName || '',
             rules: [
               {
                 required: true,
-                message: '请输入存储名...',
-              },
-            ],
+                message: '请输入存储名...'
+              }
+            ]
           })(<Input />)}
         </FormItem>
-        <FormItem {...formItemLayout} label="存储地址">
-          {form.getFieldDecorator('storagePath', {initialValue:formData.storagePath ||'',
+        <FormItem
+          {...formItemLayout}
+          label="存储地址"
+        >
+          {form.getFieldDecorator('storagePath', {
+            initialValue: formData.storagePath || '',
             rules: [
               {
                 required: true,
-                message: '请输入存储地址...',
-              },
-            ],
+                message: '请输入存储地址...'
+              }
+            ]
           })(<Input />)}
         </FormItem>
-        <FormItem {...formItemLayout} label="访问url">
-          {form.getFieldDecorator('accessUrl', {initialValue:formData.accessUrl ||'',
+        <FormItem
+          {...formItemLayout}
+          label="访问url"
+        >
+          {form.getFieldDecorator('accessUrl', {
+            initialValue: formData.accessUrl || '',
             rules: [
               {
                 required: true,
-                message: '请输入访问url...',
-              },
-            ],
+                message: '请输入访问url...'
+              }
+            ]
           })(<Input />)}
         </FormItem>
-        <FormItem {...formItemLayout} label="是否已满">
-          {form.getFieldDecorator('isFull', {initialValue:formData.isFull === undefined ? '0' : `${formData.isFull  }` || '',
+        <FormItem
+          {...formItemLayout}
+          label="是否已满"
+        >
+          {form.getFieldDecorator('isFull', {
+            initialValue: formData.isFull === undefined ? '0' : `${formData.isFull}` || '',
             rules: [
               {
                 required: true,
-                message: '请选择是否已满...',
-              },{
-                validator: checkContent.bind(this),
+                message: '请选择是否已满...'
               },
-            ],
+              {
+                validator: checkContent.bind(this)
+              }
+            ]
           })(<Select style={{ width: '150px' }}>{opt20}</Select>)}
         </FormItem>
-        <SelectBookStyle {...parentMethodsForBookStyle} modalVisible={this.state.bookStyleModalVisible} />
+        <SelectBookStyle
+          {...parentMethodsForBookStyle}
+          modalVisible={this.state.bookStyleModalVisible}
+        />
       </Modal>
     );
   }

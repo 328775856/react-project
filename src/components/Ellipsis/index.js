@@ -10,11 +10,11 @@ const isSupportLineClamp = document.body.style.webkitLineClamp !== undefined;
 
 const TooltipOverlayStyle = {
   overflowWrap: 'break-word',
-  wordWrap: 'break-word',
+  wordWrap: 'break-word'
 };
 
-export const getStrFullLength = (str = '') => {
-  return str.split('').reduce((pre, cur) => {
+export const getStrFullLength = (str = '') =>
+  str.split('').reduce((pre, cur) => {
     const charCode = cur.charCodeAt(0);
     if (charCode >= 0 && charCode <= 128) {
       return pre + 1;
@@ -22,7 +22,6 @@ export const getStrFullLength = (str = '') => {
       return pre + 2;
     }
   }, 0);
-};
 
 export const cutStrByFullLength = (str = '', maxLength) => {
   let showLength = 0;
@@ -59,7 +58,10 @@ const EllipsisText = ({ text, length, tooltip, fullWidthRecognition, ...other })
 
   if (tooltip) {
     return (
-      <Tooltip overlayStyle={TooltipOverlayStyle} title={text}>
+      <Tooltip
+        overlayStyle={TooltipOverlayStyle}
+        title={text}
+      >
         <span>
           {displayText}
           {tail}
@@ -79,7 +81,7 @@ const EllipsisText = ({ text, length, tooltip, fullWidthRecognition, ...other })
 export default class Ellipsis extends Component {
   state = {
     text: '',
-    targetCount: 0,
+    targetCount: 0
   };
 
   componentDidMount() {
@@ -108,7 +110,7 @@ export default class Ellipsis extends Component {
       if (totalHeight <= targetHeight) {
         this.setState({
           text,
-          targetCount: text.length,
+          targetCount: text.length
         });
         return;
       }
@@ -121,7 +123,7 @@ export default class Ellipsis extends Component {
 
       this.setState({
         text,
-        targetCount: count,
+        targetCount: count
       });
     }
   };
@@ -194,12 +196,15 @@ export default class Ellipsis extends Component {
 
     const cls = classNames(styles.ellipsis, className, {
       [styles.lines]: lines && !isSupportLineClamp,
-      [styles.lineClamp]: lines && isSupportLineClamp,
+      [styles.lineClamp]: lines && isSupportLineClamp
     });
 
     if (!lines && !length) {
       return (
-        <span className={cls} {...restProps}>
+        <span
+          className={cls}
+          {...restProps}
+        >
           {children}
         </span>
       );
@@ -225,15 +230,22 @@ export default class Ellipsis extends Component {
     if (isSupportLineClamp) {
       const style = `#${id}{-webkit-line-clamp:${lines};-webkit-box-orient: vertical;}`;
       return (
-        <div id={id} className={cls} {...restProps}>
+        <div
+          id={id}
+          className={cls}
+          {...restProps}
+        >
           <style>{style}</style>
           {tooltip ? (
-            <Tooltip overlayStyle={TooltipOverlayStyle} title={children}>
+            <Tooltip
+              overlayStyle={TooltipOverlayStyle}
+              title={children}
+            >
               {children}
             </Tooltip>
-          ) : (
+          ) :
             children
-          )}
+          }
         </div>
       );
     }
@@ -246,19 +258,32 @@ export default class Ellipsis extends Component {
     );
 
     return (
-      <div {...restProps} ref={this.handleRoot} className={cls}>
+      <div
+        {...restProps}
+        ref={this.handleRoot}
+        className={cls}
+      >
         <div ref={this.handleContent}>
           {tooltip ? (
-            <Tooltip overlayStyle={TooltipOverlayStyle} title={text}>
+            <Tooltip
+              overlayStyle={TooltipOverlayStyle}
+              title={text}
+            >
               {childNode}
             </Tooltip>
-          ) : (
+          ) :
             childNode
-          )}
-          <div className={styles.shadow} ref={this.handleShadowChildren}>
+          }
+          <div
+            className={styles.shadow}
+            ref={this.handleShadowChildren}
+          >
             {children}
           </div>
-          <div className={styles.shadow} ref={this.handleShadow}>
+          <div
+            className={styles.shadow}
+            ref={this.handleShadow}
+          >
             <span>{text}</span>
           </div>
         </div>

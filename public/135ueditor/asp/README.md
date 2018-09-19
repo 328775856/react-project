@@ -23,7 +23,7 @@ Classic ASP 一般在 IIS 上运行。其它 ASP 服务器不介绍部署方式�
 
 #### 版本低于 1.4.0 的配置
 
-对于 v1.4.0 之前的版本，需要修改 `ueditor.config.js`。最简单的方法，就是把文件中的 php 都替换成 asp。要修改的配置包括：
+对于 v1.4.0 之前的版本，需要修改 `ueditor.config.json`。最简单的方法，就是把文件中的 php 都替换成 asp。要修改的配置包括：
 
 ```javascript
 {

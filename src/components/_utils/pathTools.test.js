@@ -11,7 +11,7 @@ describe('test urlToList', () => {
     expect(urlToList('/userinfo/2144/addr')).toEqual([
       '/userinfo',
       '/userinfo/2144',
-      '/userinfo/2144/addr',
+      '/userinfo/2144/addr'
     ]);
   });
 });

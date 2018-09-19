@@ -8,7 +8,7 @@ import styles from '../index.less';
 @autoHeight()
 class Bar extends Component {
   state = {
-    autoHideXLabels: false,
+    autoHideXLabels: false
   };
 
   componentDidMount() {
@@ -44,12 +44,12 @@ class Bar extends Component {
     if (canvasWidth <= minWidth) {
       if (!autoHideXLabels) {
         this.setState({
-          autoHideXLabels: true,
+          autoHideXLabels: true
         });
       }
     } else if (autoHideXLabels) {
       this.setState({
-        autoHideXLabels: false,
+        autoHideXLabels: false
       });
     }
   }
@@ -61,30 +61,34 @@ class Bar extends Component {
       forceFit = true,
       data,
       color = 'rgba(24, 144, 255, 0.85)',
-      padding,
+      padding
     } = this.props;
 
     const { autoHideXLabels } = this.state;
 
     const scale = {
       x: {
-        type: 'cat',
+        type: 'cat'
       },
       y: {
-        min: 0,
-      },
+        min: 0
+      }
     };
 
     const tooltip = [
       'x*y',
       (x, y) => ({
         name: x,
-        value: y,
-      }),
+        value: y
+      })
     ];
 
     return (
-      <div className={styles.chart} style={{ height }} ref={this.handleRoot}>
+      <div
+        className={styles.chart}
+        style={{ height }}
+        ref={this.handleRoot}
+      >
         <div ref={this.handleRef}>
           {title && <h4 style={{ marginBottom: 20 }}>{title}</h4>}
           <Chart
@@ -100,9 +104,20 @@ class Bar extends Component {
               label={autoHideXLabels ? false : {}}
               tickLine={autoHideXLabels ? false : {}}
             />
-            <Axis name="y" min={0} />
-            <Tooltip showTitle={false} crosshairs={false} />
-            <Geom type="interval" position="x*y" color={color} tooltip={tooltip} />
+            <Axis
+              name="y"
+              min={0}
+            />
+            <Tooltip
+              showTitle={false}
+              crosshairs={false}
+            />
+            <Geom
+              type="interval"
+              position="x*y"
+              color={color}
+              tooltip={tooltip}
+            />
           </Chart>
         </div>
       </div>

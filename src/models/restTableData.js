@@ -1,5 +1,4 @@
 import { routerRedux } from 'dva/router';
-import { getUrl, postUrl, putUrl, deleteUrl } from '../services/api';
 import {
   Row,
   Col,
@@ -18,27 +17,29 @@ import {
   Badge,
   Divider,
   Table
-  } from 'antd';
+} from 'antd';
+import { getUrl, postUrl, putUrl, deleteUrl } from '../services/api';
+
 export default {
   namespace: 'restTableData',
   state: {
     pageData: {},
     formData: {},
     status: {},
-    message: '',
+    message: ''
   },
 
   effects: {
     *list({ path, payload, callback }, { call, put }) {
       const response = yield call(postUrl, path, payload);
-      let res = {
+      const res = {
         ...response,
         pageSize: payload.page.pageSize,
-        pageNo: payload.page.pageNo,
+        pageNo: payload.page.pageNo
       };
       yield put({
         type: 'loadPage',
-        payload: res,
+        payload: res
       });
       if (callback) callback();
     },
@@ -46,7 +47,7 @@ export default {
       const response = yield call(getUrl, path, payload);
       yield put({
         type: 'loadForm',
-        payload: response,
+        payload: response
       });
       if (callback) callback();
     },
@@ -54,24 +55,25 @@ export default {
       const response = yield call(postUrl, path, payload);
       yield put({
         type: 'loadForm',
-        payload: response,
+        payload: response
       });
       if (callback) callback();
     },
     *add({ path, payload, callback }, { call, put }) {
       const response = yield call(postUrl, path, payload);
-      //返回list列表
+      // 返回list列表
       yield put({
         type: 'loadResponse',
-        payload: response,
+        payload: response
       });
       if (callback) callback();
     },
-    *getDataForUpdate({ path, payload, callback }, { call, put }) {
+    *getDataForUpdate({ path, payload, callback, processor }, { call, put }) {
       const response = yield call(postUrl, path, payload);
       yield put({
         type: 'loadForm',
         payload: response,
+        processor
       });
       if (callback) callback();
     },
@@ -79,7 +81,7 @@ export default {
       const response = yield call(putUrl, path, payload);
       yield put({
         type: 'loadResponse',
-        payload: response,
+        payload: response
       });
       if (callback) callback();
     },
@@ -87,14 +89,14 @@ export default {
       const response = yield call(deleteUrl, path, payload);
       yield put({
         type: 'loadResponse',
-        payload: response,
+        payload: response
       });
       if (callback) callback();
     },
     *select({ path, payload }, { call, put }) {
       yield put({
         type: 'loadSelect',
-        payload: payload,
+        payload
       });
     },
     *initOption({ path, payload, optionKey, callback }, { call, put }) {
@@ -102,7 +104,7 @@ export default {
       yield put({
         type: 'loadOption',
         payload: response,
-        optionKey: optionKey,
+        optionKey
       });
       if (callback) callback();
     },
@@ -111,7 +113,7 @@ export default {
       yield put({
         type: 'loadOptionElement',
         payload: response,
-        option: option,
+        option
       });
       if (callback) callback();
     },
@@ -119,25 +121,25 @@ export default {
       yield put(routerRedux.push(path));
       yield put({
         type: 'loadForm',
-        payload: { data: payload },
+        payload: { data: payload }
       });
-    },
+    }
   },
 
   reducers: {
     loadPage(state, action) {
-      let myState = {
+      const myState = {
         ...state,
         pageData: {
           list: action.payload.data.rows,
           pagination: {
             total: action.payload.data.total,
             pageSize: action.payload.pageSize,
-            current: action.payload.pageNo,
-          },
+            current: action.payload.pageNo
+          }
         },
         status: action.payload.status,
-        message: '',
+        message: ''
       };
       return myState;
     },
@@ -148,36 +150,39 @@ export default {
       } else {
         formData = action.payload.data;
       }
-      let myState = {
+      if (action.processor) {
+        formData = action.processor(formData, action.payload);
+      }
+      const myState = {
         ...state,
-        formData: formData,
+        formData,
         status: action.payload.status,
-        message: action.payload.message,
+        message: action.payload.message
       };
       return myState;
     },
     loadResponse(state, action) {
-      let myState = {
+      const myState = {
         ...state,
         status: action.payload.status,
-        message: action.payload.message,
+        message: action.payload.message
       };
       return myState;
     },
     loadSelect(state, action) {
-      let myFormData = {
+      const myFormData = {
         ...state.formData,
-        ...action.payload,
+        ...action.payload
       };
-      let myState = {
+      const myState = {
         ...state,
-        formData: myFormData,
+        formData: myFormData
       };
       return myState;
     },
     loadOption(state, action) {
-      let myState = {
-        ...state,
+      const myState = {
+        ...state
       };
       if (action.payload.success) {
         myState[action.optionKey] = action.payload.data.rows;
@@ -185,14 +190,16 @@ export default {
       return myState;
     },
     loadOptionElement(state, action) {
-      let myState = {
-        ...state,
+      const myState = {
+        ...state
       };
       if (action.payload.success) {
-        let options = action.payload.data.rows.map(item => <Select.Option key={item[action.option.key]}>{item[action.option.value]}</Select.Option>);
+        const options = action.payload.data.rows.map(item => (
+          <Select.Option key={item[action.option.key]}>{item[action.option.value]}</Select.Option>
+        ));
         myState[action.option.optionKey] = options;
       }
       return myState;
-    },
-  },
+    }
+  }
 };

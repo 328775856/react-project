@@ -1,5 +1,5 @@
-import React, {Fragment, PureComponent} from 'react';
-import {connect} from 'dva';
+import React, { Fragment, PureComponent } from 'react';
+import { connect } from 'dva';
 import {
   Row,
   Col,
@@ -17,7 +17,7 @@ import {
   message,
   Badge,
   Divider,
-  Table,
+  Table
 } from 'antd';
 import StandardTable from 'components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
@@ -29,7 +29,7 @@ import { defaultPage } from '../../utils/utils.js';
 const FormItem = Form.Item;
 @connect(({ commonTableData, loading }) => ({
   commonTableData,
-  loading: loading.models.crud,
+  loading: loading.models.crud
 }))
 @Form.create()
 export default class CourseInfo extends PureComponent {
@@ -39,25 +39,26 @@ export default class CourseInfo extends PureComponent {
     formValues: {},
     page: defaultPage(),
     paramData: {},
+    options: {}
   };
 
   refresh = (values, page) => {
-    const {dispatch} = this.props;
+    const { dispatch } = this.props;
     const { paramData } = this.state;
     const params = {
       ...paramData,
-      ...values,
+      ...values
     };
     dispatch({
       type: 'commonTableData/list',
       path: 'courseInfo/page',
       payload: {
         data: values,
-        page: page,
-      },
+        page
+      }
     });
     this.setState({
-      modalVisible: false,
+      modalVisible: false
     });
   };
 
@@ -65,11 +66,12 @@ export default class CourseInfo extends PureComponent {
     const { formValues, page } = this.state;
     const { commonTableData } = this.props;
     const paramData = {
-      ...commonTableData.formData,
+      ...commonTableData.formData
     };
     this.setState({
-      paramData: paramData,
+      paramData
     });
+    this.initOptions();
     this.refresh(paramData, page);
   }
 
@@ -77,12 +79,18 @@ export default class CourseInfo extends PureComponent {
     const { formValues } = this.state;
     const page = {
       pageSize: pagination.pageSize,
-      pageNo: pagination.current,
+      pageNo: pagination.current
     };
     this.setState({
-      page,
+      page
     });
     this.refresh(formValues, page);
+  };
+
+  isEmptyObject = e => {
+    let t;
+    for (t in e) return !1;
+    return !0;
   };
 
   formReset = () => {
@@ -100,6 +108,12 @@ export default class CourseInfo extends PureComponent {
     }
   };
 
+  initOptionsCallback = response => {
+    this.setState({
+      options: JSON.parse(response.data)
+    });
+  };
+
   remove = record => {
     const { dispatch, commonTableData } = this.props;
     const cb = this.callback;
@@ -110,10 +124,10 @@ export default class CourseInfo extends PureComponent {
           type: 'commonTableData/remove',
           path: 'courseInfo/remove',
           payload: { courseId: record.courseId },
-          callback: cb,
+          callback: cb
         });
       },
-      onCancel() {},
+      onCancel() {}
     });
   };
 
@@ -124,12 +138,12 @@ export default class CourseInfo extends PureComponent {
       if (err) return;
 
       const values = {
-        ...fieldsValue,
+        ...fieldsValue
       };
       const page = defaultPage();
       this.setState({
         formValues: values,
-        page,
+        page
       });
       this.refresh(values, page);
     });
@@ -137,7 +151,7 @@ export default class CourseInfo extends PureComponent {
 
   closeModal = () => {
     this.setState({
-      modalVisible: false,
+      modalVisible: false
     });
   };
 
@@ -146,25 +160,25 @@ export default class CourseInfo extends PureComponent {
     dispatch({
       type: 'commonTableData/getDataForAdd',
       path: 'courseInfo/getDataForAdd',
-      payload: fields,
+      payload: fields
     });
     this.setState({
       modalTitle: '新增',
-      modalVisible: true,
+      modalVisible: true
     });
   };
 
   add = fields => {
-    const { paramData } = this.state;
+    const { dispatch, paramData } = this.props;
     const params = {
       ...fields,
-      ...paramData,
+      ...paramData
     };
     dispatch({
       type: 'commonTableData/add',
       path: 'courseInfo/add',
-      payload: fields,
-      callback: this.callback,
+      payload: params,
+      callback: this.callback
     });
   };
 
@@ -173,11 +187,21 @@ export default class CourseInfo extends PureComponent {
     dispatch({
       type: 'commonTableData/getDataForUpdate',
       path: 'courseInfo/getDataForUpdate',
-      payload: { courseId: record.courseId },
+      payload: { courseId: record.courseId }
     });
     this.setState({
       modalTitle: '修改',
-      modalVisible: true,
+      modalVisible: true
+    });
+  };
+
+  initOptions = () => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'commonTableData/initOptions',
+      path: 'courseInfo/getDataForAdd',
+      payload: {},
+      callback: this.initOptionsCallback
     });
   };
 
@@ -187,62 +211,91 @@ export default class CourseInfo extends PureComponent {
     const payload = {
       ...commonTableData.formData,
       ...fields,
-      ...paramData,
+      ...paramData
     };
     dispatch({
       type: 'commonTableData/update',
       path: 'courseInfo/update',
       payload,
-      callback: this.callback,
+      callback: this.callback
     });
   };
 
-  detail = (record,uri) => {
+  shelfStatusChange = fields => {
+    const { dispatch, commonTableData } = this.props;
+
+    const payload = {
+      ...commonTableData.formData,
+      ...fields
+    };
+    dispatch({
+      type: 'commonTableData/update',
+      path: 'courseInfo/shelfStatusChange',
+      payload,
+      callback: this.callback
+    });
+  };
+
+  detail = (record, uri) => {
     const { dispatch } = this.props;
     dispatch({
       type: 'commonTableData/goUrl',
       path: uri,
       payload: {
-        courseId: record.courseId,
-      },
+        courseId: record.courseId
+      }
     });
   };
 
-
   renderForm() {
-    return CreateFindForm(this.props, this.query, this.formReset);
+    return CreateFindForm(this.props, this.query, this.formReset, this.isEmptyObject, this.state);
   }
 
   render() {
     const { commonTableData, loading } = this.props;
-    const { modalVisible, modalTitle } = this.state;
+    const { modalVisible, modalTitle, options } = this.state;
 
     const columns = [
       {
         title: '系统id',
-        dataIndex: 'courseId',
+        dataIndex: 'courseId'
       },
 
       {
         title: '课程名称',
-        dataIndex: 'courseName',
+        dataIndex: 'courseName'
       },
       {
         title: '课程封面',
-        dataIndex: 'coverPath',
+        dataIndex: 'wholeCoverPath',
+        render: (text, record) => (
+          <Fragment>
+            <img
+              alt=""
+              style={{ width: 100, height: 100 }}
+              src={record.wholeCoverPath}
+            />
+          </Fragment>
+        )
       },
 
       {
         title: '价格',
-        dataIndex: 'upCourse',
+        dataIndex: 'upCourse'
       },
       {
         title: '上架状态',
         dataIndex: 'shelfStatus',
+        render: (text, record) => (
+          <Fragment>
+            {record.shelfStatus === 1 ? '上架' : record.shelfStatus === 0 ? '未上架' : '已下架'}
+          </Fragment>
+        )
       },
       {
         title: '是否首页推荐',
         dataIndex: 'isRecommend',
+        render: (text, record) => <Fragment>{record.isRecommend === 1 ? '是' : '否'}</Fragment>
       },
 
       {
@@ -251,10 +304,14 @@ export default class CourseInfo extends PureComponent {
           <Fragment>
             <a onClick={() => this.getDataForUpdate(record)}>修改</a>
             <Divider type="vertical" />
-            <a onClick={() => this.detail(record,'/courseServer/courseRelChapter')}>章节明细</a>
+            <a onClick={() => this.detail(record, '/courseServer/courseRelChapter')}>章节明细</a>
+            <Divider type="vertical" />
+            <a onClick={() => this.shelfStatusChange(record)}>
+              {record.shelfStatus === 1 ? '下架' : '上架'}{' '}
+            </a>
           </Fragment>
-        ),
-      },
+        )
+      }
     ];
 
     const parentMethods = {
@@ -262,6 +319,7 @@ export default class CourseInfo extends PureComponent {
       update: this.update,
       closeModal: this.closeModal,
       dispatch: this.props.dispatch,
+      isEmptyObject: this.isEmptyObject
     };
     return (
       <PageHeaderLayout>
@@ -269,7 +327,10 @@ export default class CourseInfo extends PureComponent {
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
             <div className={styles.tableListOperator}>
-              <Button type="primary" onClick={() => this.getDataForAdd()}>
+              <Button
+                type="primary"
+                onClick={() => this.getDataForAdd()}
+              >
                 新建
               </Button>
             </div>
@@ -288,6 +349,7 @@ export default class CourseInfo extends PureComponent {
           modalVisible={modalVisible}
           formData={commonTableData.formData}
           title={modalTitle}
+          state={this.state}
         />
       </PageHeaderLayout>
     );

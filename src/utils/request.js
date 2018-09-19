@@ -18,7 +18,7 @@ const codeMessage = {
   500: '服务器发生错误，请检查服务器。',
   502: '网关错误。',
   503: '服务不可用，服务器暂时过载或维护。',
-  504: '网关超时。',
+  504: '网关超时。'
 };
 function checkStatus(response) {
   if (response.status >= 200 && response.status < 300) {
@@ -27,7 +27,7 @@ function checkStatus(response) {
   const errortext = codeMessage[response.status] || response.statusText;
   notification.error({
     message: `请求错误 ${response.status}: ${response.url}`,
-    description: errortext,
+    description: errortext
   });
   const error = new Error(errortext);
   error.name = response.status;
@@ -44,7 +44,7 @@ function checkStatus(response) {
  */
 export default function request(url, options) {
   const defaultOptions = {
-    credentials: 'include',
+    credentials: 'include'
   };
   const newOptions = { ...defaultOptions, ...options };
   if (
@@ -56,14 +56,14 @@ export default function request(url, options) {
       newOptions.headers = {
         Accept: 'application/json',
         'Content-Type': 'application/json; charset=utf-8',
-        ...newOptions.headers,
+        ...newOptions.headers
       };
       newOptions.body = JSON.stringify(newOptions.body);
     } else {
       // newOptions.body is FormData
       newOptions.headers = {
         Accept: 'application/json',
-        ...newOptions.headers,
+        ...newOptions.headers
       };
     }
   }
@@ -81,7 +81,7 @@ export default function request(url, options) {
       const status = e.name;
       if (status === 401) {
         dispatch({
-          type: 'login/logout',
+          type: 'login/logout'
         });
         return;
       }

@@ -17,9 +17,9 @@ export default class NoticeIcon extends PureComponent {
     loading: false,
     locale: {
       emptyText: '暂无数据',
-      clear: '清空',
+      clear: '清空'
     },
-    emptyImage: 'https://gw.alipayobjects.com/zos/rmsportal/wAhyIChODzsoKIOBHcBk.svg',
+    emptyImage: 'https://gw.alipayobjects.com/zos/rmsportal/wAhyIChODzsoKIOBHcBk.svg'
   };
 
   constructor(props) {
@@ -48,11 +48,14 @@ export default class NoticeIcon extends PureComponent {
     }
     const panes = React.Children.map(children, child => {
       const title =
-        child.props.list && child.props.list.length > 0
-          ? `${child.props.title} (${child.props.list.length})`
-          : child.props.title;
+        child.props.list && child.props.list.length > 0 ?
+          `${child.props.title} (${child.props.list.length})` :
+          child.props.title;
       return (
-        <TabPane tab={title} key={child.props.title}>
+        <TabPane
+          tab={title}
+          key={child.props.title}
+        >
           <List
             {...child.props}
             data={child.props.list}
@@ -65,8 +68,14 @@ export default class NoticeIcon extends PureComponent {
       );
     });
     return (
-      <Spin spinning={loading} delay={0}>
-        <Tabs className={styles.tabs} onChange={this.onTabChange}>
+      <Spin
+        spinning={loading}
+        delay={0}
+      >
+        <Tabs
+          className={styles.tabs}
+          onChange={this.onTabChange}
+        >
           {panes}
         </Tabs>
       </Spin>
@@ -79,8 +88,14 @@ export default class NoticeIcon extends PureComponent {
     const notificationBox = this.getNotificationBox();
     const trigger = (
       <span className={noticeButtonClass}>
-        <Badge count={count} className={styles.badge}>
-          <Icon type="bell" className={styles.icon} />
+        <Badge
+          count={count}
+          className={styles.badge}
+        >
+          <Icon
+            type="bell"
+            className={styles.icon}
+          />
         </Badge>
       </span>
     );

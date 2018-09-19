@@ -17,7 +17,7 @@ import {
   message,
   Badge,
   Divider,
-  Table,
+  Table
 } from 'antd';
 import StandardTable from 'components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
@@ -25,10 +25,11 @@ import styles from '../../assets/styles.less';
 import CreateEditForm from './videoEdit';
 import CreateFindForm from './videoFind';
 import { defaultPage, mul, div } from '../../utils/utils.js';
+
 const FormItem = Form.Item;
 @connect(({ restTableData, loading }) => ({
   restTableData,
-  loading: loading.models.crud,
+  loading: loading.models.crud
 }))
 @Form.create()
 export default class MediaVideo extends PureComponent {
@@ -36,28 +37,28 @@ export default class MediaVideo extends PureComponent {
     modalVisible: false,
     modalTitle: '',
     formValues: {},
-    page: defaultPage(),
+    page: defaultPage()
   };
 
   initGroup = () => {
     const { dispatch } = this.props;
     dispatch({
-        type: 'restTableData/initOptionElement',
-        path:'media/videoGroup/page',
-        payload:{
-            data: {},
-            page: {
-                pageNo: 1,
-                pageSize: 1000
-            },
-        },
-        option: {
-            optionKey: 'videoGroup',
-            key: 'mediaVideoGroupId',
-            value: 'videoGroupName'
-        },
+      type: 'restTableData/initOptionElement',
+      path: 'media/videoGroup/page',
+      payload: {
+        data: {},
+        page: {
+          pageNo: 1,
+          pageSize: 1000
+        }
+      },
+      option: {
+        optionKey: 'videoGroup',
+        key: 'mediaVideoGroupId',
+        value: 'videoGroupName'
+      }
     });
-  }
+  };
 
   refresh = (values, page) => {
     const { dispatch } = this.props;
@@ -66,11 +67,11 @@ export default class MediaVideo extends PureComponent {
       path: 'media/video/page',
       payload: {
         data: values,
-        page: page,
-      },
+        page
+      }
     });
     this.setState({
-      modalVisible: false,
+      modalVisible: false
     });
   };
 
@@ -82,12 +83,12 @@ export default class MediaVideo extends PureComponent {
 
   tableChange = (pagination, filtersArg, sorter) => {
     const { formValues } = this.state;
-    let page = {
+    const page = {
       pageSize: pagination.pageSize,
-      pageNo: pagination.current,
+      pageNo: pagination.current
     };
     this.setState({
-      page: page,
+      page
     });
     this.refresh(formValues, page);
   };
@@ -117,12 +118,13 @@ export default class MediaVideo extends PureComponent {
           type: 'restTableData/delete',
           path: 'media/video',
           payload: { mediaVideoId: record.mediaVideoId },
-          callback: cb,
+          callback: cb
         });
       },
-      onCancel() {},
+      onCancel() {}
     });
   };
+
   query = e => {
     e.preventDefault();
     const { dispatch, form } = this.props;
@@ -130,12 +132,12 @@ export default class MediaVideo extends PureComponent {
       if (err) return;
 
       const values = {
-        ...fieldsValue,
+        ...fieldsValue
       };
       const page = defaultPage();
       this.setState({
         formValues: values,
-        page: page,
+        page
       });
       this.refresh(values, page);
     });
@@ -143,19 +145,20 @@ export default class MediaVideo extends PureComponent {
 
   closeModal = () => {
     this.setState({
-      modalVisible: false,
+      modalVisible: false
     });
   };
+
   getDataForAdd = fields => {
     const { dispatch } = this.props;
     dispatch({
       type: 'restTableData/getDataForAdd',
       path: 'media/video/getDataForAdd',
-      payload: fields,
+      payload: fields
     });
     this.setState({
       modalTitle: '新增',
-      modalVisible: true,
+      modalVisible: true
     });
   };
 
@@ -165,7 +168,7 @@ export default class MediaVideo extends PureComponent {
       type: 'restTableData/add',
       path: 'media/video',
       payload: fields,
-      callback: this.callback,
+      callback: this.callback
     });
   };
 
@@ -174,30 +177,30 @@ export default class MediaVideo extends PureComponent {
     dispatch({
       type: 'restTableData/getDataForUpdate',
       path: 'media/video/getDataForUpdate',
-      payload: { mediaVideoId: record.mediaVideoId },
+      payload: { mediaVideoId: record.mediaVideoId }
     });
     this.setState({
       modalTitle: '修改',
-      modalVisible: true,
+      modalVisible: true
     });
   };
 
   update = fields => {
     const { dispatch, restTableData } = this.props;
-    let payload = {
+    const payload = {
       ...restTableData.formData,
-      ...fields,
+      ...fields
     };
     dispatch({
       type: 'restTableData/update',
       path: 'media/video',
-      payload: payload,
-      callback: this.callback,
+      payload,
+      callback: this.callback
     });
   };
 
   renderForm() {
-    const {restTableData} = this.props;
+    const { restTableData } = this.props;
     return CreateFindForm(this.props, this.query, this.formReset, restTableData.videoGroup);
   }
 
@@ -208,27 +211,27 @@ export default class MediaVideo extends PureComponent {
     const columns = [
       {
         title: '系统id',
-        dataIndex: 'mediaVideoId',
+        dataIndex: 'mediaVideoId'
       },
       {
         title: '分组ID',
-        dataIndex: 'mediaVideoGroupId',
+        dataIndex: 'mediaVideoGroupId'
       },
       {
         title: '名称',
-        dataIndex: 'videoName',
+        dataIndex: 'videoName'
       },
       {
         title: '视频格式(字典)',
-        dataIndex: 'videoFormat',
+        dataIndex: 'videoFormat'
       },
       {
         title: '时长-分钟',
-        dataIndex: 'videoMinute',
+        dataIndex: 'videoMinute'
       },
       {
         title: '时长-秒',
-        dataIndex: 'videoSecond',
+        dataIndex: 'videoSecond'
       },
       {
         title: '操作',
@@ -238,14 +241,14 @@ export default class MediaVideo extends PureComponent {
             <Divider type="vertical" />
             <a onClick={() => this.delete(record)}>删除</a>
           </Fragment>
-        ),
-      },
+        )
+      }
     ];
 
     const parentMethods = {
       add: this.add,
       update: this.update,
-      closeModal: this.closeModal,
+      closeModal: this.closeModal
     };
     return (
       <PageHeaderLayout>
@@ -253,7 +256,10 @@ export default class MediaVideo extends PureComponent {
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
             <div className={styles.tableListOperator}>
-              <Button type="primary" onClick={() => this.getDataForAdd()}>
+              <Button
+                type="primary"
+                onClick={() => this.getDataForAdd()}
+              >
                 新建
               </Button>
             </div>

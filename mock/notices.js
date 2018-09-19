@@ -1,8 +1,6 @@
 export const getNotices = (req, res) => {
-  res.json([
-   
-  ]);
+  res.json([]);
 };
 export default {
-  getNotices,
+  getNotices
 };

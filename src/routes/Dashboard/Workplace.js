@@ -10,24 +10,12 @@ import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 
 import styles from './Workplace.less';
 
-
-
-
-
 export default class Workplace extends PureComponent {
-  componentDidMount() {
-  
-  }
+  componentDidMount() {}
 
-  componentWillUnmount() {
-    
-  }
-
-  
+  componentWillUnmount() {}
 
   render() {
-  
-
     const pageHeaderContent = (
       <div className={styles.pageHeaderContent}>
         <div className={styles.avatar}>
@@ -43,12 +31,6 @@ export default class Workplace extends PureComponent {
       </div>
     );
 
-  
-
-    return (
-      <PageHeaderLayout content={pageHeaderContent}>
-        
-      </PageHeaderLayout>
-    );
+    return <PageHeaderLayout content={pageHeaderContent} />;
   }
 }

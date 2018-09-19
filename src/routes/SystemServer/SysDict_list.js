@@ -10,7 +10,7 @@ import { defaultPage } from '../../utils/utils.js';
 const FormItem = Form.Item;
 @connect(({ tableData, loading }) => ({
   tableData,
-  loading: loading.models.crud,
+  loading: loading.models.crud
 }))
 @Form.create()
 export default class SysDict extends PureComponent {
@@ -18,7 +18,7 @@ export default class SysDict extends PureComponent {
     modalVisible: false,
     modalTitle: '',
     formValues: {},
-    page: defaultPage(),
+    page: defaultPage()
   };
 
   refresh = (values, page) => {
@@ -28,11 +28,11 @@ export default class SysDict extends PureComponent {
       path: 'sysDict/page',
       payload: {
         data: values,
-        page: page,
-      },
+        page
+      }
     });
     this.setState({
-      modalVisible: false,
+      modalVisible: false
     });
   };
 
@@ -43,12 +43,12 @@ export default class SysDict extends PureComponent {
 
   tableChange = (pagination, filtersArg, sorter) => {
     const { formValues } = this.state;
-    let page = {
+    const page = {
       pageSize: pagination.pageSize,
-      pageNo: pagination.current,
+      pageNo: pagination.current
     };
     this.setState({
-      page: page,
+      page
     });
     this.refresh(formValues, page);
   };
@@ -78,12 +78,13 @@ export default class SysDict extends PureComponent {
           type: 'tableData/remove',
           path: 'sysDict/remove',
           payload: { sysDictId: record.sysDictId },
-          callback: cb,
+          callback: cb
         });
       },
-      onCancel() {},
+      onCancel() {}
     });
   };
+
   query = e => {
     e.preventDefault();
     const { dispatch, form } = this.props;
@@ -91,12 +92,12 @@ export default class SysDict extends PureComponent {
       if (err) return;
 
       const values = {
-        ...fieldsValue,
+        ...fieldsValue
       };
       const page = defaultPage();
       this.setState({
         formValues: values,
-        page: page,
+        page
       });
       this.refresh(values, page);
     });
@@ -104,19 +105,20 @@ export default class SysDict extends PureComponent {
 
   closeModal = () => {
     this.setState({
-      modalVisible: false,
+      modalVisible: false
     });
   };
+
   getDataForAdd = fields => {
     const { dispatch } = this.props;
     dispatch({
       type: 'tableData/getDataForAdd',
       path: 'sysDict/getDataForAdd',
-      payload: fields,
+      payload: fields
     });
     this.setState({
       modalTitle: '新增',
-      modalVisible: true,
+      modalVisible: true
     });
   };
 
@@ -126,7 +128,7 @@ export default class SysDict extends PureComponent {
       type: 'tableData/add',
       path: 'sysDict/add',
       payload: fields,
-      callback: this.callback,
+      callback: this.callback
     });
   };
 
@@ -135,25 +137,25 @@ export default class SysDict extends PureComponent {
     dispatch({
       type: 'tableData/getDataForUpdate',
       path: 'sysDict/getDataForUpdate',
-      payload: { sysDictId: record.sysDictId },
+      payload: { sysDictId: record.sysDictId }
     });
     this.setState({
       modalTitle: '修改',
-      modalVisible: true,
+      modalVisible: true
     });
   };
 
   update = fields => {
     const { dispatch, tableData } = this.props;
-    let payload = {
+    const payload = {
       ...tableData.formData,
-      ...fields,
+      ...fields
     };
     dispatch({
       type: 'tableData/update',
       path: 'sysDict/update',
-      payload: payload,
-      callback: this.callback,
+      payload,
+      callback: this.callback
     });
   };
 
@@ -164,8 +166,8 @@ export default class SysDict extends PureComponent {
       path: '/systemServer/sysDictItem',
       payload: {
         sysDictId: record.sysDictId,
-        dictNo: record.dictNo,
-      },
+        dictNo: record.dictNo
+      }
     });
   };
 
@@ -180,19 +182,19 @@ export default class SysDict extends PureComponent {
     const columns = [
       {
         title: '系统id',
-        dataIndex: 'sysDictId',
+        dataIndex: 'sysDictId'
       },
       {
         title: '字典组编号',
-        dataIndex: 'dictNo',
+        dataIndex: 'dictNo'
       },
       {
         title: '字典组名称',
-        dataIndex: 'dictName',
+        dataIndex: 'dictName'
       },
       {
         title: '字典组备注',
-        dataIndex: 'remark',
+        dataIndex: 'remark'
       },
       {
         title: '操作',
@@ -202,14 +204,14 @@ export default class SysDict extends PureComponent {
             <Divider type="vertical" />
             <a onClick={() => this.detail(record)}>明细</a>
           </Fragment>
-        ),
-      },
+        )
+      }
     ];
 
     const parentMethods = {
       add: this.add,
       update: this.update,
-      closeModal: this.closeModal,
+      closeModal: this.closeModal
     };
     return (
       <PageHeaderLayout>
@@ -217,7 +219,10 @@ export default class SysDict extends PureComponent {
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
             <div className={styles.tableListOperator}>
-              <Button type="primary" onClick={() => this.getDataForAdd()}>
+              <Button
+                type="primary"
+                onClick={() => this.getDataForAdd()}
+              >
                 新建
               </Button>
             </div>

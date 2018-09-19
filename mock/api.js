@@ -8,7 +8,7 @@ const titles = [
   'Bootstrap',
   'React',
   'Vue',
-  'Webpack',
+  'Webpack'
 ];
 const avatars = [
   'https://gw.alipayobjects.com/zos/rmsportal/WdGqmHpayyMjiEhcKoVE.png', // Alipay
@@ -18,7 +18,7 @@ const avatars = [
   'https://gw.alipayobjects.com/zos/rmsportal/siCrBXXhmvTQGWPNLBow.png', // Bootstrap
   'https://gw.alipayobjects.com/zos/rmsportal/kZzEzemZyKLKFsojXItE.png', // React
   'https://gw.alipayobjects.com/zos/rmsportal/ComBAopevLwENQdKWiIn.png', // Vue
-  'https://gw.alipayobjects.com/zos/rmsportal/nxkuOJlFJuAUhzlMTCEe.png', // Webpack
+  'https://gw.alipayobjects.com/zos/rmsportal/nxkuOJlFJuAUhzlMTCEe.png' // Webpack
 ];
 
 const avatars2 = [
@@ -31,21 +31,21 @@ const avatars2 = [
   'https://gw.alipayobjects.com/zos/rmsportal/psOgztMplJMGpVEqfcgF.png',
   'https://gw.alipayobjects.com/zos/rmsportal/ZpBqSxLxVEXfcUNoPKrz.png',
   'https://gw.alipayobjects.com/zos/rmsportal/laiEnJdGHVOhJrUShBaJ.png',
-  'https://gw.alipayobjects.com/zos/rmsportal/UrQsqscbKEpNuJcvBZBu.png',
+  'https://gw.alipayobjects.com/zos/rmsportal/UrQsqscbKEpNuJcvBZBu.png'
 ];
 
 const covers = [
   'https://gw.alipayobjects.com/zos/rmsportal/uMfMFlvUuceEyPpotzlq.png',
   'https://gw.alipayobjects.com/zos/rmsportal/iZBVOIhGJiAnhplqjvZW.png',
   'https://gw.alipayobjects.com/zos/rmsportal/uVZonEtjWwmUZPBQfycs.png',
-  'https://gw.alipayobjects.com/zos/rmsportal/gLaIAoVWTtLbBWZNYEMg.png',
+  'https://gw.alipayobjects.com/zos/rmsportal/gLaIAoVWTtLbBWZNYEMg.png'
 ];
 const desc = [
   '那是一种内在的东西， 他们到达不了，也无法触及的',
   '希望是一个好东西，也许是最好的，好东西是不会消亡的',
   '生命就像一盒巧克力，结果往往出人意料',
   '城镇中有那么多的酒馆，她却偏偏走进了我的酒馆',
-  '那时候我只会想自己想要什么，从不想自己拥有什么',
+  '那时候我只会想自己想要什么，从不想自己拥有什么'
 ];
 
 const user = [
@@ -58,7 +58,7 @@ const user = [
   '鱼酱',
   '乐哥',
   '谭小仪',
-  '仲尼',
+  '仲尼'
 ];
 
 export function fakeList(count) {
@@ -69,7 +69,7 @@ export function fakeList(count) {
       owner: user[i % 10],
       title: titles[i % 8],
       avatar: avatars[i % 8],
-      cover: parseInt(i / 4, 10) % 2 === 0 ? covers[i % 4] : covers[3 - i % 4],
+      cover: parseInt(i / 4, 10) % 2 === 0 ? covers[i % 4] : covers[3 - (i % 4)],
       status: ['active', 'exception', 'normal'][i % 3],
       percent: Math.ceil(Math.random() * 50) + 50,
       logo: avatars[i % 8],
@@ -89,17 +89,17 @@ export function fakeList(count) {
       members: [
         {
           avatar: 'https://gw.alipayobjects.com/zos/rmsportal/ZiESqWwCXBRQoaPONSJe.png',
-          name: '曲丽丽',
+          name: '曲丽丽'
         },
         {
           avatar: 'https://gw.alipayobjects.com/zos/rmsportal/tBOxZPlITHqwlGjsJWaF.png',
-          name: '王昭君',
+          name: '王昭君'
         },
         {
           avatar: 'https://gw.alipayobjects.com/zos/rmsportal/sBxjgqiuHMGRkIjqlQCd.png',
-          name: '董娜娜',
-        },
-      ],
+          name: '董娜娜'
+        }
+      ]
     });
   }
 
@@ -114,7 +114,7 @@ export function getFakeList(req, res, u) {
 
   const params = parse(url, true).query;
 
-  const count = params.count * 1 || 20;
+  const count = Number(params.count) || 20;
 
   const result = fakeList(count);
 
@@ -134,7 +134,7 @@ export const getNotice = [
     updatedAt: new Date(),
     member: '科学搬砖组',
     href: '',
-    memberLink: '',
+    memberLink: ''
   },
   {
     id: 'xxx2',
@@ -144,7 +144,7 @@ export const getNotice = [
     updatedAt: new Date('2017-07-24'),
     member: '全组都是吴彦祖',
     href: '',
-    memberLink: '',
+    memberLink: ''
   },
   {
     id: 'xxx3',
@@ -154,7 +154,7 @@ export const getNotice = [
     updatedAt: new Date(),
     member: '中二少女团',
     href: '',
-    memberLink: '',
+    memberLink: ''
   },
   {
     id: 'xxx4',
@@ -164,7 +164,7 @@ export const getNotice = [
     updatedAt: new Date('2017-07-23'),
     member: '程序员日常',
     href: '',
-    memberLink: '',
+    memberLink: ''
   },
   {
     id: 'xxx5',
@@ -174,7 +174,7 @@ export const getNotice = [
     updatedAt: new Date('2017-07-23'),
     member: '高逼格设计天团',
     href: '',
-    memberLink: '',
+    memberLink: ''
   },
   {
     id: 'xxx6',
@@ -184,8 +184,8 @@ export const getNotice = [
     updatedAt: new Date('2017-07-23'),
     member: '骗你来学计算机',
     href: '',
-    memberLink: '',
-  },
+    memberLink: ''
+  }
 ];
 
 export const getActivities = [
@@ -194,103 +194,103 @@ export const getActivities = [
     updatedAt: new Date(),
     user: {
       name: '曲丽丽',
-      avatar: avatars2[0],
+      avatar: avatars2[0]
     },
     group: {
       name: '高逼格设计天团',
-      link: 'http://github.com/',
+      link: 'http://github.com/'
     },
     project: {
       name: '六月迭代',
-      link: 'http://github.com/',
+      link: 'http://github.com/'
     },
-    template: '在 @{group} 新建项目 @{project}',
+    template: '在 @{group} 新建项目 @{project}'
   },
   {
     id: 'trend-2',
     updatedAt: new Date(),
     user: {
       name: '付小小',
-      avatar: avatars2[1],
+      avatar: avatars2[1]
     },
     group: {
       name: '高逼格设计天团',
-      link: 'http://github.com/',
+      link: 'http://github.com/'
     },
     project: {
       name: '六月迭代',
-      link: 'http://github.com/',
+      link: 'http://github.com/'
     },
-    template: '在 @{group} 新建项目 @{project}',
+    template: '在 @{group} 新建项目 @{project}'
   },
   {
     id: 'trend-3',
     updatedAt: new Date(),
     user: {
       name: '林东东',
-      avatar: avatars2[2],
+      avatar: avatars2[2]
     },
     group: {
       name: '中二少女团',
-      link: 'http://github.com/',
+      link: 'http://github.com/'
     },
     project: {
       name: '六月迭代',
-      link: 'http://github.com/',
+      link: 'http://github.com/'
     },
-    template: '在 @{group} 新建项目 @{project}',
+    template: '在 @{group} 新建项目 @{project}'
   },
   {
     id: 'trend-4',
     updatedAt: new Date(),
     user: {
       name: '周星星',
-      avatar: avatars2[4],
+      avatar: avatars2[4]
     },
     project: {
       name: '5 月日常迭代',
-      link: 'http://github.com/',
+      link: 'http://github.com/'
     },
-    template: '将 @{project} 更新至已发布状态',
+    template: '将 @{project} 更新至已发布状态'
   },
   {
     id: 'trend-5',
     updatedAt: new Date(),
     user: {
       name: '朱偏右',
-      avatar: avatars2[3],
+      avatar: avatars2[3]
     },
     project: {
       name: '工程效能',
-      link: 'http://github.com/',
+      link: 'http://github.com/'
     },
     comment: {
       name: '留言',
-      link: 'http://github.com/',
+      link: 'http://github.com/'
     },
-    template: '在 @{project} 发布了 @{comment}',
+    template: '在 @{project} 发布了 @{comment}'
   },
   {
     id: 'trend-6',
     updatedAt: new Date(),
     user: {
       name: '乐哥',
-      avatar: avatars2[5],
+      avatar: avatars2[5]
     },
     group: {
       name: '程序员日常',
-      link: 'http://github.com/',
+      link: 'http://github.com/'
     },
     project: {
       name: '品牌迭代',
-      link: 'http://github.com/',
+      link: 'http://github.com/'
     },
-    template: '在 @{group} 新建项目 @{project}',
-  },
+    template: '在 @{group} 新建项目 @{project}'
+  }
 ];
 
 export default {
   getNotice,
   getActivities,
-  getFakeList,
+  getFakeList
 };

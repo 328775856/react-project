@@ -4,7 +4,7 @@ const { kill } = require('cross-port-killer');
 const env = Object.create(process.env);
 env.BROWSER = 'none';
 const startServer = spawn(/^win/.test(process.platform) ? 'npm.cmd' : 'npm', ['start'], {
-  env,
+  env
 });
 
 startServer.stderr.on('data', data => {
@@ -28,7 +28,7 @@ startServer.stdout.on('data', data => {
     // eslint-disable-next-line
     console.log('Development server is started, ready to run tests.');
     const testCmd = spawn(/^win/.test(process.platform) ? 'npm.cmd' : 'npm', ['test'], {
-      stdio: 'inherit',
+      stdio: 'inherit'
     });
     testCmd.on('exit', code => {
       startServer.kill();

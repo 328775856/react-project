@@ -1,25 +1,26 @@
 import { routerRedux } from 'dva/router';
 import { getUrl, postUrl, putUrl, deleteUrl } from '../services/api';
+
 export default {
   namespace: 'commonTableData',
   state: {
     pageData: {},
     formData: {},
     status: {},
-    message: '',
+    message: ''
   },
 
   effects: {
     *list({ path, payload, callback }, { call, put }) {
       const response = yield call(postUrl, path, payload);
-      let res = {
+      const res = {
         ...response,
         pageSize: payload.page.pageSize,
-        pageNo: payload.page.pageNo,
+        pageNo: payload.page.pageNo
       };
       yield put({
         type: 'loadPage',
-        payload: res,
+        payload: res
       });
       if (callback) callback();
     },
@@ -27,7 +28,7 @@ export default {
       const response = yield call(postUrl, path, payload);
       yield put({
         type: 'loadForm',
-        payload: response,
+        payload: response
       });
       if (callback) callback();
     },
@@ -38,10 +39,10 @@ export default {
     },
     *add({ path, payload, callback }, { call, put }) {
       const response = yield call(postUrl, path, payload);
-      //返回list列表
+      // 返回list列表
       yield put({
         type: 'loadResponse',
-        payload: response,
+        payload: response
       });
       if (callback) callback();
     },
@@ -49,7 +50,7 @@ export default {
       const response = yield call(postUrl, path, payload);
       yield put({
         type: 'loadForm',
-        payload: response,
+        payload: response
       });
       if (callback) callback();
     },
@@ -57,7 +58,7 @@ export default {
       const response = yield call(postUrl, path, payload);
       yield put({
         type: 'loadResponse',
-        payload: response,
+        payload: response
       });
       if (callback) callback();
     },
@@ -65,45 +66,47 @@ export default {
       const response = yield call(postUrl, path, payload);
       yield put({
         type: 'loadResponse',
-        payload: response,
+        payload: response
       });
       if (callback) callback();
     },
     *select({ path, payload }, { call, put }) {
       yield put({
         type: 'loadSelect',
-        payload: payload,
+        payload
       });
     },
     *goUrl({ path, payload }, { call, put }) {
       yield put(routerRedux.push(path));
       yield put({
         type: 'loadForm',
-        payload: { data: payload },
+        payload: { data: payload }
       });
     },
     *clear({ path, payload }, { call, put }) {
       yield put({
         type: 'clear',
-        payload: payload,
+        payload
       });
-    },
+    }
   },
 
   reducers: {
     loadPage(state, action) {
-      let myState = {
+      const list = action.payload.data ? action.payload.data.rows : [];
+      const total = action.payload.data ? action.payload.data.total : 0;
+      const myState = {
         ...state,
         pageData: {
-          list: action.payload.data.rows,
+          list,
           pagination: {
-            total: action.payload.data.total,
+            total,
             pageSize: action.payload.pageSize,
-            current: action.payload.pageNo,
-          },
+            current: action.payload.pageNo
+          }
         },
         status: action.payload.status,
-        message: '',
+        message: ''
       };
       return myState;
     },
@@ -114,42 +117,42 @@ export default {
       } else {
         formData = action.payload.data;
       }
-      let myState = {
+      const myState = {
         ...state,
-        formData: formData,
+        formData,
         status: action.payload.status,
-        message: action.payload.message,
+        message: action.payload.message
       };
       return myState;
     },
     loadResponse(state, action) {
-      let myState = {
+      const myState = {
         ...state,
         status: action.payload.status,
-        message: action.payload.message,
+        message: action.payload.message
       };
       return myState;
     },
     loadSelect(state, action) {
-      let myFormData = {
+      const myFormData = {
         ...state.formData,
-        ...action.payload,
+        ...action.payload
       };
-      let myState = {
+      const myState = {
         ...state,
-        formData: myFormData,
+        formData: myFormData
       };
       return myState;
     },
     clear(state, action) {
-      let myFormData = {
-        ...action.payload,
+      const myFormData = {
+        ...action.payload
       };
-      let myState = {
+      const myState = {
         ...state,
-        formData: myFormData,
+        formData: myFormData
       };
       return myState;
-    },
-  },
+    }
+  }
 };

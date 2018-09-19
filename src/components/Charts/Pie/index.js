@@ -15,7 +15,7 @@ import styles from './index.less';
 export default class Pie extends Component {
   state = {
     legendData: [],
-    legendBlock: false,
+    legendBlock: false
   };
 
   componentDidMount() {
@@ -32,7 +32,7 @@ export default class Pie extends Component {
       const { legendData } = this.state;
       this.setState(
         {
-          legendData: [...legendData],
+          legendData: [...legendData]
         },
         () => {
           this.getLegendData();
@@ -65,7 +65,7 @@ export default class Pie extends Component {
     });
 
     this.setState({
-      legendData,
+      legendData
     });
   };
 
@@ -87,7 +87,7 @@ export default class Pie extends Component {
     }
 
     this.setState({
-      legendData,
+      legendData
     });
   };
 
@@ -104,12 +104,12 @@ export default class Pie extends Component {
     if (this.root.parentNode.clientWidth <= 380) {
       if (!legendBlock) {
         this.setState({
-          legendBlock: true,
+          legendBlock: true
         });
       }
     } else if (legendBlock) {
       this.setState({
-        legendBlock: false,
+        legendBlock: false
       });
     }
   }
@@ -129,19 +129,19 @@ export default class Pie extends Component {
       inner = 0.75,
       animate = true,
       colors,
-      lineWidth = 1,
+      lineWidth = 1
     } = this.props;
 
     const { legendData, legendBlock } = this.state;
     const pieClassName = classNames(styles.pie, className, {
       [styles.hasLegend]: !!hasLegend,
-      [styles.legendBlock]: legendBlock,
+      [styles.legendBlock]: legendBlock
     });
 
     const {
       data: propsData,
       selected: propsSelected = true,
-      tooltip: propsTooltip = true,
+      tooltip: propsTooltip = true
     } = this.props;
 
     let data = propsData || [];
@@ -157,11 +157,11 @@ export default class Pie extends Component {
     const scale = {
       x: {
         type: 'cat',
-        range: [0, 1],
+        range: [0, 1]
       },
       y: {
-        min: 0,
-      },
+        min: 0
+      }
     };
 
     if (percent) {
@@ -178,12 +178,12 @@ export default class Pie extends Component {
       data = [
         {
           x: '占比',
-          y: parseFloat(percent),
+          y: parseFloat(percent)
         },
         {
           x: '反比',
-          y: 100 - parseFloat(percent),
-        },
+          y: 100 - parseFloat(percent)
+        }
       ];
     }
 
@@ -191,8 +191,8 @@ export default class Pie extends Component {
       'x*percent',
       (x, p) => ({
         name: x,
-        value: `${(p * 100).toFixed(2)}%`,
-      }),
+        value: `${(p * 100).toFixed(2)}%`
+      })
     ];
 
     const padding = [12, 0, 12, 0];
@@ -202,11 +202,15 @@ export default class Pie extends Component {
       type: 'percent',
       field: 'y',
       dimension: 'x',
-      as: 'percent',
+      as: 'percent'
     });
 
     return (
-      <div ref={this.handleRoot} className={pieClassName} style={style}>
+      <div
+        ref={this.handleRoot}
+        className={pieClassName}
+        style={style}
+      >
         <ReactFitText maxFontSize={25}>
           <div className={styles.chart}>
             <Chart
@@ -219,7 +223,10 @@ export default class Pie extends Component {
               onGetG2Instance={this.getG2Instance}
             >
               {!!tooltip && <Tooltip showTitle={false} />}
-              <Coord type="theta" innerRadius={inner} />
+              <Coord
+                type="theta"
+                innerRadius={inner}
+              />
               <Geom
                 style={{ lineWidth, stroke: '#fff' }}
                 tooltip={tooltip && tooltipFormat}
@@ -245,11 +252,14 @@ export default class Pie extends Component {
         {hasLegend && (
           <ul className={styles.legend}>
             {legendData.map((item, i) => (
-              <li key={item.x} onClick={() => this.handleLegendClick(item, i)}>
+              <li
+                key={item.x}
+                onClick={() => this.handleLegendClick(item, i)}
+              >
                 <span
                   className={styles.dot}
                   style={{
-                    backgroundColor: !item.checked ? '#aaa' : item.color,
+                    backgroundColor: !item.checked ? '#aaa' : item.color
                   }}
                 />
                 <span className={styles.legendTitle}>{item.x}</span>

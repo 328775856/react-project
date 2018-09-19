@@ -8,7 +8,10 @@ const Exception = ({ className, linkElement = 'a', type, title, desc, img, actio
   const pageType = type in config ? type : '404';
   const clsString = classNames(styles.exception, className);
   return (
-    <div className={clsString} {...rest}>
+    <div
+      className={clsString}
+      {...rest}
+    >
       <div className={styles.imgBlock}>
         <div
           className={styles.imgEle}
@@ -24,7 +27,7 @@ const Exception = ({ className, linkElement = 'a', type, title, desc, img, actio
               linkElement,
               {
                 to: '/',
-                href: '/',
+                href: '/'
               },
               <Button type="primary">返回首页</Button>
             )}

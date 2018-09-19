@@ -15,36 +15,58 @@ import {
   Modal,
   message,
   Badge,
-  Divider,
+  Divider
 } from 'antd';
+
 const FormItem = Form.Item;
 function CreateFindFrom(props, formQuery, formReset) {
   const { form } = props;
   const { getFieldDecorator } = form;
   return (
-    <Form onSubmit={formQuery} layout="inline">
+    <Form
+      onSubmit={formQuery}
+      layout="inline"
+    >
       <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
-        <Col md={8} sm={24}>
+        <Col
+          md={8}
+          sm={24}
+        >
           <FormItem label="名称">
             {form.getFieldDecorator('audioGroupName')(<Input placeholder="" />)}
           </FormItem>
         </Col>
-        <Col md={8} sm={24}>
+        <Col
+          md={8}
+          sm={24}
+        >
           <FormItem label="顺序">
             {form.getFieldDecorator('indexNo')(<Input placeholder="" />)}
           </FormItem>
         </Col>
-        <Col md={8} sm={24}>
+        <Col
+          md={8}
+          sm={24}
+        >
           <FormItem label="是否默认分组1是,0否,默认为">
             {form.getFieldDecorator('isDefault')(<Input placeholder="" />)}
           </FormItem>
         </Col>
-        <Col md={8} sm={24}>
+        <Col
+          md={8}
+          sm={24}
+        >
           <span>
-            <Button type="primary" htmlType="submit">
+            <Button
+              type="primary"
+              htmlType="submit"
+            >
               查询
             </Button>
-            <Button style={{ marginLeft: 8 }} onClick={formReset}>
+            <Button
+              style={{ marginLeft: 8 }}
+              onClick={formReset}
+            >
               重置
             </Button>
           </span>

@@ -16,6 +16,7 @@ import { getRoutes } from '../utils/utils';
 import Authorized from '../utils/Authorized';
 import { getMenuData } from '../common/menu';
 import logo from '../assets/logo.png';
+
 const { Content, Header, Footer } = Layout;
 const { AuthorizedRoute, check } = Authorized;
 
@@ -28,7 +29,7 @@ const getRedirect = item => {
     if (item.children[0] && item.children[0].path) {
       redirectData.push({
         from: `${item.path}`,
-        to: `${item.children[0].path}`,
+        to: `${item.children[0].path}`
       });
       item.children.forEach(children => {
         getRedirect(children);
@@ -59,27 +60,27 @@ const getBreadcrumbNameMap = (menuData, routerData) => {
 
 const query = {
   'screen-xs': {
-    maxWidth: 575,
+    maxWidth: 575
   },
   'screen-sm': {
     minWidth: 576,
-    maxWidth: 767,
+    maxWidth: 767
   },
   'screen-md': {
     minWidth: 768,
-    maxWidth: 991,
+    maxWidth: 991
   },
   'screen-lg': {
     minWidth: 992,
-    maxWidth: 1199,
+    maxWidth: 1199
   },
   'screen-xl': {
     minWidth: 1200,
-    maxWidth: 1599,
+    maxWidth: 1599
   },
   'screen-xxl': {
-    minWidth: 1600,
-  },
+    minWidth: 1600
+  }
 };
 
 let isMobile;
@@ -90,30 +91,31 @@ enquireScreen(b => {
 class BasicLayout extends React.PureComponent {
   static childContextTypes = {
     location: PropTypes.object,
-    breadcrumbNameMap: PropTypes.object,
+    breadcrumbNameMap: PropTypes.object
   };
 
   state = {
-    isMobile,
+    isMobile
   };
 
   getChildContext() {
     const { location, routerData } = this.props;
     return {
       location,
-      breadcrumbNameMap: getBreadcrumbNameMap(getMenuData(), routerData),
+      breadcrumbNameMap: getBreadcrumbNameMap(getMenuData(), routerData)
     };
   }
 
   componentDidMount() {
+    console.log(this.props);
     this.enquireHandler = enquireScreen(mobile => {
       this.setState({
-        isMobile: mobile,
+        isMobile: mobile
       });
     });
     const { dispatch } = this.props;
     dispatch({
-      type: 'user/fetchCurrent',
+      type: 'user/fetchCurrent'
     });
   }
 
@@ -155,7 +157,6 @@ class BasicLayout extends React.PureComponent {
         item => check(routerData[item].authority, item) && item !== '/'
       );
       return authorizedPath;
-
     }
     return redirect;
   };
@@ -164,7 +165,7 @@ class BasicLayout extends React.PureComponent {
     const { dispatch } = this.props;
     dispatch({
       type: 'global/changeLayoutCollapsed',
-      payload: collapsed,
+      payload: collapsed
     });
   };
 
@@ -173,7 +174,7 @@ class BasicLayout extends React.PureComponent {
     const { dispatch } = this.props;
     dispatch({
       type: 'global/clearNotices',
-      payload: type,
+      payload: type
     });
   };
 
@@ -185,7 +186,7 @@ class BasicLayout extends React.PureComponent {
     }
     if (key === 'logout') {
       dispatch({
-        type: 'login/logout',
+        type: 'login/logout'
       });
     }
   };
@@ -207,7 +208,7 @@ class BasicLayout extends React.PureComponent {
       notices,
       routerData,
       match,
-      location,
+      location
     } = this.props;
     const { isMobile: mb } = this.state;
     const bashRedirect = this.getBaseRedirect();
@@ -243,7 +244,12 @@ class BasicLayout extends React.PureComponent {
           <Content style={{ margin: '24px 24px 0', height: '100%' }}>
             <Switch>
               {redirectData.map(item => (
-                <Redirect key={item.from} exact from={item.from} to={item.to} />
+                <Redirect
+                  key={item.from}
+                  exact
+                  from={item.from}
+                  to={item.to}
+                />
               ))}
               {getRoutes(match.path, routerData).map(item => (
                 <AuthorizedRoute
@@ -255,7 +261,11 @@ class BasicLayout extends React.PureComponent {
                   redirectPath="/exception/403"
                 />
               ))}
-              <Redirect exact from="/" to={bashRedirect} />
+              <Redirect
+                exact
+                from="/"
+                to={bashRedirect}
+              />
               <Route render={NotFound} />
             </Switch>
           </Content>
@@ -266,28 +276,27 @@ class BasicLayout extends React.PureComponent {
                   key: 'geeboo',
                   title: '藏书馆',
                   href: 'http://www.geeboo.com',
-                  blankTarget: true,
+                  blankTarget: true
                 },
                 {
                   key: 'doc',
                   title: '文档管理',
                   href: 'http://192.168.10.20:8181/',
-                  blankTarget: true,
+                  blankTarget: true
                 },
 
                 {
                   key: 'ant',
                   title: 'Ant Design',
                   href: ' https://ant.design/index-cn',
-                  blankTarget: true,
+                  blankTarget: true
                 },
                 {
                   key: 'help',
                   title: 'Ant Design Pro',
                   href: 'https://pro.ant.design/index-cn',
-                  blankTarget: true,
-                },
-
+                  blankTarget: true
+                }
               ]}
               copyright={
                 <Fragment>
@@ -314,5 +323,5 @@ export default connect(({ user, global = {}, loading }) => ({
   currentUser: user.currentUser,
   collapsed: global.collapsed,
   fetchingNotices: loading.effects['global/fetchNotices'],
-  notices: global.notices,
+  notices: global.notices
 }))(BasicLayout);

@@ -32,7 +32,10 @@ export default class GlobalHeader extends PureComponent {
           newNotice.status
         ];
         newNotice.extra = (
-          <Tag color={color} style={{ marginRight: 0 }}>
+          <Tag
+            color={color}
+            style={{ marginRight: 0 }}
+          >
             {' '}
             {newNotice.extra}{' '}
           </Tag>

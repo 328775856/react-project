@@ -8,14 +8,14 @@ const UE = window.UE;
 // let editor=null;
 class Ueditor extends React.Component {
   static defaultProps = {
-    config: {},
+    config: {}
   };
 
   constructor(props) {
     super(props);
     this.state = {
       content: '',
-      editor: {},
+      editor: {}
     };
   }
 
@@ -29,18 +29,18 @@ class Ueditor extends React.Component {
   }
 
   initEditor() {
-    /*初始化编辑器*/
+    /* 初始化编辑器 */
     const { id, config } = this.props;
     const dft = {
       initialFrameHeight: 300,
       open_editor: true,
-      style_width: 360, //样式区宽度像素
+      style_width: 360, // 样式区宽度像素
       style_url:
-        'http://www.135editor.com/editor_styles/open?inajax=1&appkey=5ad85f42-0858-4947-9f76-02f2ac10c65d',
+        'http://www.135editor.com/editor_styles/open?inajax=1&appkey=5ad85f42-0858-4947-9f76-02f2ac10c65d'
     };
-    let conf = {
+    const conf = {
       ...dft,
-      ...config,
+      ...config
     };
 
     const ueEditor = UE.getEditor(this.props.id, conf);
@@ -56,15 +56,22 @@ class Ueditor extends React.Component {
 
     this.setState({ editor: ueEditor });
   }
+
   getVal() {
-    /*获取编辑器内容函数*/
-    let { editor } = this.state;
-    let content = editor.getContent();
+    /* 获取编辑器内容函数 */
+    const { editor } = this.state;
+    const content = editor.getContent();
     return content;
   }
+
   render() {
-    let { content, id } = this.props;
-    return <div id={id} defaultValue={content} onChange={this.getVal} type="text/plain" />;
+    const { content, id } = this.props;
+    return <div
+      id={id}
+      defaultValue={content}
+      onChange={this.getVal}
+      type="text/plain"
+    />;
   }
 }
 export default Ueditor;

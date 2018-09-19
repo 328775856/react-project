@@ -10,11 +10,11 @@ export default class MiniBar extends React.Component {
 
     const scale = {
       x: {
-        type: 'cat',
+        type: 'cat'
       },
       y: {
-        min: 0,
-      },
+        min: 0
+      }
     };
 
     const padding = [36, 5, 30, 5];
@@ -23,15 +23,18 @@ export default class MiniBar extends React.Component {
       'x*y',
       (x, y) => ({
         name: x,
-        value: y,
-      }),
+        value: y
+      })
     ];
 
     // for tooltip not to be hide
     const chartHeight = height + 54;
 
     return (
-      <div className={styles.miniChart} style={{ height }}>
+      <div
+        className={styles.miniChart}
+        style={{ height }}
+      >
         <div className={styles.chartContent}>
           <Chart
             scale={scale}
@@ -40,8 +43,16 @@ export default class MiniBar extends React.Component {
             data={data}
             padding={padding}
           >
-            <Tooltip showTitle={false} crosshairs={false} />
-            <Geom type="interval" position="x*y" color={color} tooltip={tooltip} />
+            <Tooltip
+              showTitle={false}
+              crosshairs={false}
+            />
+            <Geom
+              type="interval"
+              position="x*y"
+              color={color}
+              tooltip={tooltip}
+            />
           </Chart>
         </div>
       </div>

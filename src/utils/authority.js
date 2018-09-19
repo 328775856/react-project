@@ -14,4 +14,3 @@ export function setAuthority(payload) {
 export function setToken(payload) {
   return localStorage.setItem('antd-pro-user', payload.data || '');
 }
-

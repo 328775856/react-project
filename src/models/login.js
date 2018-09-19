@@ -1,7 +1,7 @@
 import { routerRedux } from 'dva/router';
 import { stringify } from 'qs';
-import { postUrl,getUrl } from '../services/api';
-import { setAuthority,setToken } from '../utils/authority';
+import { postUrl, getUrl } from '../services/api';
+import { setAuthority, setToken } from '../utils/authority';
 import { reloadAuthorized } from '../utils/Authorized';
 import { getPageQuery } from '../utils/utils';
 
@@ -10,22 +10,22 @@ export default {
 
   state: {
     status: undefined,
-    message:'',
+    message: ''
   },
 
   effects: {
     *login({ payload }, { call, put }) {
-      const response = yield call(postUrl,'/user/login', payload);
-      console.log(response);
+      const response = yield call(postUrl, '/user/login', payload);
+      console.log(response, '123');
       yield put({
         type: 'setStatus',
-        payload: response,
+        payload: response
       });
       // Login successfully
       if (response.status === 200) {
         yield put({
           type: 'setInfo',
-          payload: response,
+          payload: response
         });
         reloadAuthorized();
         const urlParams = new URL(window.location.href);
@@ -51,19 +51,19 @@ export default {
         type: 'setInfo',
         payload: {
           status: false,
-          currentAuthority: 'guest',
-        },
+          currentAuthority: 'guest'
+        }
       });
       reloadAuthorized();
       yield put(
         routerRedux.push({
           pathname: '/user/login',
           search: stringify({
-            redirect: window.location.href,
-          }),
+            redirect: window.location.href
+          })
         })
       );
-    },
+    }
   },
 
   reducers: {
@@ -78,8 +78,8 @@ export default {
       return {
         ...state,
         status: payload.status,
-        message: payload.message,
+        message: payload.message
       };
-    },
-  },
+    }
+  }
 };

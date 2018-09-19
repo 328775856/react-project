@@ -17,7 +17,7 @@ import {
   message,
   Badge,
   Divider,
-  Table,
+  Table
 } from 'antd';
 import StandardTable from 'components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
@@ -25,10 +25,11 @@ import styles from '../../assets/styles.less';
 import CreateEditForm from './OrderProduct_edit';
 import CreateFindForm from './OrderProduct_find';
 import { defaultPage } from '../../utils/utils.js';
+
 const FormItem = Form.Item;
 @connect(({ tableData, loading }) => ({
   tableData,
-  loading: loading.models.crud,
+  loading: loading.models.crud
 }))
 @Form.create()
 export default class OrderProduct extends PureComponent {
@@ -37,7 +38,7 @@ export default class OrderProduct extends PureComponent {
     modalTitle: '',
     formValues: {},
     page: defaultPage(),
-    options:{},
+    options: {}
   };
 
   refresh = (values, page) => {
@@ -47,29 +48,29 @@ export default class OrderProduct extends PureComponent {
       path: 'orderProduct/page',
       payload: {
         data: values,
-        page: page,
-      },
+        page
+      }
     });
     this.setState({
-      modalVisible: false,
+      modalVisible: false
     });
   };
 
   componentDidMount() {
     debugger;
-    const { formValues,page,options } = this.state;
+    const { formValues, page, options } = this.state;
     this.initOptions();
-    this.refresh(formValues,page);
+    this.refresh(formValues, page);
   }
 
   tableChange = (pagination, filtersArg, sorter) => {
     const { formValues } = this.state;
-    let page = {
+    const page = {
       pageSize: pagination.pageSize,
-      pageNo: pagination.current,
+      pageNo: pagination.current
     };
     this.setState({
-      page: page,
+      page
     });
     this.refresh(formValues, page);
   };
@@ -89,28 +90,28 @@ export default class OrderProduct extends PureComponent {
     }
   };
 
-  initOptionsCallback=(response)=>{
+  initOptionsCallback = response => {
     this.setState({
-      options:JSON.parse(response.data),
-    })
-  }
+      options: JSON.parse(response.data)
+    });
+  };
 
-  initOptions= () => {
+  initOptions = () => {
     const { dispatch } = this.props;
     dispatch({
       type: 'tableData/initOptions',
-      path:'orderProduct/getDataForAdd',
-      payload:{},
-      callback:this.initOptionsCallback,
+      path: 'orderProduct/getDataForAdd',
+      payload: {},
+      callback: this.initOptionsCallback
     });
-  }
+  };
 
-  isEmptyObject = (e) => {
+  isEmptyObject = e => {
     let t;
-    for (t in e)
-      return !1;
-    return !0
-  }
+    for (t in e) return !1;
+    return !0;
+  };
+
   remove = record => {
     const { dispatch, tableData } = this.props;
     const cb = this.callback;
@@ -121,12 +122,13 @@ export default class OrderProduct extends PureComponent {
           type: 'tableData/remove',
           path: 'orderProduct/remove',
           payload: { orderProductId: record.orderProductId },
-          callback: cb,
+          callback: cb
         });
       },
-      onCancel() {},
+      onCancel() {}
     });
   };
+
   query = e => {
     e.preventDefault();
     const { dispatch, form } = this.props;
@@ -134,12 +136,12 @@ export default class OrderProduct extends PureComponent {
       if (err) return;
 
       const values = {
-        ...fieldsValue,
+        ...fieldsValue
       };
       const page = defaultPage();
       this.setState({
         formValues: values,
-        page: page,
+        page
       });
       this.refresh(values, page);
     });
@@ -147,19 +149,20 @@ export default class OrderProduct extends PureComponent {
 
   closeModal = () => {
     this.setState({
-      modalVisible: false,
+      modalVisible: false
     });
   };
+
   getDataForAdd = fields => {
     const { dispatch } = this.props;
     dispatch({
       type: 'tableData/getDataForAdd',
       path: 'orderProduct/getDataForAdd',
-      payload: fields,
+      payload: fields
     });
     this.setState({
       modalTitle: '新增',
-      modalVisible: true,
+      modalVisible: true
     });
   };
 
@@ -169,7 +172,7 @@ export default class OrderProduct extends PureComponent {
       type: 'tableData/add',
       path: 'orderProduct/add',
       payload: fields,
-      callback: this.callback,
+      callback: this.callback
     });
   };
 
@@ -178,68 +181,68 @@ export default class OrderProduct extends PureComponent {
     dispatch({
       type: 'tableData/getDataForUpdate',
       path: 'orderProduct/getDataForUpdate',
-      payload: { orderProductId: record.orderProductId },
+      payload: { orderProductId: record.orderProductId }
     });
     this.setState({
       modalTitle: '修改',
-      modalVisible: true,
+      modalVisible: true
     });
   };
 
   update = fields => {
     const { dispatch, tableData } = this.props;
-    let payload = {
+    const payload = {
       ...tableData.formData,
-      ...fields,
+      ...fields
     };
     dispatch({
       type: 'tableData/update',
       path: 'orderProduct/update',
-      payload: payload,
-      callback: this.callback,
+      payload,
+      callback: this.callback
     });
   };
 
   renderForm() {
-    return CreateFindForm(this.props, this.query, this.formReset,this.isEmptyObject,this.state);
+    return CreateFindForm(this.props, this.query, this.formReset, this.isEmptyObject, this.state);
   }
 
   render() {
     const { tableData, loading } = this.props;
-    const {modalVisible, modalTitle,options} = this.state;
+    const { modalVisible, modalTitle, options } = this.state;
     debugger;
     const columns = [
       {
         title: '系统id',
-        dataIndex: 'orderProductId',
+        dataIndex: 'orderProductId'
       },
       {
         title: '产品名称',
-        dataIndex: 'productName',
+        dataIndex: 'productName'
       },
       {
         title: '产品单价',
-        dataIndex: 'upProduct',
+        dataIndex: 'upProduct'
       },
       {
         title: '产品类型',
-        render(text, record){
-          var productType = (record) =>{
-            var res = '';
-            for(var i = 0;i < options.length; i++){
-              if(record.orderProductTypeId === options[i].productTypeId){
-                res= options[i].productTypeName;
+        render(text, record) {
+          const productType = record => {
+            let res = '';
+            for (let i = 0; i < options.length; i++) {
+              if (record.orderProductTypeId === options[i].productTypeId) {
+                res = options[i].productTypeName;
                 break;
               }
             }
             return res;
-          }
-          return (<Fragment>{productType(record)}</Fragment>)
-        },
+          };
+          return <Fragment>{productType(record)}</Fragment>;
+        }
       },
       {
         title: '业务id',
-        dataIndex: 'businessId',
+        dataIndex: 'businessId'
       },
       {
         title: '操作',
@@ -249,15 +252,15 @@ export default class OrderProduct extends PureComponent {
             <Divider type="vertical" />
             <a onClick={() => this.remove(record)}>删除</a>
           </Fragment>
-        ),
-      },
+        )
+      }
     ];
 
     const parentMethods = {
       add: this.add,
       update: this.update,
       closeModal: this.closeModal,
-      isEmptyObject: this.isEmptyObject,
+      isEmptyObject: this.isEmptyObject
     };
     return (
       <PageHeaderLayout>
@@ -265,7 +268,10 @@ export default class OrderProduct extends PureComponent {
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
             <div className={styles.tableListOperator}>
-              <Button type="primary" onClick={() => this.getDataForAdd()}>
+              <Button
+                type="primary"
+                onClick={() => this.getDataForAdd()}
+              >
                 新建
               </Button>
             </div>

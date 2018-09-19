@@ -17,7 +17,7 @@ import {
   message,
   Badge,
   Divider,
-  Table,
+  Table
 } from 'antd';
 import StandardTable from 'components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
@@ -25,10 +25,11 @@ import styles from '../../assets/styles.less';
 import CreateEditForm from './SysTerminalAccess_edit';
 import CreateFindForm from './SysTerminalAccess_find';
 import { defaultPage } from '../../utils/utils.js';
+
 const FormItem = Form.Item;
 @connect(({ tableData, loading }) => ({
   tableData,
-  loading: loading.models.crud,
+  loading: loading.models.crud
 }))
 @Form.create()
 export default class SysTerminalAccess extends PureComponent {
@@ -37,7 +38,7 @@ export default class SysTerminalAccess extends PureComponent {
     modalTitle: '',
     formValues: {},
     page: defaultPage(),
-    options: {},
+    options: {}
   };
 
   refresh = (values, page) => {
@@ -47,31 +48,32 @@ export default class SysTerminalAccess extends PureComponent {
       path: 'sysTerminalAccess/page',
       payload: {
         data: values,
-        page: page,
-      },
+        page
+      }
     });
     this.setState({
-      modalVisible: false,
+      modalVisible: false
     });
   };
 
   componentDidMount() {
-    const { formValues, page,options } = this.state;
+    const { formValues, page, options } = this.state;
     this.initOptions();
     this.refresh(formValues, page);
   }
 
   tableChange = (pagination, filtersArg, sorter) => {
     const { formValues } = this.state;
-    let page = {
+    const page = {
       pageSize: pagination.pageSize,
-      pageNo: pagination.current,
+      pageNo: pagination.current
     };
     this.setState({
-      page: page,
+      page
     });
     this.refresh(formValues, page);
   };
+
   isEmptyObject = e => {
     let t;
     for (t in e) return !1;
@@ -95,7 +97,7 @@ export default class SysTerminalAccess extends PureComponent {
 
   initOptionsCallback = response => {
     this.setState({
-      options: JSON.parse(response.data),
+      options: JSON.parse(response.data)
     });
   };
 
@@ -109,12 +111,13 @@ export default class SysTerminalAccess extends PureComponent {
           type: 'tableData/remove',
           path: 'sysTerminalAccess/remove',
           payload: { sysTerminalAccessId: record.sysTerminalAccessId },
-          callback: cb,
+          callback: cb
         });
       },
-      onCancel() {},
+      onCancel() {}
     });
   };
+
   query = e => {
     e.preventDefault();
     const { dispatch, form } = this.props;
@@ -128,12 +131,12 @@ export default class SysTerminalAccess extends PureComponent {
       }
 
       const values = {
-        ...fieldsValue,
+        ...fieldsValue
       };
       const page = defaultPage();
       this.setState({
         formValues: values,
-        page: page,
+        page
       });
       this.refresh(values, page);
     });
@@ -141,19 +144,20 @@ export default class SysTerminalAccess extends PureComponent {
 
   closeModal = () => {
     this.setState({
-      modalVisible: false,
+      modalVisible: false
     });
   };
+
   getDataForAdd = fields => {
     const { dispatch } = this.props;
     dispatch({
       type: 'tableData/getDataForAdd',
       path: 'sysTerminalAccess/getDataForAdd',
-      payload: fields,
+      payload: fields
     });
     this.setState({
       modalTitle: '新增',
-      modalVisible: true,
+      modalVisible: true
     });
   };
 
@@ -163,7 +167,7 @@ export default class SysTerminalAccess extends PureComponent {
       type: 'tableData/add',
       path: 'sysTerminalAccess/add',
       payload: fields,
-      callback: this.callback,
+      callback: this.callback
     });
   };
 
@@ -172,11 +176,11 @@ export default class SysTerminalAccess extends PureComponent {
     dispatch({
       type: 'tableData/getDataForUpdate',
       path: 'sysTerminalAccess/getDataForUpdate',
-      payload: { sysTerminalAccessId: record.sysTerminalAccessId },
+      payload: { sysTerminalAccessId: record.sysTerminalAccessId }
     });
     this.setState({
       modalTitle: '修改',
-      modalVisible: true,
+      modalVisible: true
     });
   };
 
@@ -186,60 +190,60 @@ export default class SysTerminalAccess extends PureComponent {
       type: 'tableData/initOptions',
       path: 'sysTerminalAccess/getDataForAdd',
       payload: {},
-      callback: this.initOptionsCallback,
+      callback: this.initOptionsCallback
     });
   };
 
   update = fields => {
     const { dispatch, tableData } = this.props;
-    let payload = {
+    const payload = {
       ...tableData.formData,
-      ...fields,
+      ...fields
     };
     dispatch({
       type: 'tableData/update',
       path: 'sysTerminalAccess/update',
-      payload: payload,
-      callback: this.callback,
+      payload,
+      callback: this.callback
     });
   };
 
   renderForm() {
-    return CreateFindForm(this.props, this.query, this.formReset,this.isEmptyObject,this.state);
+    return CreateFindForm(this.props, this.query, this.formReset, this.isEmptyObject, this.state);
   }
 
   render() {
     const { tableData, loading } = this.props;
-    const { modalVisible, modalTitle,options } = this.state;
+    const { modalVisible, modalTitle, options } = this.state;
 
     const columns = [
       {
         title: '系统id',
-        dataIndex: 'sysTerminalAccessId',
+        dataIndex: 'sysTerminalAccessId'
       },
       {
         title: '终端名称',
-        dataIndex: 'terminalName',
+        dataIndex: 'terminalName'
       },
       {
         title: '终端路径',
-        dataIndex: 'terminalPath',
+        dataIndex: 'terminalPath'
       },
       {
         title: '终端ID',
-        dataIndex: 'terminalId',
+        dataIndex: 'terminalId'
       },
       {
         title: '终端SECRET',
-        dataIndex: 'terminalSecret',
+        dataIndex: 'terminalSecret'
       },
       {
         title: '是否检查',
         dataIndex: 'paramCheck',
         render(text, record) {
-          var dict = record => {
-            var res = '';
-            for (var i = 0; i < options.length; i++) {
+          const dict = record => {
+            let res = '';
+            for (let i = 0; i < options.length; i++) {
               if (record.paramCheck === options[i].itemNo) {
                 res = options[i].itemLabel;
                 break;
@@ -248,15 +252,15 @@ export default class SysTerminalAccess extends PureComponent {
             return res;
           };
           return <Fragment>{dict(record)}</Fragment>;
-        },
+        }
       },
       {
         title: '有效开始日期',
-        dataIndex: 'beginDate',
+        dataIndex: 'beginDate'
       },
       {
         title: '有效结束日期',
-        dataIndex: 'endDate',
+        dataIndex: 'endDate'
       },
       {
         title: '操作',
@@ -266,15 +270,15 @@ export default class SysTerminalAccess extends PureComponent {
             <Divider type="vertical" />
             <a onClick={() => this.remove(record)}>删除</a>
           </Fragment>
-        ),
-      },
+        )
+      }
     ];
 
     const parentMethods = {
       add: this.add,
       update: this.update,
       closeModal: this.closeModal,
-      isEmptyObject: this.isEmptyObject,
+      isEmptyObject: this.isEmptyObject
     };
     return (
       <PageHeaderLayout>
@@ -282,7 +286,10 @@ export default class SysTerminalAccess extends PureComponent {
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
             <div className={styles.tableListOperator}>
-              <Button type="primary" onClick={() => this.getDataForAdd()}>
+              <Button
+                type="primary"
+                onClick={() => this.getDataForAdd()}
+              >
                 新建
               </Button>
             </div>

@@ -8,21 +8,20 @@ class SelectDemo extends React.Component {
     const value = props.value || {};
     this.state = {
       valueId: value.valueId,
-      valueName: value.valueName,
+      valueName: value.valueName
     };
   }
-  triggerChange = (changedValue) => {
+
+  triggerChange = changedValue => {
     // Should provide an event to pass value to Form.
     const onChange = this.props.onChange;
     if (onChange) {
       onChange(Object.assign({}, this.state, changedValue));
     }
-  }
-
-
+  };
 
   render() {
-    const { size} = this.props;
+    const { size } = this.props;
     const state = this.state;
     return (
       <span>
@@ -39,14 +38,14 @@ class SelectDemo extends React.Component {
 }
 
 class Demo extends React.Component {
-  handleSubmit = (e) => {
+  handleSubmit = e => {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
         console.log('Received values of form: ', values);
       }
     });
-  }
+  };
 
   checkPrice = (rule, value, callback) => {
     if (value.number > 0) {
@@ -54,20 +53,28 @@ class Demo extends React.Component {
       return;
     }
     callback('Price must greater than zero!');
-  }
+  };
 
   render() {
     const { getFieldDecorator } = this.props.form;
     return (
-      <Form layout="inline" onSubmit={this.handleSubmit}>
+      <Form
+        layout="inline"
+        onSubmit={this.handleSubmit}
+      >
         <FormItem label="Price">
           {getFieldDecorator('price', {
             initialValue: { number: 0, currency: 'rmb' },
-            rules: [{ validator: this.checkPrice }],
+            rules: [{ validator: this.checkPrice }]
           })(<PriceInput />)}
         </FormItem>
         <FormItem>
-          <Button type="primary" htmlType="submit">Submit</Button>
+          <Button
+            type="primary"
+            htmlType="submit"
+          >
+            Submit
+          </Button>
         </FormItem>
       </Form>
     );

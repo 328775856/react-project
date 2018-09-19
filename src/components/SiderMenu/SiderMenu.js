@@ -15,7 +15,11 @@ const { SubMenu } = Menu;
 const getIcon = icon => {
   if (typeof icon === 'string') {
     if (icon.indexOf('http') === 0) {
-      return <img src={icon} alt="icon" className={`${styles.icon} sider-menu-item-img`} />;
+      return <img
+        src={icon}
+        alt="icon"
+        className={`${styles.icon} sider-menu-item-img`}
+      />;
     }
     return <Icon type={icon} />;
   }
@@ -54,7 +58,7 @@ export default class SiderMenu extends PureComponent {
     super(props);
     this.flatMenuKeys = getFlatMenuKeys(props.menuData);
     this.state = {
-      openKeys: this.getDefaultCollapsedSubMenus(props),
+      openKeys: this.getDefaultCollapsedSubMenus(props)
     };
   }
 
@@ -62,7 +66,7 @@ export default class SiderMenu extends PureComponent {
     const { location } = this.props;
     if (nextProps.location.pathname !== location.pathname) {
       this.setState({
-        openKeys: this.getDefaultCollapsedSubMenus(nextProps),
+        openKeys: this.getDefaultCollapsedSubMenus(nextProps)
       });
     }
   }
@@ -74,7 +78,7 @@ export default class SiderMenu extends PureComponent {
    */
   getDefaultCollapsedSubMenus(props) {
     const {
-      location: { pathname },
+      location: { pathname }
     } =
       props || this.props;
     return getMenuMatchKeys(this.flatMenuKeys, urlToList(pathname));
@@ -92,7 +96,10 @@ export default class SiderMenu extends PureComponent {
     // Is it a http link
     if (/^https?:\/\//.test(itemPath)) {
       return (
-        <a href={itemPath} target={target}>
+        <a
+          href={itemPath}
+          target={target}
+        >
           {icon}
           <span>{name}</span>
         </a>
@@ -105,11 +112,11 @@ export default class SiderMenu extends PureComponent {
         target={target}
         replace={itemPath === location.pathname}
         onClick={
-          isMobile
-            ? () => {
-                onCollapse(true);
-              }
-            : undefined
+          isMobile ?
+            () => {
+              onCollapse(true);
+            } :
+            undefined
         }
       >
         {icon}
@@ -134,9 +141,9 @@ export default class SiderMenu extends PureComponent {
                   {getIcon(item.icon)}
                   <span>{item.name}</span>
                 </span>
-              ) : (
+              ) :
                 item.name
-              )
+
             }
             key={item.path}
           >
@@ -171,7 +178,7 @@ export default class SiderMenu extends PureComponent {
   // Get the currently selected menu
   getSelectedMenuKeys = () => {
     const {
-      location: { pathname },
+      location: { pathname }
     } = this.props;
     return getMenuMatchKeys(this.flatMenuKeys, urlToList(pathname));
   };
@@ -205,7 +212,7 @@ export default class SiderMenu extends PureComponent {
     const lastOpenKey = openKeys[openKeys.length - 1];
     const moreThanOne = openKeys.filter(openKey => this.isMainMenu(openKey)).length > 1;
     this.setState({
-      openKeys: moreThanOne ? [lastOpenKey] : [...openKeys],
+      openKeys: moreThanOne ? [lastOpenKey] : [...openKeys]
     });
   };
 
@@ -213,11 +220,11 @@ export default class SiderMenu extends PureComponent {
     const { logo, menuData, collapsed, onCollapse } = this.props;
     const { openKeys } = this.state;
     // Don't show popup menu when it is been collapsed
-    const menuProps = collapsed
-      ? {}
-      : {
-          openKeys,
-        };
+    const menuProps = collapsed ?
+      {} :
+      {
+        openKeys
+      };
     // if pathname can't match, use the nearest parent's key
     let selectedKeys = this.getSelectedMenuKeys();
     if (!selectedKeys.length) {
@@ -233,9 +240,15 @@ export default class SiderMenu extends PureComponent {
         width={256}
         className={styles.sider}
       >
-        <div className={styles.logo} key="logo">
+        <div
+          className={styles.logo}
+          key="logo"
+        >
           <Link to="/">
-            <img src={logo} alt="logo" />
+            <img
+              src={logo}
+              alt="logo"
+            />
             <h1>简帛管理平台</h1>
           </Link>
         </div>

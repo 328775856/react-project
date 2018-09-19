@@ -17,50 +17,52 @@ import {
   Modal,
   message,
   Badge,
-  Divider,
+  Divider
 } from 'antd';
 import StandardTable from 'components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from '../../assets/styles.less';
-const FormItem = Form.Item;
 import CreateEditForm from './Crud_edit';
 import CreateFindForm from './Crud_find';
 
+const FormItem = Form.Item;
 
 @connect(({ crud, loading }) => ({
   crud,
-  loading: loading.models.crud,
+  loading: loading.models.crud
 }))
 @Form.create()
 export default class TableList extends PureComponent {
   state = {
     modalVisible: false,
-    modalTitle:'',
+    modalTitle: '',
     selectedRows: [],
-    formValues: {},
+    formValues: {}
   };
+
   refresh() {
     const { dispatch } = this.props;
     dispatch({
       type: 'crud/list',
-      path:'api/crud/list',
-      payload:{
-        pageNumber:1,
-        pageSize:10
+      path: 'api/crud/list',
+      payload: {
+        pageNumber: 1,
+        pageSize: 10
       }
     });
     this.setState({
-      modalVisible: false,
+      modalVisible: false
     });
   }
+
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
       type: 'crud/list',
-      path:'api/crud/list',
-      payload:{
-        pageNumber:1,
-        pageSize:10
+      path: 'api/crud/list',
+      payload: {
+        pageNumber: 1,
+        pageSize: 10
       }
     });
   }
@@ -75,8 +77,8 @@ export default class TableList extends PureComponent {
     };
     dispatch({
       type: 'crud/list',
-      path:'api/crud/list',
-      payload: params,
+      path: 'api/crud/list',
+      payload: params
     });
   };
 
@@ -84,19 +86,20 @@ export default class TableList extends PureComponent {
     const { form, dispatch } = this.props;
     form.resetFields();
     this.setState({
-      formValues: {},
+      formValues: {}
     });
     dispatch({
       type: 'crud/list',
-      path:'api/crud/list',
-      payload: {},
+      path: 'api/crud/list',
+      payload: {}
     });
   };
+
   batchDelete = () => {
     const { dispatch } = this.props;
     const { selectedRows } = this.state;
-    if(selectedRows.length==0){
-      message.error("请选择记录");
+    if (selectedRows.length == 0) {
+      message.error('请选择记录');
       return;
     }
     Modal.confirm({
@@ -104,26 +107,25 @@ export default class TableList extends PureComponent {
       onOk() {
         dispatch({
           type: 'crud/batchDelete',
-          path:'api/crud/batchDelete',
+          path: 'api/crud/batchDelete',
           payload: {
             key: selectedRows.map(row => row.key).join(',')
-          },
+          }
         });
         message.success('批量审核成功');
         dispatch({
           type: 'crud/list',
-          path:'api/crud/list',
-          payload: {},
+          path: 'api/crud/list',
+          payload: {}
         });
       },
-      onCancel() {},
+      onCancel() {}
     });
   };
 
-
   selectRows = rows => {
     this.setState({
-      selectedRows: rows,
+      selectedRows: rows
     });
   };
 
@@ -139,32 +141,33 @@ export default class TableList extends PureComponent {
       };
 
       this.setState({
-        formValues: values,
+        formValues: values
       });
 
       dispatch({
         type: 'api/crud/list',
-        path:'api/crud/list',
-        payload: values,
+        path: 'api/crud/list',
+        payload: values
       });
     });
   };
 
   closeModal = () => {
     this.setState({
-      modalVisible: false,
+      modalVisible: false
     });
   };
-  add = (fields) => {
+
+  add = fields => {
     const { dispatch } = this.props;
     dispatch({
       type: 'crud/add',
-      path:'api/crud/add',
-      payload: fields,
+      path: 'api/crud/add',
+      payload: fields
     });
     this.setState({
       modalTitle: '新增Demo',
-      modalVisible: true,
+      modalVisible: true
     });
   };
 
@@ -172,89 +175,82 @@ export default class TableList extends PureComponent {
     const { dispatch } = this.props;
     dispatch({
       type: 'crud/addSave',
-      path:'api/crud/addSave',
-      payload: fields,
+      path: 'api/crud/addSave',
+      payload: fields
     });
     message.success('保存成功');
     this.refresh();
-    
-
   };
-  
- 
 
-  update = (record) => {
+  update = record => {
     const { dispatch } = this.props;
     dispatch({
       type: 'crud/update',
-      path:'api/crud/update',
-      payload: {key:record.key},
+      path: 'api/crud/update',
+      payload: { key: record.key }
     });
     this.setState({
       modalTitle: '修改Demo',
-      modalVisible: true,
-     
+      modalVisible: true
     });
   };
 
   updateSave = fields => {
-    const { dispatch,formData } = this.props;
+    const { dispatch, formData } = this.props;
     dispatch({
       type: 'crud/updateSave',
-      path:'api/crud/updateSave',
-      payload: fields,
+      path: 'api/crud/updateSave',
+      payload: fields
     });
     message.success('修改保存成功');
     this.refresh();
   };
 
-
   renderForm() {
-    return CreateFindForm(this.props,this.query,this.formReset);
+    return CreateFindForm(this.props, this.query, this.formReset);
   }
 
   render() {
     const {
-      crud:{pageData},
-      crud:{formData},
-      loading,
+      crud: { pageData },
+      crud: { formData },
+      loading
     } = this.props;
-    const { selectedRows, modalVisible,modalTitle } = this.state;
+    const { selectedRows, modalVisible, modalTitle } = this.state;
 
     const columns = [
       {
         title: '系统ID',
-        dataIndex: 'key',
+        dataIndex: 'key'
       },
       {
         title: '编号',
-        dataIndex: 'code',
+        dataIndex: 'code'
       },
       {
         title: '名称',
-        dataIndex: 'name',
+        dataIndex: 'name'
       },
       {
         title: '备注',
-        dataIndex: 'memo',
+        dataIndex: 'memo'
       },
       {
         title: '操作',
-        render: (text,record) => (
+        render: (text, record) => (
           <Fragment>
-            <a onClick={() => this.update(record)} >修改-{record.key}</a>
+            <a onClick={() => this.update(record)}>修改-{record.key}</a>
             <Divider type="vertical" />
             <a href="">删除</a>
           </Fragment>
-        ),
-      },
+        )
+      }
     ];
 
-  
     const parentMethods = {
       addSave: this.addSave,
       updateSave: this.updateSave,
-      closeModal: this.closeModal,
+      closeModal: this.closeModal
     };
 
     return (
@@ -263,13 +259,18 @@ export default class TableList extends PureComponent {
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
             <div className={styles.tableListOperator}>
-              <Button  type="primary" onClick={() => this.add()}>
+              <Button
+                type="primary"
+                onClick={() => this.add()}
+              >
                 新建
               </Button>
-              <Button  type="primary" onClick={() => this.batchDelete()}>
+              <Button
+                type="primary"
+                onClick={() => this.batchDelete()}
+              >
                 审核
               </Button>
-
             </div>
             <StandardTable
               selectedRows={selectedRows}
@@ -281,7 +282,12 @@ export default class TableList extends PureComponent {
             />
           </div>
         </Card>
-        <CreateEditForm {...parentMethods} modalVisible={modalVisible}  formData={formData} title={modalTitle} />
+        <CreateEditForm
+          {...parentMethods}
+          modalVisible={modalVisible}
+          formData={formData}
+          title={modalTitle}
+        />
       </PageHeaderLayout>
     );
   }

@@ -17,18 +17,19 @@ import {
   Modal,
   message,
   Badge,
-  Divider,
+  Divider
 } from 'antd';
 import StandardTable from 'components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from '../../assets/styles.less';
-const FormItem = Form.Item;
 import CreateEditForm from './GateClientService_edit';
 import CreateFindForm from './GateClientService_find';
 
+const FormItem = Form.Item;
+
 @connect(({ crud, loading }) => ({
   crud,
-  loading: loading.models.crud,
+  loading: loading.models.crud
 }))
 @Form.create()
 export default class TableList extends PureComponent {
@@ -37,8 +38,9 @@ export default class TableList extends PureComponent {
     modalTitle: '',
     selectedRows: [],
     formValues: {},
-    gateClientOptions : {},
+    gateClientOptions: {}
   };
+
   refresh() {
     const { dispatch } = this.props;
     dispatch({
@@ -47,14 +49,15 @@ export default class TableList extends PureComponent {
       payload: {
         page: {
           pageNo: 1,
-          pageSize: 10,
-        },
-      },
+          pageSize: 10
+        }
+      }
     });
     this.setState({
-      modalVisible: false,
+      modalVisible: false
     });
   }
+
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
@@ -63,9 +66,9 @@ export default class TableList extends PureComponent {
       payload: {
         page: {
           pageNo: 1,
-          pageSize: 10,
-        },
-      },
+          pageSize: 10
+        }
+      }
     });
   }
 
@@ -75,14 +78,14 @@ export default class TableList extends PureComponent {
     const params = {
       page: {
         pageNo: pagination.current,
-        pageSize: pagination.pageSize,
+        pageSize: pagination.pageSize
       },
-      ...formValues,
+      ...formValues
     };
     dispatch({
       type: 'crud/list',
       path: 'gateClientService/getGateClientServicePage',
-      payload: params,
+      payload: params
     });
   };
 
@@ -90,15 +93,16 @@ export default class TableList extends PureComponent {
     const { form, dispatch } = this.props;
     form.resetFields();
     this.setState({
-      formValues: {},
+      formValues: {}
     });
     console.log('000000000000000');
     dispatch({
       type: 'crud/list',
       path: 'gateClientService/getGateClientServicePage',
-      payload: {},
+      payload: {}
     });
   };
+
   batchDelete = () => {
     const { dispatch } = this.props;
     const { selectedRows } = this.state;
@@ -113,23 +117,23 @@ export default class TableList extends PureComponent {
           type: 'crud/batchDelete',
           path: 'api/crud/batchDelete',
           payload: {
-            key: selectedRows.map(row => row.key).join(','),
-          },
+            key: selectedRows.map(row => row.key).join(',')
+          }
         });
         message.success('批量审核成功');
         dispatch({
           type: 'crud/list',
           path: 'gateClientService/getGateClientServicePage',
-          payload: {},
+          payload: {}
         });
       },
-      onCancel() {},
+      onCancel() {}
     });
   };
 
   selectRows = rows => {
     this.setState({
-      selectedRows: rows,
+      selectedRows: rows
     });
   };
 
@@ -143,42 +147,43 @@ export default class TableList extends PureComponent {
 
       const values = {
         data: {
-          ...fieldsValue,
+          ...fieldsValue
         },
         page: {
           pageNo: 1,
-          pageSize: 10,
-        },
+          pageSize: 10
+        }
       };
 
       this.setState({
-        formValues: values,
+        formValues: values
       });
 
       dispatch({
         type: 'crud/list',
         path: 'gateClientService/getGateClientServicePage',
-        payload: values,
+        payload: values
       });
     });
   };
 
   closeModal = () => {
     this.setState({
-      modalVisible: false,
+      modalVisible: false
     });
   };
+
   add = () => {
     debugger;
     const { dispatch } = this.props;
     dispatch({
       type: 'crud/selectOld',
-      path:'gateClient/genGateClientOptions',
-      payload: {},
+      path: 'gateClient/genGateClientOptions',
+      payload: {}
     });
     this.setState({
       modalTitle: '新增服务管理',
-      modalVisible: true,
+      modalVisible: true
     });
   };
 
@@ -187,7 +192,7 @@ export default class TableList extends PureComponent {
     dispatch({
       type: 'crud/addSave',
       path: 'gateClientService/addGateClientService',
-      payload: fields,
+      payload: fields
     });
     message.success('保存成功');
     this.refresh();
@@ -197,17 +202,17 @@ export default class TableList extends PureComponent {
     const { dispatch } = this.props;
     dispatch({
       type: 'crud/selectOld',
-      path:'gateClient/genGateClientOptions',
-      payload: {},
+      path: 'gateClient/genGateClientOptions',
+      payload: {}
     });
     dispatch({
       type: 'crud/update',
       path: 'gateClientService/getGateClientService',
-      payload: { id: record.id },
+      payload: { id: record.id }
     });
     this.setState({
       modalTitle: '修改服务管理',
-      modalVisible: true,
+      modalVisible: true
     });
   };
 
@@ -216,7 +221,7 @@ export default class TableList extends PureComponent {
     dispatch({
       type: 'crud/updateSave',
       path: 'gateClientService/updateGateClientService',
-      payload: fields,
+      payload: fields
     });
     message.success('修改保存成功');
     this.refresh();
@@ -227,7 +232,7 @@ export default class TableList extends PureComponent {
     dispatch({
       type: 'crud/delete',
       path: 'gateClientService/deleteGateClientService',
-      payload: { id: record.id },
+      payload: { id: record.id }
     });
     message.success('删除成功');
     this.refresh();
@@ -241,27 +246,27 @@ export default class TableList extends PureComponent {
     const {
       crud: { pageData },
       crud: { formData },
-      crud: {gateClientOptions},
-      loading,
+      crud: { gateClientOptions },
+      loading
     } = this.props;
     const { selectedRows, modalVisible, modalTitle } = this.state;
 
     const columns = [
       {
         title: 'id',
-        dataIndex: 'id',
+        dataIndex: 'id'
       },
       {
         title: 'serviceId',
-        dataIndex: 'serviceId',
+        dataIndex: 'serviceId'
       },
       {
         title: 'clientId',
-        dataIndex: 'clientId',
+        dataIndex: 'clientId'
       },
       {
         title: 'description',
-        dataIndex: 'description',
+        dataIndex: 'description'
       },
       {
         title: '操作',
@@ -271,14 +276,14 @@ export default class TableList extends PureComponent {
             <Divider type="vertical" />
             <a onClick={() => this.delete(record)}>删除-{record.key}</a>
           </Fragment>
-        ),
-      },
+        )
+      }
     ];
 
     const parentMethods = {
       addSave: this.addSave,
       updateSave: this.updateSave,
-      closeModal: this.closeModal,
+      closeModal: this.closeModal
     };
 
     return (
@@ -287,7 +292,10 @@ export default class TableList extends PureComponent {
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
             <div className={styles.tableListOperator}>
-              <Button type="primary" onClick={() => this.add()}>
+              <Button
+                type="primary"
+                onClick={() => this.add()}
+              >
                 新建
               </Button>
             </div>

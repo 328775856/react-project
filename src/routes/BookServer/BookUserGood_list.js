@@ -17,7 +17,7 @@ import {
   message,
   Badge,
   Divider,
-  Table,
+  Table
 } from 'antd';
 import StandardTable from 'components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
@@ -29,7 +29,7 @@ import { defaultPage } from '../../utils/utils.js';
 const FormItem = Form.Item;
 @connect(({ tableData, loading }) => ({
   tableData,
-  loading: loading.models.crud,
+  loading: loading.models.crud
 }))
 @Form.create()
 export default class BookUserGood extends PureComponent {
@@ -37,7 +37,7 @@ export default class BookUserGood extends PureComponent {
     modalVisible: false,
     modalTitle: '',
     formValues: {},
-    page: defaultPage(),
+    page: defaultPage()
   };
 
   refresh = (values, page) => {
@@ -47,11 +47,11 @@ export default class BookUserGood extends PureComponent {
       path: 'bookUserGood/page',
       payload: {
         data: values,
-        page,
-      },
+        page
+      }
     });
     this.setState({
-      modalVisible: false,
+      modalVisible: false
     });
   };
 
@@ -64,10 +64,10 @@ export default class BookUserGood extends PureComponent {
     const { formValues } = this.state;
     const page = {
       pageSize: pagination.pageSize,
-      pageNo: pagination.current,
+      pageNo: pagination.current
     };
     this.setState({
-      page,
+      page
     });
     this.refresh(formValues, page);
   };
@@ -97,10 +97,10 @@ export default class BookUserGood extends PureComponent {
           type: 'tableData/remove',
           path: 'bookUserGood/remove',
           payload: { bookUserGoodId: record.bookUserGoodId },
-          callback: cb,
+          callback: cb
         });
       },
-      onCancel() {},
+      onCancel() {}
     });
   };
 
@@ -111,12 +111,12 @@ export default class BookUserGood extends PureComponent {
       if (err) return;
 
       const values = {
-        ...fieldsValue,
+        ...fieldsValue
       };
       const page = defaultPage();
       this.setState({
         formValues: values,
-        page,
+        page
       });
       this.refresh(values, page);
     });
@@ -124,7 +124,7 @@ export default class BookUserGood extends PureComponent {
 
   closeModal = () => {
     this.setState({
-      modalVisible: false,
+      modalVisible: false
     });
   };
 
@@ -133,11 +133,11 @@ export default class BookUserGood extends PureComponent {
     dispatch({
       type: 'tableData/getDataForAdd',
       path: 'bookUserGood/getDataForAdd',
-      payload: fields,
+      payload: fields
     });
     this.setState({
       modalTitle: '新增',
-      modalVisible: true,
+      modalVisible: true
     });
   };
 
@@ -147,7 +147,7 @@ export default class BookUserGood extends PureComponent {
       type: 'tableData/add',
       path: 'bookUserGood/add',
       payload: fields,
-      callback: this.callback,
+      callback: this.callback
     });
   };
 
@@ -156,11 +156,11 @@ export default class BookUserGood extends PureComponent {
     dispatch({
       type: 'tableData/getDataForUpdate',
       path: 'bookUserGood/getDataForUpdate',
-      payload: { bookUserGoodId: record.bookUserGoodId },
+      payload: { bookUserGoodId: record.bookUserGoodId }
     });
     this.setState({
       modalTitle: '修改',
-      modalVisible: true,
+      modalVisible: true
     });
   };
 
@@ -168,13 +168,13 @@ export default class BookUserGood extends PureComponent {
     const { dispatch, tableData } = this.props;
     const payload = {
       ...tableData.formData,
-      ...fields,
+      ...fields
     };
     dispatch({
       type: 'tableData/update',
       path: 'bookUserGood/update',
       payload,
-      callback: this.callback,
+      callback: this.callback
     });
   };
 
@@ -189,56 +189,60 @@ export default class BookUserGood extends PureComponent {
     const columns = [
       {
         title: '系统id',
-        dataIndex: 'bookUserGoodId',
+        dataIndex: 'bookUserGoodId'
       },
       {
         title: '图书-用户id',
-        dataIndex: 'bookUserId',
+        dataIndex: 'bookUserId'
       },
       {
         title: '图书编号',
-        dataIndex: 'bookCode',
+        dataIndex: 'bookCode'
       },
       {
         title: '图书名',
-        dataIndex: 'bookName',
+        dataIndex: 'bookName'
       },
       {
         title: '图书属性',
-        dataIndex: 'bookPropName',
+        dataIndex: 'bookPropName'
       },
       {
         title: '图书分类',
-        dataIndex: 'bookTypeName',
+        dataIndex: 'bookTypeName'
       },
       {
         title: '图书格式',
-        dataIndex: 'bookStyleName',
+        dataIndex: 'bookStyleName'
       },
       {
         title: '封面路径',
         dataIndex: 'wholePhotoPath',
         render: (text, record) => (
           <Fragment>
-            <img alt="" style={{ width: 100, height: 100 }} src={record.wholePhotoPath} />
+            <img
+              alt=""
+              style={{ width: 100, height: 100 }}
+              src={record.wholePhotoPath}
+            />
           </Fragment>
-        ),
+        )
       },
       {
         title: '作者',
-        dataIndex: 'bookAuthor',
+        dataIndex: 'bookAuthor'
       },
       {
         title: '存储名',
-        dataIndex: 'bookStorageName',
+        dataIndex: 'bookStorageName'
       },
       {
         title: '存储文件名',
-        dataIndex: 'fileName',
+        dataIndex: 'fileName'
       },
       {
         title: '资源大小',
-        dataIndex: 'fileSize',
+        dataIndex: 'fileSize'
       },
       {
         title: '操作',
@@ -246,14 +250,14 @@ export default class BookUserGood extends PureComponent {
           <Fragment>
             <a onClick={() => this.remove(record)}>删除</a>
           </Fragment>
-        ),
-      },
+        )
+      }
     ];
 
     const parentMethods = {
       add: this.add,
       update: this.update,
-      closeModal: this.closeModal,
+      closeModal: this.closeModal
     };
     return (
       <PageHeaderLayout>

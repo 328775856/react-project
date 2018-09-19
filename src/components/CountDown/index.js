@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 function fixedZero(val) {
-  return val * 1 < 10 ? `0${val}` : val;
+  return Number(val) < 10 ? `0${val}` : val;
 }
 
 class CountDown extends Component {
@@ -15,7 +15,7 @@ class CountDown extends Component {
     const { lastTime } = this.initTime(props);
 
     this.state = {
-      lastTime,
+      lastTime
     };
   }
 
@@ -30,7 +30,7 @@ class CountDown extends Component {
       const { lastTime } = this.initTime(nextProps);
       this.setState(
         {
-          lastTime,
+          lastTime
         },
         () => {
           this.tick();
@@ -58,7 +58,7 @@ class CountDown extends Component {
 
     lastTime = targetTime - new Date().getTime();
     return {
-      lastTime: lastTime < 0 ? 0 : lastTime,
+      lastTime: lastTime < 0 ? 0 : lastTime
     };
   };
 
@@ -92,7 +92,7 @@ class CountDown extends Component {
         clearTimeout(this.timer);
         this.setState(
           {
-            lastTime: 0,
+            lastTime: 0
           },
           () => {
             if (onEnd) {
@@ -104,7 +104,7 @@ class CountDown extends Component {
         lastTime -= this.interval;
         this.setState(
           {
-            lastTime,
+            lastTime
           },
           () => {
             this.tick();

@@ -15,8 +15,9 @@ import {
   Modal,
   message,
   Badge,
-  Divider,
+  Divider
 } from 'antd';
+
 const FormItem = Form.Item;
 const CreateEditForm = Form.create()(props => {
   const { modalVisible, form, addSave, updateSave, closeModal, formData, title } = props;
@@ -33,18 +34,37 @@ const CreateEditForm = Form.create()(props => {
     });
   };
   return (
-    <Modal title={title} visible={modalVisible} onOk={okHandle} onCancel={() => closeModal()}>
-      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="书名">
+    <Modal
+      title={title}
+      visible={modalVisible}
+      onOk={okHandle}
+      onCancel={() => closeModal()}
+    >
+      <FormItem
+        labelCol={{ span: 5 }}
+        wrapperCol={{ span: 15 }}
+        label="书名"
+      >
         {form.getFieldDecorator('bookName', {
           initialValue: formData.bookName || '',
-          rules: [{ required: true, message: '请输入书名...' }],
-        })(<Input placeholder="请输入" value={formData.bookName} />)}
+          rules: [{ required: true, message: '请输入书名...' }]
+        })(<Input
+          placeholder="请输入"
+          value={formData.bookName}
+        />)}
       </FormItem>
-      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="备注">
+      <FormItem
+        labelCol={{ span: 5 }}
+        wrapperCol={{ span: 15 }}
+        label="备注"
+      >
         {form.getFieldDecorator('remark', {
           initialValue: formData.remark || '',
-          rules: [{ required: true, message: '请输入备注...' }],
-        })(<Input placeholder="请输入" value={formData.remark} />)}
+          rules: [{ required: true, message: '请输入备注...' }]
+        })(<Input
+          placeholder="请输入"
+          value={formData.remark}
+        />)}
       </FormItem>
     </Modal>
   );

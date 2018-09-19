@@ -31,7 +31,7 @@
 
         // 服务器统一请求接口路径
         , serverUrl: BASEURL + "/uploadfiles/ueditor"
-        , configUrl: "/js/ueditor/config.js"
+        , configUrl: "/js/ueditor/config.json"
 
         , plat_host: 'www.135editor.com'
 

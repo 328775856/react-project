@@ -10,7 +10,7 @@ import { defaultPage } from '../../utils/utils.js';
 const FormItem = Form.Item;
 @connect(({ tableData, loading }) => ({
   tableData,
-  loading: loading.models.crud,
+  loading: loading.models.crud
 }))
 @Form.create()
 export default class SysDictItem extends PureComponent {
@@ -19,26 +19,26 @@ export default class SysDictItem extends PureComponent {
     modalTitle: '',
     formValues: {},
     paramData: {},
-    page: defaultPage(),
+    page: defaultPage()
   };
 
   refresh = (values, page) => {
     const { dispatch } = this.props;
     const { paramData } = this.state;
-    let params = {
+    const params = {
       ...paramData,
-      ...values,
+      ...values
     };
     dispatch({
       type: 'tableData/list',
       path: 'sysDictItem/page',
       payload: {
         data: params,
-        page: page,
-      },
+        page
+      }
     });
     this.setState({
-      modalVisible: false,
+      modalVisible: false
     });
   };
 
@@ -46,22 +46,22 @@ export default class SysDictItem extends PureComponent {
     const { formValues, page } = this.state;
     const { tableData } = this.props;
     const paramData = {
-      ...tableData.formData,
+      ...tableData.formData
     };
     this.setState({
-      paramData: paramData,
+      paramData
     });
     this.refresh(paramData, page);
   }
 
   tableChange = (pagination, filtersArg, sorter) => {
     const { formValues } = this.state;
-    let page = {
+    const page = {
       pageSize: pagination.pageSize,
-      pageNo: pagination.current,
+      pageNo: pagination.current
     };
     this.setState({
-      page: page,
+      page
     });
     this.refresh(params, page);
   };
@@ -91,12 +91,13 @@ export default class SysDictItem extends PureComponent {
           type: 'tableData/remove',
           path: 'sysDictItem/remove',
           payload: { sysDictItemId: record.sysDictItemId },
-          callback: cb,
+          callback: cb
         });
       },
-      onCancel() {},
+      onCancel() {}
     });
   };
+
   query = e => {
     e.preventDefault();
     const { dispatch, form } = this.props;
@@ -104,12 +105,12 @@ export default class SysDictItem extends PureComponent {
       if (err) return;
 
       const values = {
-        ...fieldsValue,
+        ...fieldsValue
       };
       const page = defaultPage();
       this.setState({
         formValues: values,
-        page: page,
+        page
       });
       this.refresh(values, page);
     });
@@ -117,34 +118,35 @@ export default class SysDictItem extends PureComponent {
 
   closeModal = () => {
     this.setState({
-      modalVisible: false,
+      modalVisible: false
     });
   };
+
   getDataForAdd = fields => {
     const { dispatch } = this.props;
     dispatch({
       type: 'tableData/getDataForAdd',
       path: 'sysDictItem/getDataForAdd',
-      payload: fields,
+      payload: fields
     });
     this.setState({
       modalTitle: '新增',
-      modalVisible: true,
+      modalVisible: true
     });
   };
 
   add = fields => {
     const { dispatch, tableData } = this.props;
     const { paramData } = this.state;
-    let params = {
+    const params = {
       ...fields,
-      ...paramData,
+      ...paramData
     };
     dispatch({
       type: 'tableData/add',
       path: 'sysDictItem/add',
       payload: params,
-      callback: this.callback,
+      callback: this.callback
     });
   };
 
@@ -153,7 +155,7 @@ export default class SysDictItem extends PureComponent {
     dispatch({
       type: 'tableData/goUrl',
       path: '/systemServer/sysDict',
-      payload: {},
+      payload: {}
     });
   };
 
@@ -162,27 +164,27 @@ export default class SysDictItem extends PureComponent {
     dispatch({
       type: 'tableData/getDataForUpdate',
       path: 'sysDictItem/getDataForUpdate',
-      payload: { sysDictItemId: record.sysDictItemId },
+      payload: { sysDictItemId: record.sysDictItemId }
     });
     this.setState({
       modalTitle: '修改',
-      modalVisible: true,
+      modalVisible: true
     });
   };
 
   update = fields => {
     const { dispatch, tableData } = this.props;
     const { paramData } = this.state;
-    let payload = {
+    const payload = {
       ...tableData.formData,
       ...fields,
-      ...paramData,
+      ...paramData
     };
     dispatch({
       type: 'tableData/update',
       path: 'sysDictItem/update',
-      payload: payload,
-      callback: this.callback,
+      payload,
+      callback: this.callback
     });
   };
 
@@ -197,19 +199,19 @@ export default class SysDictItem extends PureComponent {
     const columns = [
       {
         title: '系统id',
-        dataIndex: 'sysDictItemId',
+        dataIndex: 'sysDictItemId'
       },
       {
         title: '字典项',
-        dataIndex: 'itemNo',
+        dataIndex: 'itemNo'
       },
       {
         title: '字典名称',
-        dataIndex: 'itemLabel',
+        dataIndex: 'itemLabel'
       },
       {
         title: '备注',
-        dataIndex: 'itemRemark',
+        dataIndex: 'itemRemark'
       },
       {
         title: '操作',
@@ -219,14 +221,14 @@ export default class SysDictItem extends PureComponent {
             <Divider type="vertical" />
             <a onClick={() => this.remove(record)}>删除</a>
           </Fragment>
-        ),
-      },
+        )
+      }
     ];
 
     const parentMethods = {
       add: this.add,
       update: this.update,
-      closeModal: this.closeModal,
+      closeModal: this.closeModal
     };
     return (
       <PageHeaderLayout>
@@ -234,10 +236,16 @@ export default class SysDictItem extends PureComponent {
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
             <div className={styles.tableListOperator}>
-              <Button type="primary" onClick={() => this.getDataForAdd()}>
+              <Button
+                type="primary"
+                onClick={() => this.getDataForAdd()}
+              >
                 新建
               </Button>
-              <Button type="default" onClick={() => this.ret()}>
+              <Button
+                type="default"
+                onClick={() => this.ret()}
+              >
                 返回
               </Button>
             </div>

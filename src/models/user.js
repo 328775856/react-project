@@ -5,41 +5,44 @@ export default {
 
   state: {
     list: [],
-    currentUser: {},
+    currentUser: {}
   },
 
   effects: {
     *fetch(_, { call, put }) {
+      // eslint-disable-next-line no-undef
       const response = yield call(queryUsers);
       yield put({
         type: 'save',
-        payload: response,
+        payload: response
       });
     },
     *fetchCurrent(_, { call, put }) {
       const response = yield call(getUrl, '/user/getCurrentUser', {});
-      if (response.status != 200) {
-        yield put(routerRedux.push(`/user/login`));
+      console.log(response);
+      if (response.status !== 200) {
+        // eslint-disable-next-line no-undef
+        yield put(routerRedux.push('/user/login'));
       } else {
         yield put({
           type: 'saveCurrentUser',
-          payload: response.data,
+          payload: response.data
         });
       }
-    },
+    }
   },
 
   reducers: {
     save(state, action) {
       return {
         ...state,
-        list: action.payload,
+        list: action.payload
       };
     },
     saveCurrentUser(state, action) {
       return {
         ...state,
-        currentUser: action.payload || {},
+        currentUser: action.payload || {}
       };
     },
     changeNotifyCount(state, action) {
@@ -47,9 +50,9 @@ export default {
         ...state,
         currentUser: {
           ...state.currentUser,
-          notifyCount: action.payload,
-        },
+          notifyCount: action.payload
+        }
       };
-    },
-  },
+    }
+  }
 };

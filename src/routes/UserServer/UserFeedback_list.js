@@ -17,7 +17,7 @@ import {
   message,
   Badge,
   Divider,
-  Table,
+  Table
 } from 'antd';
 import StandardTable from 'components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
@@ -29,7 +29,7 @@ import { defaultPage } from '../../utils/utils.js';
 const FormItem = Form.Item;
 @connect(({ tableData, loading }) => ({
   tableData,
-  loading: loading.models.crud,
+  loading: loading.models.crud
 }))
 @Form.create()
 export default class UserFeedback extends PureComponent {
@@ -38,7 +38,7 @@ export default class UserFeedback extends PureComponent {
     modalTitle: '',
     formValues: {},
     page: defaultPage(),
-    options: {},
+    options: {}
   };
 
   refresh = (values, page) => {
@@ -48,11 +48,11 @@ export default class UserFeedback extends PureComponent {
       path: 'userFeedback/page',
       payload: {
         data: values,
-        page,
-      },
+        page
+      }
     });
     this.setState({
-      modalVisible: false,
+      modalVisible: false
     });
   };
 
@@ -66,10 +66,10 @@ export default class UserFeedback extends PureComponent {
     const { formValues } = this.state;
     const page = {
       pageSize: pagination.pageSize,
-      pageNo: pagination.current,
+      pageNo: pagination.current
     };
     this.setState({
-      page,
+      page
     });
     this.refresh(formValues, page);
   };
@@ -99,7 +99,7 @@ export default class UserFeedback extends PureComponent {
     console.log(response.data);
     console.log(JSON.parse(response.data));
     this.setState({
-      options: JSON.parse(response.data),
+      options: JSON.parse(response.data)
     });
 
     console.log(this.state);
@@ -115,10 +115,10 @@ export default class UserFeedback extends PureComponent {
           type: 'tableData/remove',
           path: 'userFeedback/remove',
           payload: { userFeedbackId: record.userFeedbackId },
-          callback: cb,
+          callback: cb
         });
       },
-      onCancel() {},
+      onCancel() {}
     });
   };
 
@@ -129,12 +129,12 @@ export default class UserFeedback extends PureComponent {
       if (err) return;
 
       const values = {
-        ...fieldsValue,
+        ...fieldsValue
       };
       const page = defaultPage();
       this.setState({
         formValues: values,
-        page,
+        page
       });
       this.refresh(values, page);
     });
@@ -142,7 +142,7 @@ export default class UserFeedback extends PureComponent {
 
   closeModal = () => {
     this.setState({
-      modalVisible: false,
+      modalVisible: false
     });
   };
 
@@ -151,11 +151,11 @@ export default class UserFeedback extends PureComponent {
     dispatch({
       type: 'tableData/getDataForAdd',
       path: 'userFeedback/getDataForAdd',
-      payload: fields,
+      payload: fields
     });
     this.setState({
       modalTitle: '新增',
-      modalVisible: true,
+      modalVisible: true
     });
   };
 
@@ -165,7 +165,7 @@ export default class UserFeedback extends PureComponent {
       type: 'tableData/add',
       path: 'userFeedback/add',
       payload: fields,
-      callback: this.callback,
+      callback: this.callback
     });
   };
 
@@ -174,11 +174,11 @@ export default class UserFeedback extends PureComponent {
     dispatch({
       type: 'tableData/getDataForUpdate',
       path: 'userFeedback/getDataForUpdate',
-      payload: { userFeedbackId: record.userFeedbackId },
+      payload: { userFeedbackId: record.userFeedbackId }
     });
     this.setState({
       modalTitle: '修改',
-      modalVisible: true,
+      modalVisible: true
     });
   };
 
@@ -188,7 +188,7 @@ export default class UserFeedback extends PureComponent {
       type: 'tableData/initOptions',
       path: 'userFeedback/getDataForAdd',
       payload: {},
-      callback: this.initOptionsCallback,
+      callback: this.initOptionsCallback
     });
   };
 
@@ -196,13 +196,13 @@ export default class UserFeedback extends PureComponent {
     const { dispatch, tableData } = this.props;
     const payload = {
       ...tableData.formData,
-      ...fields,
+      ...fields
     };
     dispatch({
       type: 'tableData/update',
       path: 'userFeedback/update',
       payload,
-      callback: this.callback,
+      callback: this.callback
     });
   };
 
@@ -217,24 +217,24 @@ export default class UserFeedback extends PureComponent {
     const columns = [
       {
         title: '系统id',
-        dataIndex: 'userFeedbackId',
+        dataIndex: 'userFeedbackId'
       },
       {
         title: '账号id',
-        dataIndex: 'userId',
+        dataIndex: 'userId'
       },
       {
         title: '藏书馆图书id',
-        dataIndex: 'bookUserId',
+        dataIndex: 'bookUserId'
       },
       {
         title: '错误类型',
         dataIndex: 'errorType',
         render(text, record) {
-          var dict = record => {
-            var res = '';
-            var myArray = options["11"];
-            for(var k in myArray) {
+          const dict = record => {
+            let res = '';
+            const myArray = options['11'];
+            for (const k in myArray) {
               if (record.errorType === myArray[k].itemNo) {
                 res = myArray[k].itemLabel;
                 break;
@@ -243,20 +243,20 @@ export default class UserFeedback extends PureComponent {
             return res;
           };
           return <Fragment>{dict(record)}</Fragment>;
-        },
+        }
       },
       {
         title: '错误原因',
-        dataIndex: 'errorContent',
+        dataIndex: 'errorContent'
       },
       {
         title: '处理状态',
         dataIndex: 'dealStatus',
         render(text, record) {
-          var dict = record => {
-            var res = '';
-            var myArray = options["5"];
-            for(var k in myArray) {
+          const dict = record => {
+            let res = '';
+            const myArray = options['5'];
+            for (const k in myArray) {
               if (record.dealStatus === myArray[k].itemNo) {
                 res = myArray[k].itemLabel;
                 break;
@@ -265,28 +265,28 @@ export default class UserFeedback extends PureComponent {
             return res;
           };
           return <Fragment>{dict(record)}</Fragment>;
-        },
+        }
       },
       {
         title: '处理时间',
-        dataIndex: 'dealTime',
+        dataIndex: 'dealTime'
       },
       {
         title: '处理内容',
-        dataIndex: 'dealContent',
+        dataIndex: 'dealContent'
       },
       {
         title: '操作人',
-        dataIndex: 'dealBy',
+        dataIndex: 'dealBy'
       },
       {
         title: '终端类型',
         dataIndex: 'terminalType',
         render(text, record) {
-          var dict = record => {
-            var res = '';
-            var myArray = options["12"];
-            for(var k in myArray) {
+          const dict = record => {
+            let res = '';
+            const myArray = options['12'];
+            for (const k in myArray) {
               if (record.terminalType === myArray[k].itemNo) {
                 res = myArray[k].itemLabel;
                 break;
@@ -295,23 +295,23 @@ export default class UserFeedback extends PureComponent {
             return res;
           };
           return <Fragment>{dict(record)}</Fragment>;
-        },
+        }
       },
       {
         title: '终端唯一',
-        dataIndex: 'terminalSn',
+        dataIndex: 'terminalSn'
       },
       {
         title: '终端名称',
-        dataIndex: 'terminalName',
+        dataIndex: 'terminalName'
       },
       {
         title: 'app版本号',
-        dataIndex: 'appVersionNo',
+        dataIndex: 'appVersionNo'
       },
       {
         title: 'app版本名称',
-        dataIndex: 'appVersionName',
+        dataIndex: 'appVersionName'
       },
       {
         title: '操作',
@@ -321,15 +321,15 @@ export default class UserFeedback extends PureComponent {
             <Divider type="vertical" />
             <a onClick={() => this.remove(record)}>删除</a>
           </Fragment>
-        ),
-      },
+        )
+      }
     ];
 
     const parentMethods = {
       add: this.add,
       update: this.update,
       closeModal: this.closeModal,
-      isEmptyObject: this.isEmptyObject,
+      isEmptyObject: this.isEmptyObject
     };
     return (
       <PageHeaderLayout>
@@ -337,7 +337,10 @@ export default class UserFeedback extends PureComponent {
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
             <div className={styles.tableListOperator}>
-              <Button type="primary" onClick={() => this.getDataForAdd()}>
+              <Button
+                type="primary"
+                onClick={() => this.getDataForAdd()}
+              >
                 新建
               </Button>
             </div>

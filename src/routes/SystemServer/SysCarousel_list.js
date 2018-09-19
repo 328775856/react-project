@@ -17,7 +17,7 @@ import {
   message,
   Badge,
   Divider,
-  Table,
+  Table
 } from 'antd';
 import StandardTable from 'components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
@@ -25,10 +25,11 @@ import styles from '../../assets/styles.less';
 import CreateEditForm from './SysCarousel_edit';
 import CreateFindForm from './SysCarousel_find';
 import { defaultPage } from '../../utils/utils.js';
+
 const FormItem = Form.Item;
 @connect(({ tableData, loading }) => ({
   tableData,
-  loading: loading.models.crud,
+  loading: loading.models.crud
 }))
 @Form.create()
 export default class SysCarousel extends PureComponent {
@@ -37,7 +38,7 @@ export default class SysCarousel extends PureComponent {
     modalTitle: '',
     formValues: {},
     page: defaultPage(),
-    options: {},
+    options: {}
   };
 
   refresh = (values, page) => {
@@ -47,11 +48,11 @@ export default class SysCarousel extends PureComponent {
       path: 'sysCarousel/page',
       payload: {
         data: values,
-        page: page,
-      },
+        page
+      }
     });
     this.setState({
-      modalVisible: false,
+      modalVisible: false
     });
   };
 
@@ -63,12 +64,12 @@ export default class SysCarousel extends PureComponent {
 
   tableChange = (pagination, filtersArg, sorter) => {
     const { formValues } = this.state;
-    let page = {
+    const page = {
       pageSize: pagination.pageSize,
-      pageNo: pagination.current,
+      pageNo: pagination.current
     };
     this.setState({
-      page: page,
+      page
     });
     this.refresh(formValues, page);
   };
@@ -96,9 +97,10 @@ export default class SysCarousel extends PureComponent {
 
   initOptionsCallback = response => {
     this.setState({
-      options: JSON.parse(response.data),
+      options: JSON.parse(response.data)
     });
   };
+
   remove = record => {
     const { dispatch, tableData } = this.props;
     const cb = this.callback;
@@ -109,12 +111,13 @@ export default class SysCarousel extends PureComponent {
           type: 'tableData/remove',
           path: 'sysCarousel/remove',
           payload: { sysCarouselId: record.sysCarouselId },
-          callback: cb,
+          callback: cb
         });
       },
-      onCancel() {},
+      onCancel() {}
     });
   };
+
   query = e => {
     e.preventDefault();
     const { dispatch, form } = this.props;
@@ -122,12 +125,12 @@ export default class SysCarousel extends PureComponent {
       if (err) return;
 
       const values = {
-        ...fieldsValue,
+        ...fieldsValue
       };
       const page = defaultPage();
       this.setState({
         formValues: values,
-        page: page,
+        page
       });
       this.refresh(values, page);
     });
@@ -135,19 +138,20 @@ export default class SysCarousel extends PureComponent {
 
   closeModal = () => {
     this.setState({
-      modalVisible: false,
+      modalVisible: false
     });
   };
+
   getDataForAdd = fields => {
     const { dispatch } = this.props;
     dispatch({
       type: 'tableData/getDataForAdd',
       path: 'sysCarousel/getDataForAdd',
-      payload: fields,
+      payload: fields
     });
     this.setState({
       modalTitle: '新增',
-      modalVisible: true,
+      modalVisible: true
     });
   };
 
@@ -157,7 +161,7 @@ export default class SysCarousel extends PureComponent {
       type: 'tableData/add',
       path: 'sysCarousel/add',
       payload: fields,
-      callback: this.callback,
+      callback: this.callback
     });
   };
 
@@ -166,11 +170,11 @@ export default class SysCarousel extends PureComponent {
     dispatch({
       type: 'tableData/getDataForUpdate',
       path: 'sysCarousel/getDataForUpdate',
-      payload: { sysCarouselId: record.sysCarouselId },
+      payload: { sysCarouselId: record.sysCarouselId }
     });
     this.setState({
       modalTitle: '修改',
-      modalVisible: true,
+      modalVisible: true
     });
   };
 
@@ -180,21 +184,21 @@ export default class SysCarousel extends PureComponent {
       type: 'tableData/initOptions',
       path: 'sysCarousel/getDataForAdd',
       payload: {},
-      callback: this.initOptionsCallback,
+      callback: this.initOptionsCallback
     });
   };
 
   update = fields => {
     const { dispatch, tableData } = this.props;
-    let payload = {
+    const payload = {
       ...tableData.formData,
-      ...fields,
+      ...fields
     };
     dispatch({
       type: 'tableData/update',
       path: 'sysCarousel/update',
-      payload: payload,
-      callback: this.callback,
+      payload,
+      callback: this.callback
     });
   };
 
@@ -209,19 +213,19 @@ export default class SysCarousel extends PureComponent {
     const columns = [
       {
         title: '系统id',
-        dataIndex: 'sysCarouselId',
+        dataIndex: 'sysCarouselId'
       },
       {
         title: '名称',
-        dataIndex: 'carouselName',
+        dataIndex: 'carouselName'
       },
       {
         title: '轮播类型',
         dataIndex: 'carouselType',
         render(text, record) {
-          var dict = record => {
-            var res = '';
-            for (var i = 0; i < options.length; i++) {
+          const dict = record => {
+            let res = '';
+            for (let i = 0; i < options.length; i++) {
               if (record.carouselType === options[i].itemNo) {
                 res = options[i].itemLabel;
                 break;
@@ -230,24 +234,28 @@ export default class SysCarousel extends PureComponent {
             return res;
           };
           return <Fragment>{dict(record)}</Fragment>;
-        },
+        }
       },
       {
         title: '轮播顺序',
-        dataIndex: 'indexNo',
+        dataIndex: 'indexNo'
       },
       {
         title: '跳转参数',
-        dataIndex: 'params',
+        dataIndex: 'params'
       },
       {
         title: '轮播图片',
         dataIndex: 'imagePath',
         render: (text, record) => (
           <Fragment>
-            <img alt="" style={{ width: 100, height: 100 }} src={record.wholeImagePath} />
+            <img
+              alt=""
+              style={{ width: 100, height: 100 }}
+              src={record.wholeImagePath}
+            />
           </Fragment>
-        ),
+        )
       },
       {
         title: '操作',
@@ -257,8 +265,8 @@ export default class SysCarousel extends PureComponent {
             <Divider type="vertical" />
             <a onClick={() => this.remove(record)}>删除</a>
           </Fragment>
-        ),
-      },
+        )
+      }
     ];
 
     const parentMethods = {
@@ -266,7 +274,7 @@ export default class SysCarousel extends PureComponent {
       update: this.update,
       closeModal: this.closeModal,
       dispatch: this.props.dispatch,
-      isEmptyObject: this.isEmptyObject,
+      isEmptyObject: this.isEmptyObject
     };
     return (
       <PageHeaderLayout>
@@ -274,7 +282,10 @@ export default class SysCarousel extends PureComponent {
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
             <div className={styles.tableListOperator}>
-              <Button type="primary" onClick={() => this.getDataForAdd()}>
+              <Button
+                type="primary"
+                onClick={() => this.getDataForAdd()}
+              >
                 新建
               </Button>
             </div>

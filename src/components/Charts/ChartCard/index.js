@@ -7,14 +7,14 @@ import styles from './index.less';
 const renderTotal = total => {
   let totalDom;
   switch (typeof total) {
-    case 'undefined':
-      totalDom = null;
-      break;
-    case 'function':
-      totalDom = <div className={styles.total}>{total()}</div>;
-      break;
-    default:
-      totalDom = <div className={styles.total}>{total}</div>;
+  case 'undefined':
+    totalDom = null;
+    break;
+  case 'function':
+    totalDom = <div className={styles.total}>{total()}</div>;
+    break;
+  default:
+    totalDom = <div className={styles.total}>{total}</div>;
   }
   return totalDom;
 };
@@ -34,7 +34,7 @@ const ChartCard = ({
     <div className={styles.chartCard}>
       <div
         className={classNames(styles.chartTop, {
-          [styles.chartTopMargin]: !children && !footer,
+          [styles.chartTopMargin]: !children && !footer
         })}
       >
         <div className={styles.avatar}>{avatar}</div>
@@ -47,14 +47,17 @@ const ChartCard = ({
         </div>
       </div>
       {children && (
-        <div className={styles.content} style={{ height: contentHeight || 'auto' }}>
+        <div
+          className={styles.content}
+          style={{ height: contentHeight || 'auto' }}
+        >
           <div className={contentHeight && styles.contentFixed}>{children}</div>
         </div>
       )}
       {footer && (
         <div
           className={classNames(styles.footer, {
-            [styles.footerMargin]: !children,
+            [styles.footerMargin]: !children
           })}
         >
           {footer}
@@ -64,7 +67,11 @@ const ChartCard = ({
   );
 
   return (
-    <Card loading={loading} bodyStyle={{ padding: '20px 24px 8px 24px' }} {...rest}>
+    <Card
+      loading={loading}
+      bodyStyle={{ padding: '20px 24px 8px 24px' }}
+      {...rest}
+    >
       {content}
     </Card>
   );

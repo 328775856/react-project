@@ -17,13 +17,16 @@ function RouterConfig({ history, app }) {
     <LocaleProvider locale={zhCN}>
       <ConnectedRouter history={history}>
         <Switch>
-          <Route path="/user" component={UserLayout} />
+          <Route
+            path="/user"
+            component={UserLayout}
+          />
           <AuthorizedRoute
             path="/"
             render={props => <BasicLayout {...props} />}
             authority={['admin', 'user']}
             redirectPath={getQueryPath('/user/login', {
-              redirect: window.location.href,
+              redirect: window.location.href
             })}
           />
         </Switch>

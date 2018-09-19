@@ -6,9 +6,9 @@ const menu = [
     path: '/dashboard',
     children: [
       {
-        path: '/dashboard/name',
-      },
-    ],
+        path: '/dashboard/name'
+      }
+    ]
   },
   {
     path: '/userinfo',
@@ -17,12 +17,12 @@ const menu = [
         path: '/userinfo/:id',
         children: [
           {
-            path: '/userinfo/:id/info',
-          },
-        ],
-      },
-    ],
-  },
+            path: '/userinfo/:id/info'
+          }
+        ]
+      }
+    ]
+  }
 ];
 
 const flatMenuKeys = getFlatMenuKeys(menu);
@@ -34,7 +34,7 @@ describe('test convert nested menu to flat menu', () => {
       '/dashboard/name',
       '/userinfo',
       '/userinfo/:id',
-      '/userinfo/:id/info',
+      '/userinfo/:id/info'
     ]);
   });
 });
@@ -51,14 +51,14 @@ describe('test menu match', () => {
   it('Secondary path', () => {
     expect(getMenuMatchKeys(flatMenuKeys, urlToList('/dashboard/name'))).toEqual([
       '/dashboard',
-      '/dashboard/name',
+      '/dashboard/name'
     ]);
   });
 
   it('Parameter path', () => {
     expect(getMenuMatchKeys(flatMenuKeys, urlToList('/userinfo/2144'))).toEqual([
       '/userinfo',
-      '/userinfo/:id',
+      '/userinfo/:id'
     ]);
   });
 
@@ -66,7 +66,7 @@ describe('test menu match', () => {
     expect(getMenuMatchKeys(flatMenuKeys, urlToList('/userinfo/2144/info'))).toEqual([
       '/userinfo',
       '/userinfo/:id',
-      '/userinfo/:id/info',
+      '/userinfo/:id/info'
     ]);
   });
 });

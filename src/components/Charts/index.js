@@ -28,7 +28,7 @@ const Charts = {
   Field,
   WaterWave,
   TagCloud,
-  TimelineChart,
+  TimelineChart
 };
 
 export {
@@ -45,5 +45,5 @@ export {
   Field,
   WaterWave,
   TagCloud,
-  TimelineChart,
+  TimelineChart
 };

@@ -7,24 +7,42 @@ function CreateFindFrom(props, formQuery, formReset) {
   const { form } = props;
   const { getFieldDecorator } = form;
   return (
-    <Form onSubmit={formQuery} layout="inline">
+    <Form
+      onSubmit={formQuery}
+      layout="inline"
+    >
       <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
-        <Col md={8} sm={24}>
+        <Col
+          md={8}
+          sm={24}
+        >
           <FormItem label="字典组编号">
             {form.getFieldDecorator('dictNo')(<Input placeholder="" />)}
           </FormItem>
         </Col>
-        <Col md={8} sm={24}>
+        <Col
+          md={8}
+          sm={24}
+        >
           <FormItem label="字典组名称">
             {form.getFieldDecorator('dictName')(<Input placeholder="" />)}
           </FormItem>
         </Col>
-        <Col md={8} sm={24}>
+        <Col
+          md={8}
+          sm={24}
+        >
           <span>
-            <Button type="primary" htmlType="submit">
+            <Button
+              type="primary"
+              htmlType="submit"
+            >
               查询
             </Button>
-            <Button style={{ marginLeft: 8 }} onClick={formReset}>
+            <Button
+              style={{ marginLeft: 8 }}
+              onClick={formReset}
+            >
               重置
             </Button>
           </span>

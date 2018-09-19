@@ -6,16 +6,16 @@ const { Arc, Html, Line } = Guide;
 
 const defaultFormatter = val => {
   switch (val) {
-    case '2':
-      return '差';
-    case '4':
-      return '中';
-    case '6':
-      return '良';
-    case '8':
-      return '优';
-    default:
-      return '';
+  case '2':
+    return '差';
+  case '4':
+    return '中';
+  case '6':
+    return '良';
+  case '8':
+    return '优';
+  default:
+    return '';
   }
 };
 
@@ -25,7 +25,7 @@ Shape.registerShape('point', 'pointer', {
     point = this.parsePoint(point);
     const center = this.parsePoint({
       x: 0,
-      y: 0,
+      y: 0
     });
     group.addShape('line', {
       attrs: {
@@ -35,8 +35,8 @@ Shape.registerShape('point', 'pointer', {
         y2: point.y,
         stroke: cfg.color,
         lineWidth: 2,
-        lineCap: 'round',
-      },
+        lineCap: 'round'
+      }
     });
     return group.addShape('circle', {
       attrs: {
@@ -45,10 +45,10 @@ Shape.registerShape('point', 'pointer', {
         r: 6,
         stroke: cfg.color,
         lineWidth: 3,
-        fill: '#fff',
-      },
+        fill: '#fff'
+      }
     });
-  },
+  }
 });
 
 @autoHeight()
@@ -61,7 +61,7 @@ export default class Gauge extends React.Component {
       forceFit = true,
       formatter = defaultFormatter,
       color = '#2F9CFF',
-      bgColor = '#F0F2F5',
+      bgColor = '#F0F2F5'
     } = this.props;
     const cols = {
       value: {
@@ -69,14 +69,28 @@ export default class Gauge extends React.Component {
         min: 0,
         max: 10,
         tickCount: 6,
-        nice: true,
-      },
+        nice: true
+      }
     };
     const data = [{ value: percent / 10 }];
     return (
-      <Chart height={height} data={data} scale={cols} padding={[-16, 0, 16, 0]} forceFit={forceFit}>
-        <Coord type="polar" startAngle={-1.25 * Math.PI} endAngle={0.25 * Math.PI} radius={0.8} />
-        <Axis name="1" line={null} />
+      <Chart
+        height={height}
+        data={data}
+        scale={cols}
+        padding={[-16, 0, 16, 0]}
+        forceFit={forceFit}
+      >
+        <Coord
+          type="polar"
+          startAngle={-1.25 * Math.PI}
+          endAngle={0.25 * Math.PI}
+          radius={0.8}
+        />
+        <Axis
+          name="1"
+          line={null}
+        />
         <Axis
           line={null}
           tickLine={null}
@@ -90,8 +104,8 @@ export default class Gauge extends React.Component {
             textStyle: {
               fontSize: 12,
               fill: 'rgba(0, 0, 0, 0.65)',
-              textAlign: 'center',
-            },
+              textAlign: 'center'
+            }
           }}
         />
         <Guide>
@@ -101,7 +115,7 @@ export default class Gauge extends React.Component {
             lineStyle={{
               stroke: color,
               lineDash: null,
-              lineWidth: 2,
+              lineWidth: 2
             }}
           />
           <Line
@@ -110,7 +124,7 @@ export default class Gauge extends React.Component {
             lineStyle={{
               stroke: color,
               lineDash: null,
-              lineWidth: 3,
+              lineWidth: 3
             }}
           />
           <Line
@@ -119,7 +133,7 @@ export default class Gauge extends React.Component {
             lineStyle={{
               stroke: color,
               lineDash: null,
-              lineWidth: 3,
+              lineWidth: 3
             }}
           />
           <Arc
@@ -128,7 +142,7 @@ export default class Gauge extends React.Component {
             end={[10, 0.965]}
             style={{
               stroke: bgColor,
-              lineWidth: 10,
+              lineWidth: 10
             }}
           />
           <Arc
@@ -137,20 +151,18 @@ export default class Gauge extends React.Component {
             end={[data[0].value, 0.965]}
             style={{
               stroke: color,
-              lineWidth: 10,
+              lineWidth: 10
             }}
           />
           <Html
             position={['50%', '95%']}
-            html={() => {
-              return `
+            html={() => `
                 <div style="width: 300px;text-align: center;font-size: 12px!important;">
                   <p style="font-size: 14px; color: rgba(0,0,0,0.43);margin: 0;">${title}</p>
                   <p style="font-size: 24px;color: rgba(0,0,0,0.85);margin: 0;">
                     ${data[0].value * 10}%
                   </p>
-                </div>`;
-            }}
+                </div>`}
           />
         </Guide>
         <Geom

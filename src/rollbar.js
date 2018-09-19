@@ -8,7 +8,7 @@ if (location.host === 'preview.pro.ant.design') {
     captureUnhandledRejections: true,
     hostWhiteList: ['ant.design'],
     payload: {
-      environment: 'production',
-    },
+      environment: 'production'
+    }
   });
 }

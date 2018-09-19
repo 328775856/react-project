@@ -31,7 +31,7 @@ const dynamicWrapper = (app, models, component) => {
       }
       return createElement(component().default, {
         ...props,
-        routerData: routerDataCache,
+        routerData: routerDataCache
       });
     };
   }
@@ -46,13 +46,14 @@ const dynamicWrapper = (app, models, component) => {
         return props =>
           createElement(Component, {
             ...props,
-            routerData: routerDataCache,
+            routerData: routerDataCache
           });
       });
     },
-    loading: () => {
-      return <Spin size="large" className="global-spin" />;
-    },
+    loading: () => <Spin
+      size="large"
+      className="global-spin"
+    />
   });
 };
 
@@ -72,206 +73,313 @@ function getFlatMenuData(menus) {
 export const getRouterData = app => {
   const routerConfig = {
     '/': {
-      component: dynamicWrapper(app, ['user', 'login'], () => import('../layouts/BasicLayout')),
+      component: dynamicWrapper(app, ['user', 'login'], () => import('../layouts/BasicLayout'))
     },
     '/dashboard/workplace': {
-      component: dynamicWrapper(app, [], () => import('../routes/Dashboard/Workplace')),
+      component: dynamicWrapper(app, [], () => import('../routes/Dashboard/Workplace'))
     },
+
     '/exception/403': {
-      component: dynamicWrapper(app, [], () => import('../routes/Exception/403')),
+      component: dynamicWrapper(app, [], () => import('../routes/Exception/403'))
     },
     '/exception/404': {
-      component: dynamicWrapper(app, [], () => import('../routes/Exception/404')),
+      component: dynamicWrapper(app, [], () => import('../routes/Exception/404'))
     },
     '/exception/500': {
-      component: dynamicWrapper(app, [], () => import('../routes/Exception/500')),
+      component: dynamicWrapper(app, [], () => import('../routes/Exception/500'))
     },
     '/exception/trigger': {
       component: dynamicWrapper(app, ['error'], () =>
         import('../routes/Exception/triggerException')
-      ),
-    },
-    '/user': {
-      component: dynamicWrapper(app, [], () => import('../layouts/UserLayout')),
-    },
-    '/user/login': {
-      component: dynamicWrapper(app, ['login'], () => import('../routes/User/Login')),
-    },
-    '/systemServer/crud': {
-      component: dynamicWrapper(app, ['crud'], () => import('../routes/Test/Crud')),
-    },
-    '/systemServer/selectTest': {
-      component: dynamicWrapper(app, ['crud'], () => import('../routes/Test/SelectTest')),
-    },
-    '/systemServer/selectAudio': {
-      component: dynamicWrapper(app, ['crud'], () => import('../routes/Test/SelectAudio')),
-    },
-    '/systemServer/sysParam': {
-      component: dynamicWrapper(app, [], () => import('../routes/SystemServer/SysParam_list')),
-    },
-    '/media/imageGroup': {
-      component: dynamicWrapper(app, ['crud'], () => import('../routes/media/imageGroup')),
-    },
-    '/media/image': {
-      component: dynamicWrapper(app, ['crud'], () => import('../routes/media/image')),
-    },
-    '/media/videoGroup': {
-      component: dynamicWrapper(app, [], () => import('../routes/media/videoGroupList')),
-    },
-    '/media/video': {
-      component: dynamicWrapper(app, [], () => import('../routes/media/videoList')),
-    },
-    '/media/audioGroup': {
-      component: dynamicWrapper(app, [], () => import('../routes/media/audioGroupList')),
-    },
-    '/media/audio': {
-      component: dynamicWrapper(app, [], () => import('../routes/media/audioList')),
-    },
-    '/media/articleGroup': {
-      component: dynamicWrapper(app, [], () => import('../routes/media/articleGroupList')),
-    },
-    '/media/article': {
-      component: dynamicWrapper(app, [], () => import('../routes/media/articleList')),
-    },
-    '/systemServer/sysDict': {
-      component: dynamicWrapper(app, [], () => import('../routes/SystemServer/SysDict_list')),
-    },
-    '/systemServer/sysDictItem': {
-      component: dynamicWrapper(app, [], () => import('../routes/SystemServer/SysDictItem_list')),
-    },
-    '/systemServer/sysRole': {
-      component: dynamicWrapper(app, [], () => import('../routes/SystemServer/SysRole_list')),
+      )
     },
 
+    '/user': { component: dynamicWrapper(app, [], () => import('../layouts/UserLayout')) },
+    '/user/login': {
+      component: dynamicWrapper(app, ['login'], () => import('../routes/User/Login'))
+    },
+
+    '/systemServer/crud': {
+      component: dynamicWrapper(app, ['crud'], () => import('../routes/Test/Crud'))
+    },
+    '/systemServer/selectTest': {
+      component: dynamicWrapper(app, ['crud'], () => import('../routes/Test/SelectTest'))
+    },
+    '/systemServer/selectAudio': {
+      component: dynamicWrapper(app, ['crud'], () => import('../routes/Test/SelectAudio'))
+    },
+    '/systemServer/sysParam': {
+      component: dynamicWrapper(app, [], () => import('../routes/SystemServer/SysParam_list'))
+    },
+
+    '/media/imageGroup': {
+      component: dynamicWrapper(app, ['crud'], () => import('../routes/media/imageGroup'))
+    },
+    '/media/image': {
+      component: dynamicWrapper(app, ['crud'], () => import('../routes/media/image'))
+    },
+    '/media/videoGroup': {
+      component: dynamicWrapper(app, [], () => import('../routes/media/videoGroupList'))
+    },
+    '/media/video': {
+      component: dynamicWrapper(app, [], () => import('../routes/media/videoList'))
+    },
+    '/media/audioGroup': {
+      component: dynamicWrapper(app, [], () => import('../routes/media/audioGroupList'))
+    },
+    '/media/audio': {
+      component: dynamicWrapper(app, [], () => import('../routes/media/audioList'))
+    },
+    '/media/articleGroup': {
+      component: dynamicWrapper(app, [], () => import('../routes/media/articleGroupList'))
+    },
+    '/media/article': {
+      component: dynamicWrapper(app, [], () => import('../routes/media/articleList'))
+    },
+
+    '/systemServer/sysDict': {
+      component: dynamicWrapper(app, [], () => import('../routes/SystemServer/SysDict_list'))
+    },
+    '/systemServer/sysDictItem': {
+      component: dynamicWrapper(app, [], () => import('../routes/SystemServer/SysDictItem_list'))
+    },
+    '/systemServer/sysRole': {
+      component: dynamicWrapper(app, [], () => import('../routes/SystemServer/SysRole_list'))
+    },
     '/systemServer/sysUser': {
-      component: dynamicWrapper(app, [], () => import('../routes/SystemServer/SysUser_list')),
+      component: dynamicWrapper(app, [], () => import('../routes/SystemServer/SysUser_list'))
     },
     '/systemServer/sysSensitive': {
-      component: dynamicWrapper(app, [], () => import('../routes/SystemServer/SysSensitive_list')),
+      component: dynamicWrapper(app, [], () => import('../routes/SystemServer/SysSensitive_list'))
     },
     '/systemServer/sysSensitiveType': {
       component: dynamicWrapper(app, [], () =>
         import('../routes/SystemServer/SysSensitiveType_list')
-      ),
+      )
     },
     '/systemServer/sysChannel': {
-      component: dynamicWrapper(app, [], () => import('../routes/SystemServer/SysChannel_list')),
+      component: dynamicWrapper(app, [], () => import('../routes/SystemServer/SysChannel_list'))
     },
     '/systemServer/sysChannelItem': {
       component: dynamicWrapper(app, [], () =>
         import('../routes/SystemServer/SysChannelItem_list')
-      ),
+      )
     },
     '/systemServer/sysLabel': {
-      component: dynamicWrapper(app, [], () => import('../routes/SystemServer/SysLabel_list')),
+      component: dynamicWrapper(app, [], () => import('../routes/SystemServer/SysLabel_list'))
     },
+
     '/orderServer/orderProduct': {
-      component: dynamicWrapper(app, [], () => import('../routes/OrderServer/OrderProduct_list')),
+      component: dynamicWrapper(app, [], () => import('../routes/OrderServer/OrderProduct_list'))
     },
     '/orderServer/orderProductType': {
       component: dynamicWrapper(app, [], () =>
         import('../routes/OrderServer/OrderProductType_list')
-      ),
+      )
     },
+
     '/courseServer/courseAuthor': {
-      component: dynamicWrapper(app, [], () => import('../routes/CourseServer/CourseAuthor_list')),
+      component: dynamicWrapper(app, [], () => import('../routes/CourseServer/CourseAuthor_list'))
     },
     '/courseServer/courseColumn': {
-      component: dynamicWrapper(app, [], () => import('../routes/CourseServer/CourseColumn_list')),
+      component: dynamicWrapper(app, [], () => import('../routes/CourseServer/CourseColumn_list'))
     },
     '/courseServer/courseTag': {
-      component: dynamicWrapper(app, [], () => import('../routes/CourseServer/CourseTag_list')),
+      component: dynamicWrapper(app, [], () => import('../routes/CourseServer/CourseTag_list'))
     },
     '/courseServer/courseInfo': {
-      component: dynamicWrapper(app, [], () => import('../routes/CourseServer/CourseInfo_list')),
+      component: dynamicWrapper(app, [], () => import('../routes/CourseServer/CourseInfo_list'))
     },
     '/courseServer/courseChapter': {
-      component: dynamicWrapper(app, [], () => import('../routes/CourseServer/CourseChapter_list')),
+      component: dynamicWrapper(app, [], () => import('../routes/CourseServer/CourseChapter_list'))
     },
     '/courseServer/courseChapterAudio': {
       component: dynamicWrapper(app, [], () =>
         import('../routes/CourseServer/CourseChapterAudio_list')
-      ),
+      )
     },
     '/courseServer/courseChapterNote': {
       component: dynamicWrapper(app, [], () =>
         import('../routes/CourseServer/CourseChapterNote_list')
-      ),
+      )
     },
 
     '/courseServer/courseChapterVideo': {
       component: dynamicWrapper(app, [], () =>
         import('../routes/CourseServer/CourseChapterVideo_list')
-      ),
+      )
     },
     '/courseServer/courseRelChapter': {
-      component: dynamicWrapper(app, [], () => import('../routes/CourseServer/CourseRelChapter_list')),
+      component: dynamicWrapper(app, [], () =>
+        import('../routes/CourseServer/CourseRelChapter_list')
+      )
     },
+
+    '/priServer/priFunction': {
+      component: dynamicWrapper(app, [], () => import('../routes/PriServer/PriFunction_list'))
+    },
+    '/priServer/priPackage': {
+      component: dynamicWrapper(app, [], () => import('../routes/PriServer/PriPackage_list'))
+    },
+    '/priServer/priPackageItem': {
+      component: dynamicWrapper(app, [], () => import('../routes/PriServer/PriPackageItem_list'))
+    },
+
+    '/vipServer/vipCourse': {
+      component: dynamicWrapper(app, [], () => import('../routes/VipServer/VipCourse_list'))
+    },
+    '/vipServer/vipCourseDemo': {
+      component: dynamicWrapper(app, [], () => import('../routes/VipServer/VipCourseDemo_list'))
+    },
+    '/vipServer/vipCourseType': {
+      component: dynamicWrapper(app, [], () => import('../routes/VipServer/VipCourseType_list'))
+    },
+    '/vipServer/vipPackage': {
+      component: dynamicWrapper(app, [], () => import('../routes/VipServer/VipPackage_list'))
+    },
+
     '/systemServer/sysBlackBook': {
-      component: dynamicWrapper(app, ['crud'], () => import('../routes/SystemServer/SysBlackBook')),
+      component: dynamicWrapper(app, ['crud'], () => import('../routes/SystemServer/SysBlackBook'))
     },
     '/systemServer/gateClient': {
-      component: dynamicWrapper(app, ['crud'], () => import('../routes/AuthServer/GateClient')),
+      component: dynamicWrapper(app, ['crud'], () => import('../routes/AuthServer/GateClient'))
     },
     '/systemServer/sysCarousel': {
       component: dynamicWrapper(app, ['crud'], () =>
         import('../routes/SystemServer/SysCarousel_list')
-      ),
+      )
     },
     '/systemServer/sysCheckRule': {
       component: dynamicWrapper(app, ['crud'], () =>
         import('../routes/SystemServer/SysCheckRule_list')
-      ),
+      )
     },
     '/systemServer/sysTerminalAccess': {
       component: dynamicWrapper(app, ['crud'], () =>
         import('../routes/SystemServer/SysTerminalAccess_list')
-      ),
+      )
     },
+
     '/bookServer/bookStyle': {
-      component: dynamicWrapper(app, ['crud'], () => import('../routes/BookServer/BookStyle_list')),
+      component: dynamicWrapper(app, ['crud'], () => import('../routes/BookServer/BookStyle_list'))
     },
-
     '/bookServer/bookReadnote': {
-      component: dynamicWrapper(app, [], () => import('../routes/BookServer/BookReadnote_list')),
+      component: dynamicWrapper(app, [], () => import('../routes/BookServer/BookReadnote_list'))
     },
-
     '/bookServer/bookProp': {
-      component: dynamicWrapper(app, ['crud'], () => import('../routes/BookServer/BookProp_list')),
+      component: dynamicWrapper(app, ['crud'], () => import('../routes/BookServer/BookProp_list'))
     },
     '/bookServer/bookType': {
-      component: dynamicWrapper(app, ['crud'], () => import('../routes/BookServer/BookType_list')),
+      component: dynamicWrapper(app, ['crud'], () => import('../routes/BookServer/BookType_list'))
     },
     '/bookServer/bookStorage': {
-      component: dynamicWrapper(app, ['crud'], () => import('../routes/BookServer/BookStorage_list')),
+      component: dynamicWrapper(app, ['crud'], () =>
+        import('../routes/BookServer/BookStorage_list')
+      )
     },
     '/bookServer/bookUserGood': {
-      component: dynamicWrapper(app, ['crud'], () => import('../routes/BookServer/BookUserGood_list')),
+      component: dynamicWrapper(app, ['crud'], () =>
+        import('../routes/BookServer/BookUserGood_list')
+      )
     },
     '/bookServer/bookBuy': {
-      component: dynamicWrapper(app, ['crud'], () => import('../routes/BookServer/BookBuy_list')),
+      component: dynamicWrapper(app, ['crud'], () => import('../routes/BookServer/BookBuy_list'))
     },
     '/bookServer/bookPrivate': {
-      component: dynamicWrapper(app, ['crud'], () => import('../routes/BookServer/BookPrivate_list')),
+      component: dynamicWrapper(app, ['crud'], () =>
+        import('../routes/BookServer/BookPrivate_list')
+      )
     },
     '/bookServer/bookShare': {
-      component: dynamicWrapper(app, ['crud'], () => import('../routes/BookServer/BookShare_list')),
+      component: dynamicWrapper(app, ['crud'], () => import('../routes/BookServer/BookShare_list'))
     },
+
     '/userServer/userFeedback': {
       component: dynamicWrapper(app, ['crud'], () =>
         import('../routes/UserServer/UserFeedback_list')
-      ),
+      )
     },
+
     '/uploadbookServer/uploadBook': {
       component: dynamicWrapper(app, ['crud'], () =>
         import('../routes/UploadBookServer/UploadBook_list')
-      ),
+      )
     },
+
     '/systemServer/gateClientService': {
       component: dynamicWrapper(app, ['crud'], () =>
         import('../routes/AuthServer/GateClientService')
-      ),
+      )
     },
+    '/dyna/topic': {
+      component: dynamicWrapper(app, ['crud'], () => import('../routes/dyna/topicList'))
+    },
+    '/dyna/complaint': {
+      component: dynamicWrapper(app, ['crud'], () => import('../routes/dyna/topicComplaintList'))
+    },
+    '/dyna/comment': {
+      component: dynamicWrapper(app, ['crud'], () => import('../routes/dyna/topicCommentList'))
+    },
+    '/dyna/reply': {
+      component: dynamicWrapper(app, [], () => import('../routes/dyna/topicCommentReplyList'))
+    },
+
+    '/FindServer/findList': {
+      component: dynamicWrapper(app, ['crud'], () =>
+        import('../routes/FindServer/FindList/FindList_list')
+      )
+    },
+    '/FindServer/findListBook': {
+      component: dynamicWrapper(app, ['crud'], () =>
+        import('../routes/FindServer/FindList/FindListBook_list')
+      )
+    },
+    '/FindServer/findSpec': {
+      component: dynamicWrapper(app, ['crud'], () =>
+        import('../routes/FindServer/FindSpec/FindSpec_list')
+      )
+    },
+    '/FindServer/findSpecBook': {
+      component: dynamicWrapper(app, ['crud'], () =>
+        import('../routes/FindServer/FindSpec/FindSpecBook_list')
+      )
+    },
+    '/FindServer/findSpecCourse': {
+      component: dynamicWrapper(app, ['crud'], () =>
+        import('../routes/FindServer/FindSpec/FindSpecCourse_list')
+      )
+    },
+    '/FindServer/findChannel': {
+      component: dynamicWrapper(app, ['crud'], () =>
+        import('../routes/FindServer/FindChannel/FindChannel_list')
+      )
+    },
+    '/FindServer/findUnscramble': {
+      component: dynamicWrapper(app, ['crud'], () =>
+        import('../routes/FindServer/FindUnscramble/FindUnscramble_list')
+      )
+    },
+    '/FindServer/findSuggestBook': {
+      component: dynamicWrapper(app, ['crud'], () =>
+        import('../routes/FindServer/FindSuggestBook/FindSuggestBook_list')
+      )
+    },
+    '/FindServer/findTop': {
+      component: dynamicWrapper(app, ['crud'], () =>
+        import('../routes/FindServer/FindTop/FindTop_list')
+      )
+    },
+    '/FindServer/findTopBook': {
+      component: dynamicWrapper(app, ['crud'], () =>
+        import('../routes/FindServer/FindTop/FindTopBook_list')
+      )
+    },
+    '/systemServer/sysAnalysisTag': {
+      component: dynamicWrapper(app, ['crud'], () =>
+        import('../routes/SystemServer/SysAnalysisTag_list')
+      )
+    }
+
     // '/user/:id': {
     //   component: dynamicWrapper(app, [], () => import('../routes/User/SomeComponent')),
     // },
@@ -301,7 +409,7 @@ export const getRouterData = app => {
       ...router,
       name: router.name || menuItem.name,
       authority: router.authority || menuItem.authority,
-      hideInBreadcrumb: router.hideInBreadcrumb || menuItem.hideInBreadcrumb,
+      hideInBreadcrumb: router.hideInBreadcrumb || menuItem.hideInBreadcrumb
     };
     routerData[path] = router;
   });

@@ -2,7 +2,7 @@ import moment from 'moment';
 import { parse, stringify } from 'qs';
 
 export function fixedZero(val) {
-  return val * 1 < 10 ? `0${val}` : val;
+  return Number(val) < 10 ? `0${val}` : val;
 }
 
 export function getTimeDistance(type) {
@@ -42,7 +42,7 @@ export function getTimeDistance(type) {
 
     return [
       moment(`${year}-${fixedZero(month + 1)}-01 00:00:00`),
-      moment(moment(`${nextYear}-${fixedZero(nextMonth + 1)}-01 00:00:00`).valueOf() - 1000),
+      moment(moment(`${nextYear}-${fixedZero(nextMonth + 1)}-01 00:00:00`).valueOf() - 1000)
     ];
   }
 
@@ -156,7 +156,7 @@ export function getRoutes(path, routerData) {
       exact,
       ...routerData[`${path}${item}`],
       key: `${path}${item}`,
-      path: `${path}${item}`,
+      path: `${path}${item}`
     };
   });
   return renderRoutes;
@@ -174,6 +174,14 @@ export function getQueryPath(path = '', query = {}) {
   return path;
 }
 
+export function translateDate(value) {
+  if (value === undefined || value == null || value === 0) {
+    return '';
+  }
+  const string = value.toString();
+  return `${string.substring(0, 4)}年${string.substring(4, 6)}月${string.substring(6, 8)}日`;
+}
+
 /* eslint no-useless-escape:0 */
 const reg = /(((^https?:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+(?::\d+)?|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)$/;
 
@@ -185,24 +193,32 @@ export function defaultPage() {
 }
 
 /**
- * 
+ *
  * @param {*} multiplicand 被乘数
  * @param {*} multiplier 乘数
  */
 export function mul(multiplicand, multiplier) {
-  let m  =0,s1 = multiplicand.toString(),s2 = multiplier.toString();
-  try{m += s1.split(".")[1].length}catch(e){};
-  try{m += s2.split(".")[1].length}catch(e){};
-  return Number(s1.replace(".", "")) * Number(s2.replace(".","")) / Math.pow(10, m);
+  let m = 0;
+
+  const s1 = multiplicand.toString();
+
+  const s2 = multiplier.toString();
+  try {
+    m += s1.split('.')[1].length;
+  } catch (e) {}
+  try {
+    m += s2.split('.')[1].length;
+  } catch (e) {}
+  return (Number(s1.replace('.', '')) * Number(s2.replace('.', ''))) / Math.pow(10, m);
 }
 
 /**
- * 
+ *
  * @param {*} dividend 被除数
  * @param {*} divisor 除数
- * @param {*} intensive 精度 
+ * @param {*} intensive 精度
  * @param {*} method ceil, floor, round
  */
 export function div(dividend, divisor, intensive, method) {
-  return Math[method](dividend/divisor).toFixed(intensive);
+  return Math[method](dividend / divisor).toFixed(intensive);
 }

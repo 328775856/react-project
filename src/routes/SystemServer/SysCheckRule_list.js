@@ -17,7 +17,7 @@ import {
   message,
   Badge,
   Divider,
-  Table,
+  Table
 } from 'antd';
 import StandardTable from 'components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
@@ -25,10 +25,11 @@ import styles from '../../assets/styles.less';
 import CreateEditForm from './SysCheckRule_edit';
 import CreateFindForm from './SysCheckRule_find';
 import { defaultPage } from '../../utils/utils.js';
+
 const FormItem = Form.Item;
 @connect(({ tableData, loading }) => ({
   tableData,
-  loading: loading.models.crud,
+  loading: loading.models.crud
 }))
 @Form.create()
 export default class SysCheckRule extends PureComponent {
@@ -36,7 +37,7 @@ export default class SysCheckRule extends PureComponent {
     modalVisible: false,
     modalTitle: '',
     formValues: {},
-    page: defaultPage(),
+    page: defaultPage()
   };
 
   refresh = (values, page) => {
@@ -46,11 +47,11 @@ export default class SysCheckRule extends PureComponent {
       path: 'sysCheckRule/page',
       payload: {
         data: values,
-        page: page,
-      },
+        page
+      }
     });
     this.setState({
-      modalVisible: false,
+      modalVisible: false
     });
   };
 
@@ -61,12 +62,12 @@ export default class SysCheckRule extends PureComponent {
 
   tableChange = (pagination, filtersArg, sorter) => {
     const { formValues } = this.state;
-    let page = {
+    const page = {
       pageSize: pagination.pageSize,
-      pageNo: pagination.current,
+      pageNo: pagination.current
     };
     this.setState({
-      page: page,
+      page
     });
     this.refresh(formValues, page);
   };
@@ -96,12 +97,13 @@ export default class SysCheckRule extends PureComponent {
           type: 'tableData/remove',
           path: 'sysCheckRule/remove',
           payload: { sysCheckRuleId: record.sysCheckRuleId },
-          callback: cb,
+          callback: cb
         });
       },
-      onCancel() {},
+      onCancel() {}
     });
   };
+
   query = e => {
     e.preventDefault();
     const { dispatch, form } = this.props;
@@ -109,12 +111,12 @@ export default class SysCheckRule extends PureComponent {
       if (err) return;
 
       const values = {
-        ...fieldsValue,
+        ...fieldsValue
       };
       const page = defaultPage();
       this.setState({
         formValues: values,
-        page: page,
+        page
       });
       this.refresh(values, page);
     });
@@ -122,19 +124,20 @@ export default class SysCheckRule extends PureComponent {
 
   closeModal = () => {
     this.setState({
-      modalVisible: false,
+      modalVisible: false
     });
   };
+
   getDataForAdd = fields => {
     const { dispatch } = this.props;
     dispatch({
       type: 'tableData/getDataForAdd',
       path: 'sysCheckRule/getDataForAdd',
-      payload: fields,
+      payload: fields
     });
     this.setState({
       modalTitle: '新增',
-      modalVisible: true,
+      modalVisible: true
     });
   };
 
@@ -144,7 +147,7 @@ export default class SysCheckRule extends PureComponent {
       type: 'tableData/add',
       path: 'sysCheckRule/add',
       payload: fields,
-      callback: this.callback,
+      callback: this.callback
     });
   };
 
@@ -153,25 +156,25 @@ export default class SysCheckRule extends PureComponent {
     dispatch({
       type: 'tableData/getDataForUpdate',
       path: 'sysCheckRule/getDataForUpdate',
-      payload: { sysCheckRuleId: record.sysCheckRuleId },
+      payload: { sysCheckRuleId: record.sysCheckRuleId }
     });
     this.setState({
       modalTitle: '修改',
-      modalVisible: true,
+      modalVisible: true
     });
   };
 
   update = fields => {
     const { dispatch, tableData } = this.props;
-    let payload = {
+    const payload = {
       ...tableData.formData,
-      ...fields,
+      ...fields
     };
     dispatch({
       type: 'tableData/update',
       path: 'sysCheckRule/update',
-      payload: payload,
-      callback: this.callback,
+      payload,
+      callback: this.callback
     });
   };
 
@@ -186,15 +189,15 @@ export default class SysCheckRule extends PureComponent {
     const columns = [
       {
         title: '系统id',
-        dataIndex: 'sysCheckRuleId',
+        dataIndex: 'sysCheckRuleId'
       },
       {
         title: '规则',
-        dataIndex: 'checkRule',
+        dataIndex: 'checkRule'
       },
       {
         title: '备注',
-        dataIndex: 'remark',
+        dataIndex: 'remark'
       },
       {
         title: '操作',
@@ -204,14 +207,14 @@ export default class SysCheckRule extends PureComponent {
             <Divider type="vertical" />
             <a onClick={() => this.remove(record)}>删除</a>
           </Fragment>
-        ),
-      },
+        )
+      }
     ];
 
     const parentMethods = {
       add: this.add,
       update: this.update,
-      closeModal: this.closeModal,
+      closeModal: this.closeModal
     };
     return (
       <PageHeaderLayout>
@@ -219,7 +222,10 @@ export default class SysCheckRule extends PureComponent {
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
             <div className={styles.tableListOperator}>
-              <Button type="primary" onClick={() => this.getDataForAdd()}>
+              <Button
+                type="primary"
+                onClick={() => this.getDataForAdd()}
+              >
                 新建
               </Button>
             </div>

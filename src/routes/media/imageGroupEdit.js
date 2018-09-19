@@ -15,8 +15,9 @@ import {
   Modal,
   message,
   Badge,
-  Divider,
+  Divider
 } from 'antd';
+
 const FormItem = Form.Item;
 const CreateEditForm = Form.create()(props => {
   const { modalVisible, form, addSave, updateSave, closeModal, formData, title } = props;
@@ -33,7 +34,12 @@ const CreateEditForm = Form.create()(props => {
     });
   };
   return (
-    <Modal title={title} visible={modalVisible} onOk={okHandle} onCancel={() => closeModal()}>
+    <Modal
+      title={title}
+      visible={modalVisible}
+      onOk={okHandle}
+      onCancel={() => closeModal()}
+    >
       <FormItem
         labelCol={{ span: 5 }}
         wrapperCol={{ span: 15 }}
@@ -42,25 +48,46 @@ const CreateEditForm = Form.create()(props => {
       >
         {form.getFieldDecorator('mediaImageGroupId', {})(<Input />)}
       </FormItem>
-      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="分组名称">
+      <FormItem
+        labelCol={{ span: 5 }}
+        wrapperCol={{ span: 15 }}
+        label="分组名称"
+      >
         {form.getFieldDecorator('imageGroupName', {
           initialValue: formData.imageGroupName || '',
-          rules: [{ required: true, message: '请输入分组名称...' }],
-        })(<Input placeholder="请输入" value={formData.imageGroupName} />)}
+          rules: [{ required: true, message: '请输入分组名称...' }]
+        })(<Input
+          placeholder="请输入"
+          value={formData.imageGroupName}
+        />)}
       </FormItem>
-      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="顺序">
+      <FormItem
+        labelCol={{ span: 5 }}
+        wrapperCol={{ span: 15 }}
+        label="顺序"
+      >
         {form.getFieldDecorator('indexNo', {
           initialValue: formData.indexNo || '',
-          rules: [{ required: true, message: '请输入顺序...' }],
-        })(<Input placeholder="请输入" value={formData.indexNo} />)}
+          rules: [{ required: true, message: '请输入顺序...' }]
+        })(<Input
+          placeholder="请输入"
+          value={formData.indexNo}
+        />)}
       </FormItem>
-      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="是否默认">
+      <FormItem
+        labelCol={{ span: 5 }}
+        wrapperCol={{ span: 15 }}
+        label="是否默认"
+      >
         {form.getFieldDecorator('isDefault', {
-          initialValue: formData.isDefault || '',
+          initialValue: formData.isDefault || ''
         })(
-          <Select value={formData.isDefault} style={{ width: '100%' }}>
-              <Select.Option value="1">是</Select.Option>
-              <Select.Option value="0">否</Select.Option>
+          <Select
+            value={formData.isDefault}
+            style={{ width: '100%' }}
+          >
+            <Select.Option value="1">是</Select.Option>
+            <Select.Option value="0">否</Select.Option>
           </Select>
         )}
       </FormItem>

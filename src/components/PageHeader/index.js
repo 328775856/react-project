@@ -24,11 +24,11 @@ export default class PageHeader extends PureComponent {
     routes: PropTypes.array,
     params: PropTypes.object,
     location: PropTypes.object,
-    breadcrumbNameMap: PropTypes.object,
+    breadcrumbNameMap: PropTypes.object
   };
 
   state = {
-    breadcrumb: null,
+    breadcrumb: null
   };
 
   componentDidMount() {
@@ -55,20 +55,20 @@ export default class PageHeader extends PureComponent {
       routes: croutes,
       params: cparams,
       location: clocation,
-      breadcrumbNameMap: cbreadcrumbNameMap,
+      breadcrumbNameMap: cbreadcrumbNameMap
     } = this.context;
     return {
       routes: routes || croutes,
       params: params || cparams,
       routerLocation: location || clocation,
-      breadcrumbNameMap: breadcrumbNameMap || cbreadcrumbNameMap,
+      breadcrumbNameMap: breadcrumbNameMap || cbreadcrumbNameMap
     };
   };
 
   getBreadcrumbDom = () => {
     const breadcrumb = this.conversionBreadcrumbList();
     this.setState({
-      breadcrumb,
+      breadcrumb
     });
   };
 
@@ -76,18 +76,21 @@ export default class PageHeader extends PureComponent {
   conversionFromProps = () => {
     const { breadcrumbList, breadcrumbSeparator, linkElement = 'a' } = this.props;
     return (
-      <Breadcrumb className={styles.breadcrumb} separator={breadcrumbSeparator}>
+      <Breadcrumb
+        className={styles.breadcrumb}
+        separator={breadcrumbSeparator}
+      >
         {breadcrumbList.map(item => (
           <Breadcrumb.Item key={item.title}>
-            {item.href
-              ? createElement(
-                  linkElement,
-                  {
-                    [linkElement === 'a' ? 'href' : 'to']: item.href,
-                  },
-                  item.title
-                )
-              : item.title}
+            {item.href ?
+              createElement(
+                linkElement,
+                {
+                  [linkElement === 'a' ? 'href' : 'to']: item.href
+                },
+                item.title
+              ) :
+              item.title}
           </Breadcrumb.Item>
         ))}
       </Breadcrumb>
@@ -118,14 +121,17 @@ export default class PageHeader extends PureComponent {
         {createElement(
           linkElement,
           {
-            [linkElement === 'a' ? 'href' : 'to']: '/',
+            [linkElement === 'a' ? 'href' : 'to']: '/'
           },
           '首页'
         )}
       </Breadcrumb.Item>
     );
     return (
-      <Breadcrumb className={styles.breadcrumb} separator={breadcrumbSeparator}>
+      <Breadcrumb
+        className={styles.breadcrumb}
+        separator={breadcrumbSeparator}
+      >
         {extraBreadcrumbItems}
       </Breadcrumb>
     );
@@ -169,16 +175,16 @@ export default class PageHeader extends PureComponent {
     const last = routes.indexOf(route) === routes.length - 1;
     return last || !route.component ? (
       <span>{route.breadcrumbName}</span>
-    ) : (
+    ) :
       createElement(
         linkElement,
         {
           href: paths.join('/') || '/',
-          to: paths.join('/') || '/',
+          to: paths.join('/') || '/'
         },
         route.breadcrumbName
       )
-    );
+    ;
   };
 
   render() {
@@ -192,7 +198,7 @@ export default class PageHeader extends PureComponent {
       className,
       tabActiveKey,
       tabDefaultActiveKey,
-      tabBarExtraContent,
+      tabBarExtraContent
     } = this.props;
     const { breadcrumb } = this.state;
 
@@ -223,15 +229,18 @@ export default class PageHeader extends PureComponent {
         </div>
         {tabList &&
           tabList.length && (
-            <Tabs
-              className={styles.tabs}
-              {...activeKeyProps}
-              onChange={this.onChange}
-              tabBarExtraContent={tabBarExtraContent}
-            >
-              {tabList.map(item => <TabPane tab={item.tab} key={item.key} />)}
-            </Tabs>
-          )}
+          <Tabs
+            className={styles.tabs}
+            {...activeKeyProps}
+            onChange={this.onChange}
+            tabBarExtraContent={tabBarExtraContent}
+          >
+            {tabList.map(item => <TabPane
+              tab={item.tab}
+              key={item.key}
+            />)}
+          </Tabs>
+        )}
       </div>
     );
   }

@@ -12,10 +12,11 @@ import {
   Icon,
   Tooltip,
   Row,
-  Col,
+  Col
 } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import Ueditor from '../../components/Ueditor/Ueditor';
+
 const FormItem = Form.Item;
 const { Option } = Select;
 const { RangePicker } = DatePicker;
@@ -23,12 +24,13 @@ const { TextArea } = Input;
 @Form.create()
 export default class Editor extends PureComponent {
   state = {
-    data: '',
+    data: ''
   };
 
   constructor(props) {
     super(props);
   }
+
   handleSubmit = () => {
     const data = UE.getEditor('content').getContent();
     this.setState({ data });
@@ -38,7 +40,10 @@ export default class Editor extends PureComponent {
     return (
       <PageHeaderLayout>
         <div>
-          <Ueditor id="content" height="200" />
+          <Ueditor
+            id="content"
+            height="200"
+          />
           <button onClick={this.handleSubmit}>保存</button>
           <p>{this.state.data}</p>
         </div>

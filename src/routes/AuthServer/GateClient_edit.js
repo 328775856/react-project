@@ -15,8 +15,9 @@ import {
   Modal,
   message,
   Badge,
-  Divider,
+  Divider
 } from 'antd';
+
 const FormItem = Form.Item;
 const CreateEditForm = Form.create()(props => {
   const { modalVisible, form, addSave, updateSave, closeModal, formData, title } = props;
@@ -33,18 +34,37 @@ const CreateEditForm = Form.create()(props => {
     });
   };
   return (
-    <Modal title={title} visible={modalVisible} onOk={okHandle} onCancel={() => closeModal()}>
-      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="code">
+    <Modal
+      title={title}
+      visible={modalVisible}
+      onOk={okHandle}
+      onCancel={() => closeModal()}
+    >
+      <FormItem
+        labelCol={{ span: 5 }}
+        wrapperCol={{ span: 15 }}
+        label="code"
+      >
         {form.getFieldDecorator('code', {
           initialValue: formData.code || '',
-          rules: [{ required: true, message: '请输入code...' }],
-        })(<Input placeholder="请输入" value={formData.code} />)}
+          rules: [{ required: true, message: '请输入code...' }]
+        })(<Input
+          placeholder="请输入"
+          value={formData.code}
+        />)}
       </FormItem>
-      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="secret">
+      <FormItem
+        labelCol={{ span: 5 }}
+        wrapperCol={{ span: 15 }}
+        label="secret"
+      >
         {form.getFieldDecorator('secret', {
           initialValue: formData.secret || '',
-          rules: [{ required: true, message: '请输入备注...' }],
-        })(<Input placeholder="请输入" value={formData.secret} />)}
+          rules: [{ required: true, message: '请输入备注...' }]
+        })(<Input
+          placeholder="请输入"
+          value={formData.secret}
+        />)}
       </FormItem>
     </Modal>
   );

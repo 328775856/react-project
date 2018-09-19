@@ -18,26 +18,28 @@ import {
   message,
   Badge,
   Divider,
-  Table,
+  Table
 } from 'antd';
 import StandardTable from 'components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from '../../assets/styles.less';
-const FormItem = Form.Item;
 import CreateConditionForm from './SelectTag_condition';
 import { getUrl, postUrl } from '../../services/api';
 
+const FormItem = Form.Item;
+
 @connect(({ selectData, loading }) => ({
   selectData,
-  loading: loading.models.selectTable,
+  loading: loading.models.selectTable
 }))
 @Form.create()
 export default class SelectTag extends React.Component {
   state = {
     selectedRows: [],
     formValues: {},
-    modalVisibleTemp: true,
+    modalVisibleTemp: true
   };
+
   constructor(props) {
     super(props);
   }
@@ -49,8 +51,8 @@ export default class SelectTag extends React.Component {
       path: 'courseTag/page',
       payload: {
         data: params,
-        page: page,
-      },
+        page
+      }
     });
   };
 
@@ -58,26 +60,26 @@ export default class SelectTag extends React.Component {
     this.query({}, { pageNo: 1, pageSize: 10 });
   }
 
-  componentDidUpdate  () {
-    const {  modalVisible } = this.props;
+  componentDidUpdate() {
+    const { modalVisible } = this.props;
     if (modalVisible === this.state.modalVisibleTemp) {
       return;
     }
-    this.setState({modalVisibleTemp: modalVisible});
+    this.setState({ modalVisibleTemp: modalVisible });
     if (modalVisible === true) {
       this.init();
     }
   }
 
   init = () => {
-    this.query({},{pageNo:1,pageSize:10});
-  }
+    this.query({}, { pageNo: 1, pageSize: 10 });
+  };
 
   tableChange = (pagination, filtersArg, sorter) => {
     const { formValues } = this.state;
     const page = {
       pageNo: pagination.current,
-      pageSize: pagination.pageSize,
+      pageSize: pagination.pageSize
     };
     this.query(formValues, page);
   };
@@ -86,9 +88,10 @@ export default class SelectTag extends React.Component {
     const { form } = this.props;
     form.resetFields();
   };
+
   onRowClick = row => {
     this.setState({
-      selectedRows: row,
+      selectedRows: row
     });
   };
 
@@ -99,17 +102,16 @@ export default class SelectTag extends React.Component {
       if (err) return;
 
       const values = {
-        ...fieldsValue,
+        ...fieldsValue
       };
       this.setState({
-        formValues: values,
+        formValues: values
       });
       this.query(values, { pageNo: 1, pageSize: 10 });
     });
   };
 
   renderForm(groupList) {
-
     return CreateConditionForm(this.props, this.formSubmit, this.formReset);
   }
 
@@ -119,36 +121,36 @@ export default class SelectTag extends React.Component {
       selectData: { formData },
       callReturn,
       closeModal,
-      modalVisible,
+      modalVisible
     } = this.props;
 
     const columns = [
       {
         title: '标签',
-        dataIndex: 'tagName',
+        dataIndex: 'tagName'
       },
       {
         title: '顺序',
-        dataIndex: 'indexNo',
-      },
+        dataIndex: 'indexNo'
+      }
     ];
 
     const rowSelection = {
       type: 'radio',
       hideDefaultSelections: 'true',
       onChange: (selectedRowKeys, selectedRows) => {
-        //console.log('selectedRows',selectedRows);//得到每一项的信息，也就是每一项的信息[{key: 1, name: "花骨朵", age: 18, hobby: "看书"}]
+        // console.log('selectedRows',selectedRows);//得到每一项的信息，也就是每一项的信息[{key: 1, name: "花骨朵", age: 18, hobby: "看书"}]
       },
       onSelect: (record, selected, selectedRows) => {
-        //console.log('selectedRows',selectedRows); //选中的每行信息，是一个数组
+        // console.log('selectedRows',selectedRows); //选中的每行信息，是一个数组
         callReturn(selectedRows);
       },
       onSelectAll: (selected, selectedRows, changeRows) => {
-        //console.log('changeRows',changeRows);   //变化的每一项
+        // console.log('changeRows',changeRows);   //变化的每一项
       },
       onSelectInvert: selectedRows => {
-        //console.log('selectedRows',selectedRows);
-      },
+        // console.log('selectedRows',selectedRows);
+      }
     };
 
     return (

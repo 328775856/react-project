@@ -24,13 +24,13 @@ class GbUpload extends React.Component {
     fileList:
       this.props.fileList instanceof Array &&
       (this.props.fileList.length === 0 ||
-        (this.props.fileList[0].fileName && this.props.fileList[0].fileName !== 'undefined'))
-        ? this.props.fileList
-        : [],
+        (this.props.fileList[0].fileName && this.props.fileList[0].fileName !== 'undefined')) ?
+        this.props.fileList :
+        [],
     accept: this.props.accept ? this.props.accept : 'image/*',
 
     action: this.props.action ? this.props.action : '/upload/uploadImage',
-    fileHead: this.props.fileHead ? this.props.fileHead : 'image://',
+    fileHead: this.props.fileHead ? this.props.fileHead : 'image://'
   };
 
   /**
@@ -49,7 +49,7 @@ class GbUpload extends React.Component {
   handlePreview = file => {
     this.setState({
       previewImage: file.url || file.thumbUrl,
-      previewVisible: true,
+      previewVisible: true
     });
   };
 
@@ -59,7 +59,7 @@ class GbUpload extends React.Component {
    */
 
   handleChange = e => {
-    let fileList = this.handleUpload(e);
+    const fileList = this.handleUpload(e);
     this.props.onChange(fileList);
   };
 
@@ -70,17 +70,17 @@ class GbUpload extends React.Component {
    */
 
   handleUpload = e => {
-    //再进行实际筛选，其实上面那一行没有用
-    let fileList = e.fileList.map(file => {
+    // 再进行实际筛选，其实上面那一行没有用
+    const fileList = e.fileList.map(file => {
       if (file.response) {
-        //这个地方是上传结束之后会调用的方法，这边是判断success!!!
+        // 这个地方是上传结束之后会调用的方法，这边是判断success!!!
         if (file.response.success) {
           return this.filter(file);
         }
       }
       return file;
     });
-    this.setState({ fileList: fileList });
+    this.setState({ fileList });
     return fileList;
   };
 
@@ -98,7 +98,7 @@ class GbUpload extends React.Component {
       format: response.data.format || '',
       millisecond: response.data.millisecond || 0,
       uid,
-      status,
+      status
     };
   };
 
@@ -118,7 +118,7 @@ class GbUpload extends React.Component {
   };
 
   resetState = props => {
-    let newState = {
+    const newState = {
       uid: props.uid,
       previewVisible: false,
       length: props.length,
@@ -127,13 +127,13 @@ class GbUpload extends React.Component {
       fileList:
         props.fileList instanceof Array &&
         (props.fileList.length === 0 ||
-          (props.fileList[0].fileName && props.fileList[0].fileName !== 'undefined'))
-          ? props.fileList
-          : [],
+          (props.fileList[0].fileName && props.fileList[0].fileName !== 'undefined')) ?
+          props.fileList :
+          [],
       accept: props.accept ? props.accept : 'image/*',
 
       action: props.action ? props.action : '/upload/uploadImage',
-      fileHead: props.fileHead ? props.fileHead : 'image://',
+      fileHead: props.fileHead ? props.fileHead : 'image://'
     };
     this.setState(newState);
   };
@@ -149,7 +149,7 @@ class GbUpload extends React.Component {
 
   render() {
     const { previewVisible, previewImage } = this.state;
-    let fileList = this.state.fileList;
+    const fileList = this.state.fileList;
     if (fileList.length > 0) {
       fileList.map((file, i) => {
         if (!file.url || !file.url.startsWith('http://')) {
@@ -158,7 +158,7 @@ class GbUpload extends React.Component {
       });
     }
 
-    //一共有多少个图片
+    // 一共有多少个图片
     const uploadButton =
       fileList.length >= this.props.length ? null : (
         <div>
@@ -170,20 +170,28 @@ class GbUpload extends React.Component {
     const props = {
       uid: this.state.uid,
       action: this.state.action,
-      fileList: fileList,
+      fileList,
       headers: { 'X-Requested-With': null },
       accept: this.props.accept ? this.props.accept : 'image/*',
       onChange: this.handleChange,
       beforeUpload: this.beforeUpload,
       onPreview: this.handlePreview,
-      listType: 'picture-card',
+      listType: 'picture-card'
     };
 
     return (
       <div className="clearfix">
         <Upload {...props}>{fileList.length >= this.state.length ? null : uploadButton}</Upload>
-        <Modal visible={previewVisible} footer={null} onCancel={this.handleCancel}>
-          <img alt="example" style={{ width: '100%' }} src={previewImage} />
+        <Modal
+          visible={previewVisible}
+          footer={null}
+          onCancel={this.handleCancel}
+        >
+          <img
+            alt="example"
+            style={{ width: '100%' }}
+            src={previewImage}
+          />
         </Modal>
       </div>
     );

@@ -15,8 +15,9 @@ import {
   Modal,
   message,
   Badge,
-  Divider,
+  Divider
 } from 'antd';
+
 const FormItem = Form.Item;
 const CreateEditForm = Form.create()(props => {
   const { modalVisible, form, add, update, closeModal, formData, title } = props;
@@ -37,37 +38,48 @@ const CreateEditForm = Form.create()(props => {
     labelCol: {
       xs: { span: 24 },
       sm: { span: 7 },
-      md: { span: 5 },
+      md: { span: 5 }
     },
     wrapperCol: {
       xs: { span: 24 },
       sm: { span: 12 },
-      md: { span: 13 },
-    },
+      md: { span: 13 }
+    }
   };
 
   return (
-    <Modal title={title} visible={modalVisible} onOk={okHandle} onCancel={() => closeModal()}>
-      <FormItem {...formItemLayout} label="规则">
+    <Modal
+      title={title}
+      visible={modalVisible}
+      onOk={okHandle}
+      onCancel={() => closeModal()}
+    >
+      <FormItem
+        {...formItemLayout}
+        label="规则"
+      >
         {form.getFieldDecorator('checkRule', {
           initialValue: formData.checkRule || '',
           rules: [
             {
               required: true,
-              message: '请输入规则...',
-            },
-          ],
+              message: '请输入规则...'
+            }
+          ]
         })(<Input />)}
       </FormItem>
-      <FormItem {...formItemLayout} label="备注">
+      <FormItem
+        {...formItemLayout}
+        label="备注"
+      >
         {form.getFieldDecorator('remark', {
           initialValue: formData.remark || '',
           rules: [
             {
               required: false,
-              message: '请输入备注...',
-            },
-          ],
+              message: '请输入备注...'
+            }
+          ]
         })(<Input />)}
       </FormItem>
     </Modal>

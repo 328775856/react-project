@@ -8,17 +8,17 @@ import map from './map';
 const FormItem = Form.Item;
 
 function generator({ defaultProps, defaultRules, type }) {
-  return WrappedComponent => {
-    return class BasicComponent extends Component {
+  return WrappedComponent =>
+    class BasicComponent extends Component {
       static contextTypes = {
         form: PropTypes.object,
-        updateActive: PropTypes.func,
+        updateActive: PropTypes.func
       };
 
       constructor(props) {
         super(props);
         this.state = {
-          count: 0,
+          count: 0
         };
       }
 
@@ -72,7 +72,10 @@ function generator({ defaultProps, defaultRules, type }) {
               <Row gutter={8}>
                 <Col span={16}>
                   {getFieldDecorator(name, options)(
-                    <WrappedComponent {...defaultProps} {...inputProps} />
+                    <WrappedComponent
+                      {...defaultProps}
+                      {...inputProps}
+                    />
                   )}
                 </Col>
                 <Col span={8}>
@@ -92,13 +95,15 @@ function generator({ defaultProps, defaultRules, type }) {
         return (
           <FormItem>
             {getFieldDecorator(name, options)(
-              <WrappedComponent {...defaultProps} {...otherProps} />
+              <WrappedComponent
+                {...defaultProps}
+                {...otherProps}
+              />
             )}
           </FormItem>
         );
       }
     };
-  };
 }
 
 const LoginItem = {};
@@ -106,7 +111,7 @@ Object.keys(map).forEach(item => {
   LoginItem[item] = generator({
     defaultProps: map[item].props,
     defaultRules: map[item].rules,
-    type: item,
+    type: item
   })(map[item].component);
 });
 

@@ -20,7 +20,7 @@ class StandardTable extends PureComponent {
 
     this.state = {
       selectedRowKeys: [],
-      needTotalList,
+      needTotalList
     };
   }
 
@@ -30,7 +30,7 @@ class StandardTable extends PureComponent {
       const needTotalList = initTotalList(nextProps.columns);
       this.setState({
         selectedRowKeys: [],
-        needTotalList,
+        needTotalList
       });
     }
   }
@@ -39,14 +39,10 @@ class StandardTable extends PureComponent {
     const { needTotalList: list } = this.state;
     const { onSelectRow } = this.props;
     let needTotalList = [...list];
-    needTotalList = needTotalList.map(item => {
-      return {
-        ...item,
-        total: selectedRows.reduce((sum, val) => {
-          return sum + parseFloat(val[item.dataIndex], 10);
-        }, 0),
-      };
-    });
+    needTotalList = needTotalList.map(item => ({
+      ...item,
+      total: selectedRows.reduce((sum, val) => sum + parseFloat(val[item.dataIndex], 10), 0)
+    }));
 
     if (onSelectRow) {
       onSelectRow(selectedRows);
@@ -70,21 +66,21 @@ class StandardTable extends PureComponent {
       data: { list, pagination },
       loading,
       columns,
-      rowKey,
+      rowKey
     } = this.props;
 
     const paginationProps = {
       showSizeChanger: true,
       showQuickJumper: true,
-      ...pagination,
+      ...pagination
     };
 
     const rowSelection = {
       selectedRowKeys,
       onChange: this.handleRowSelectChange,
       getCheckboxProps: record => ({
-        disabled: record.disabled,
-      }),
+        disabled: record.disabled
+      })
     };
 
     return (

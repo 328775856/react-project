@@ -17,7 +17,7 @@ export default class MiniArea extends React.Component {
       line,
       xAxis,
       yAxis,
-      animate = true,
+      animate = true
     } = this.props;
 
     const padding = [36, 5, 30, 5];
@@ -26,26 +26,29 @@ export default class MiniArea extends React.Component {
       x: {
         type: 'cat',
         range: [0, 1],
-        ...scale.x,
+        ...scale.x
       },
       y: {
         min: 0,
-        ...scale.y,
-      },
+        ...scale.y
+      }
     };
 
     const tooltip = [
       'x*y',
       (x, y) => ({
         name: x,
-        value: y,
-      }),
+        value: y
+      })
     ];
 
     const chartHeight = height + 54;
 
     return (
-      <div className={styles.miniChart} style={{ height }}>
+      <div
+        className={styles.miniChart}
+        style={{ height }}
+      >
         <div className={styles.chartContent}>
           {height > 0 && (
             <Chart
@@ -74,7 +77,10 @@ export default class MiniArea extends React.Component {
                 grid={false}
                 {...yAxis}
               />
-              <Tooltip showTitle={false} crosshairs={false} />
+              <Tooltip
+                showTitle={false}
+                crosshairs={false}
+              />
               <Geom
                 type="area"
                 position="x*y"
@@ -82,7 +88,7 @@ export default class MiniArea extends React.Component {
                 tooltip={tooltip}
                 shape="smooth"
                 style={{
-                  fillOpacity: 1,
+                  fillOpacity: 1
                 }}
               />
               {line ? (

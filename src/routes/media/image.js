@@ -17,7 +17,7 @@ import {
   Modal,
   message,
   Badge,
-  Divider,
+  Divider
 } from 'antd';
 import StandardTable from 'components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
@@ -29,7 +29,7 @@ const FormItem = Form.Item;
 
 @connect(({ restTableData, loading }) => ({
   restTableData,
-  loading: loading.models.crud,
+  loading: loading.models.crud
 }))
 @Form.create()
 export default class TableList extends PureComponent {
@@ -37,7 +37,7 @@ export default class TableList extends PureComponent {
     modalVisible: false,
     modalTitle: '',
     selectedRows: [],
-    formValues: {},
+    formValues: {}
   };
 
   refresh() {
@@ -48,12 +48,12 @@ export default class TableList extends PureComponent {
       payload: {
         page: {
           pageNo: 1,
-          pageSize: 10,
-        },
-      },
+          pageSize: 10
+        }
+      }
     });
     this.setState({
-      modalVisible: false,
+      modalVisible: false
     });
   }
 
@@ -65,9 +65,9 @@ export default class TableList extends PureComponent {
       payload: {
         page: {
           pageNo: 1,
-          pageSize: 10,
-        },
-      },
+          pageSize: 10
+        }
+      }
     });
   }
 
@@ -77,24 +77,24 @@ export default class TableList extends PureComponent {
     const params = {
       pageNo: pagination.current,
       pageSize: pagination.pageSize,
-      ...formValues,
+      ...formValues
     };
     dispatch({
       type: 'restTableData/list',
       path: 'media/image/getImagePage',
-      payload: params,
+      payload: params
     });
   };
 
   formReset = () => {
     const { form, dispatch } = this.props;
     this.setState({
-      formValues: {},
+      formValues: {}
     });
     dispatch({
       type: 'restTableData/list',
       path: 'media/image/getImagePage',
-      payload: {},
+      payload: {}
     });
 
     form.resetFields();
@@ -102,7 +102,7 @@ export default class TableList extends PureComponent {
 
   selectRows = rows => {
     this.setState({
-      selectedRows: rows,
+      selectedRows: rows
     });
   };
 
@@ -115,29 +115,29 @@ export default class TableList extends PureComponent {
 
       const values = {
         data: {
-          ...fieldsValue,
+          ...fieldsValue
         },
         page: {
           pageNo: 1,
-          pageSize: 10,
-        },
+          pageSize: 10
+        }
       };
 
       this.setState({
-        formValues: values,
+        formValues: values
       });
 
       dispatch({
         type: 'restTableData/list',
         path: 'media/image/getImagePage',
-        payload: values,
+        payload: values
       });
     });
   };
 
   closeModal = () => {
     this.setState({
-      modalVisible: false,
+      modalVisible: false
     });
   };
 
@@ -146,11 +146,11 @@ export default class TableList extends PureComponent {
     dispatch({
       type: 'restTableData/getDataForAdd',
       path: 'media/image/getDataForAdd',
-      payload: fields,
+      payload: fields
     });
     this.setState({
       modalTitle: '新增',
-      modalVisible: true,
+      modalVisible: true
     });
   };
 
@@ -159,7 +159,7 @@ export default class TableList extends PureComponent {
     dispatch({
       type: 'restTableData/add',
       path: 'media/image',
-      payload: fields,
+      payload: fields
     });
     message.success('保存成功');
     this.refresh();
@@ -169,11 +169,11 @@ export default class TableList extends PureComponent {
     const { dispatch } = this.props;
     dispatch({
       type: 'restTableData/getById',
-      path: `media/image/${  record.mediaImageId}`,
+      path: `media/image/${record.mediaImageId}`
     });
     this.setState({
       modalTitle: '修改图片',
-      modalVisible: true,
+      modalVisible: true
     });
   };
 
@@ -182,7 +182,7 @@ export default class TableList extends PureComponent {
     dispatch({
       type: 'restTableData/update',
       path: 'media/image',
-      payload: fields,
+      payload: fields
     });
     message.success('修改成功');
     this.refresh();
@@ -193,12 +193,11 @@ export default class TableList extends PureComponent {
     dispatch({
       type: 'restTableData/delete',
       path: 'media/image',
-      payload: { mediaImageId: record.mediaImageId },
+      payload: { mediaImageId: record.mediaImageId }
     });
     message.success('删除成功');
     this.refresh();
   };
-
 
   renderForm() {
     return CreateFindForm(this.props, this.query, this.formReset);
@@ -208,49 +207,47 @@ export default class TableList extends PureComponent {
     const {
       restTableData: { pageData },
       restTableData: { formData },
-      loading,
+      loading
     } = this.props;
     const { selectedRows, modalVisible, modalTitle } = this.state;
-
-
-
 
     const columns = [
       {
         title: 'ID',
-        dataIndex: 'mediaImageId',
+        dataIndex: 'mediaImageId'
       },
       {
         title: '分组名称',
-        dataIndex: 'mediaImageGroupName',
+        dataIndex: 'mediaImageGroupName'
       },
       {
         title: '图片名称',
-        dataIndex: 'imageName',
+        dataIndex: 'imageName'
       },
       {
         title: '略缩图',
         dataIndex: 'imagePath',
         render: (text, record) => (
-
           <Fragment>
-
-            <img alt="" style={{width:100,height:100}} src={record.domain}  />
-
+            <img
+              alt=""
+              style={{ width: 100, height: 100 }}
+              src={record.domain}
+            />
           </Fragment>
-        ),
+        )
       },
       {
         title: '用户ID',
-        dataIndex: 'userId',
+        dataIndex: 'userId'
       },
       {
         title: '用户名称',
-        dataIndex: 'userName',
+        dataIndex: 'userName'
       },
       {
         title: '创建时间',
-        dataIndex: 'createTime',
+        dataIndex: 'createTime'
       },
       {
         title: '操作',
@@ -260,14 +257,14 @@ export default class TableList extends PureComponent {
             <Divider type="vertical" />
             <a onClick={() => this.delete(record)}>删除</a>
           </Fragment>
-        ),
-      },
+        )
+      }
     ];
 
     const parentMethods = {
       addSave: this.addSave,
       updateSave: this.updateSave,
-      closeModal: this.closeModal,
+      closeModal: this.closeModal
     };
 
     return (
@@ -276,7 +273,10 @@ export default class TableList extends PureComponent {
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
             <div className={styles.tableListOperator}>
-              <Button type="primary" onClick={() => this.add()}>
+              <Button
+                type="primary"
+                onClick={() => this.add()}
+              >
                 新建
               </Button>
             </div>

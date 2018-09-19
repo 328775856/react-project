@@ -21,48 +21,62 @@ const CreateEditForm = Form.create()(props => {
     labelCol: {
       xs: { span: 24 },
       sm: { span: 7 },
-      md: { span: 5 },
+      md: { span: 5 }
     },
     wrapperCol: {
       xs: { span: 24 },
       sm: { span: 12 },
-      md: { span: 13 },
-    },
+      md: { span: 13 }
+    }
   };
 
   return (
-    <Modal title={title} visible={modalVisible} onOk={okHandle} onCancel={() => closeModal()}>
-      <FormItem {...formItemLayout} label="字典组编号">
+    <Modal
+      title={title}
+      visible={modalVisible}
+      onOk={okHandle}
+      onCancel={() => closeModal()}
+    >
+      <FormItem
+        {...formItemLayout}
+        label="字典组编号"
+      >
         {form.getFieldDecorator('dictNo', {
           initialValue: formData.dictNo || '',
           rules: [
             {
               required: true,
-              message: '请输入字典组编号...',
-            },
-          ],
+              message: '请输入字典组编号...'
+            }
+          ]
         })(<InputNumber />)}
       </FormItem>
-      <FormItem {...formItemLayout} label="字典组名称">
+      <FormItem
+        {...formItemLayout}
+        label="字典组名称"
+      >
         {form.getFieldDecorator('dictName', {
           initialValue: formData.dictName || '',
           rules: [
             {
               required: true,
-              message: '请输入字典组名称...',
-            },
-          ],
+              message: '请输入字典组名称...'
+            }
+          ]
         })(<Input />)}
       </FormItem>
-      <FormItem {...formItemLayout} label="字典组备注">
+      <FormItem
+        {...formItemLayout}
+        label="字典组备注"
+      >
         {form.getFieldDecorator('remark', {
           initialValue: formData.remark || '',
           rules: [
             {
               required: false,
-              message: '请输入字典组备注...',
-            },
-          ],
+              message: '请输入字典组备注...'
+            }
+          ]
         })(<Input />)}
       </FormItem>
     </Modal>

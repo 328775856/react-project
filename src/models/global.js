@@ -5,7 +5,7 @@ export default {
 
   state: {
     collapsed: false,
-    notices: [],
+    notices: []
   },
 
   effects: {
@@ -30,28 +30,28 @@ export default {
       //   type: 'user/changeNotifyCount',
       //   payload: count,
       // });
-    },
+    }
   },
 
   reducers: {
     changeLayoutCollapsed(state, { payload }) {
       return {
         ...state,
-        collapsed: payload,
+        collapsed: payload
       };
     },
     saveNotices(state, { payload }) {
       return {
         ...state,
-        notices: payload,
+        notices: payload
       };
     },
     saveClearedNotices(state, { payload }) {
       return {
         ...state,
-        notices: state.notices.filter(item => item.type !== payload),
+        notices: state.notices.filter(item => item.type !== payload)
       };
-    },
+    }
   },
 
   subscriptions: {
@@ -62,6 +62,6 @@ export default {
           window.ga('send', 'pageview', pathname + search);
         }
       });
-    },
-  },
+    }
+  }
 };
