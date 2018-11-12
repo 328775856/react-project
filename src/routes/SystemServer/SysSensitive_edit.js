@@ -24,7 +24,6 @@ const CreateEditForm = Form.create()(props => {
   const { modalVisible, form, add, update, closeModal, formData, title, isEmptyObject } = props;
   let options = '';
   if (!isEmptyObject(props.state.options)) {
-    debugger;
     options = props.state.options.map(item => (
       <Option key={item.sensitiveTypeId}>{item.typeName}</Option>
     ));
@@ -42,11 +41,16 @@ const CreateEditForm = Form.create()(props => {
     });
   };
 
+  const cancelHandle = () => {
+    form.resetFields();
+    closeModal();
+  };
+
   const formItemLayout = {
     labelCol: {
       xs: { span: 24 },
       sm: { span: 7 },
-      md: { span: 5 }
+      md: { span: 7 }
     },
     wrapperCol: {
       xs: { span: 24 },
@@ -56,44 +60,26 @@ const CreateEditForm = Form.create()(props => {
   };
 
   const isTrueSelect = (
-    <Select
-      placeholder=""
-      style={{ width: '150px' }}
-    >
+    <Select placeholder="" style={{ width: '150px' }}>
       <Option key={1}>是</Option>
       <Option key={0}>否</Option>
     </Select>
   );
 
   return (
-    <Modal
-      title={title}
-      visible={modalVisible}
-      onOk={okHandle}
-      onCancel={() => closeModal()}
-    >
-      <FormItem
-        labelCol={{ span: 5 }}
-        wrapperCol={{ span: 15 }}
-        label="敏感词分类"
-      >
+    <Modal title={title} visible={modalVisible} onOk={okHandle} onCancel={cancelHandle}>
+      <FormItem {...formItemLayout} label="敏感词分类">
         {form.getFieldDecorator('sysSensitiveTypeId', {
           initialValue:
             formData.sysSensitiveTypeId === undefined ? '' : `${formData.sysSensitiveTypeId}`
         })(
-          <Select
-            placeholder=""
-            style={{ width: '150px' }}
-          >
+          <Select placeholder="" style={{ width: '150px' }}>
             {options}
           </Select>
         )}
       </FormItem>
 
-      <FormItem
-        {...formItemLayout}
-        label="敏感词"
-      >
+      <FormItem {...formItemLayout} label="敏感词">
         {form.getFieldDecorator('sensitiveName', {
           initialValue: formData.sensitiveName || '',
           rules: [
@@ -104,10 +90,7 @@ const CreateEditForm = Form.create()(props => {
           ]
         })(<Input />)}
       </FormItem>
-      <FormItem
-        {...formItemLayout}
-        label="处理方式"
-      >
+      <FormItem {...formItemLayout} label="处理方式">
         {form.getFieldDecorator('dealWay', {
           initialValue: formData.dealWay === undefined ? '' : `${formData.dealWay}`,
           rules: [
@@ -117,19 +100,13 @@ const CreateEditForm = Form.create()(props => {
             }
           ]
         })(
-          <Select
-            placeholder=""
-            style={{ width: '150px' }}
-          >
+          <Select placeholder="" style={{ width: '150px' }}>
             <Option key={1}>替换处理</Option>
             <Option key={2}>禁止传播</Option>
           </Select>
         )}
       </FormItem>
-      <FormItem
-        {...formItemLayout}
-        label="是否停用"
-      >
+      <FormItem {...formItemLayout} label="是否停用">
         {form.getFieldDecorator('isStop', {
           initialValue: formData.isStop === undefined ? '' : `${formData.isStop}`,
           rules: [
@@ -140,10 +117,7 @@ const CreateEditForm = Form.create()(props => {
           ]
         })(isTrueSelect)}
       </FormItem>
-      <FormItem
-        {...formItemLayout}
-        label="是否在书名中使用"
-      >
+      <FormItem {...formItemLayout} label="是否在书名中使用">
         {form.getFieldDecorator('isBookScope', {
           initialValue: formData.isBookScope === undefined ? '' : `${formData.isBookScope}`,
           rules: [
@@ -154,10 +128,7 @@ const CreateEditForm = Form.create()(props => {
           ]
         })(isTrueSelect)}
       </FormItem>
-      <FormItem
-        {...formItemLayout}
-        label="是否在话题中使用"
-      >
+      <FormItem {...formItemLayout} label="是否在话题中使用">
         {form.getFieldDecorator('isTopicScope', {
           initialValue: formData.isTopicScope === undefined ? '' : `${formData.isTopicScope}`,
           rules: [
@@ -168,10 +139,7 @@ const CreateEditForm = Form.create()(props => {
           ]
         })(isTrueSelect)}
       </FormItem>
-      <FormItem
-        {...formItemLayout}
-        label="是否在呢称中使用"
-      >
+      <FormItem {...formItemLayout} label="是否在呢称中使用">
         {form.getFieldDecorator('isNicknameScope', {
           initialValue: formData.isNicknameScope === undefined ? '' : `${formData.isNicknameScope}`,
           rules: [
@@ -182,10 +150,7 @@ const CreateEditForm = Form.create()(props => {
           ]
         })(isTrueSelect)}
       </FormItem>
-      <FormItem
-        {...formItemLayout}
-        label="替换值"
-      >
+      <FormItem {...formItemLayout} label="替换值">
         {form.getFieldDecorator('replaceValue', {
           initialValue: formData.replaceValue || '',
           rules: [

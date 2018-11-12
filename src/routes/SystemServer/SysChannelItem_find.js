@@ -33,7 +33,7 @@ function CreateFindFrom(props, formQuery, formReset) {
           sm={24}
         >
           <FormItem label="渠道明细编号">
-            {form.getFieldDecorator('channelItemCode')(<Input placeholder="" />)}
+            {form.getFieldDecorator('channelItemCode')(<InputNumber placeholder="" />)}
           </FormItem>
         </Col>
         <Col

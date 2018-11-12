@@ -5,7 +5,7 @@ import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from '../../assets/styles.less';
 import CreateEditForm from './SysUser_edit';
 import CreateFindForm from './SysUser_find';
-import { defaultPage } from '../../utils/utils.js';
+import { defaultPage, formatTime } from '../../utils/utils.js';
 
 const FormItem = Form.Item;
 @connect(({ tableData, loading }) => ({
@@ -19,8 +19,13 @@ export default class SysUser extends PureComponent {
     modalTitle: '',
     formValues: {},
     page: defaultPage(),
-    options: {}
+    options: []
   };
+
+  componentWillMount() {
+    const { tableData } = this.props;
+    tableData.pageData.list = [];
+  }
 
   componentDidMount() {
     const { formValues, page, options } = this.state;
@@ -187,7 +192,8 @@ export default class SysUser extends PureComponent {
   };
 
   renderForm() {
-    return CreateFindForm(this.props, this.query, this.formReset, this.isEmptyObject, this.state);
+    const { options } = this.state;
+    return CreateFindForm(this.props, this.query, this.formReset, this.isEmptyObject, options , this.getDataForAdd);
   }
 
   render() {
@@ -196,7 +202,7 @@ export default class SysUser extends PureComponent {
 
     const columns = [
       {
-        title: '系统id',
+        title: '系统ID',
         dataIndex: 'sysUserId'
       },
       {
@@ -217,9 +223,9 @@ export default class SysUser extends PureComponent {
         dataIndex: 'remark'
       },
       {
-        title: '权限组id',
+        title: '权限组ID',
         render(text, record) {
-          const role = () => {
+          const role = record => {
             let res = '';
             for (let i = 0; i < options.length; i += 1) {
               if (record.sysRoleId === options[i].sysRoleId) {
@@ -233,8 +239,13 @@ export default class SysUser extends PureComponent {
         }
       },
       {
-        title: '藏书馆用户id',
+        title: '藏书馆用户ID',
         dataIndex: 'userId'
+      },
+      {
+        title: '创建时间',
+        dataIndex: 'createTime',
+        render: (text, record) => <Fragment>{formatTime(text)}</Fragment>
       },
       {
         title: '操作',
@@ -252,21 +263,15 @@ export default class SysUser extends PureComponent {
       add: this.add,
       update: this.update,
       closeModal: this.closeModal,
-      isEmptyObject: this.isEmptyObject
+      isEmptyObject: this.isEmptyObject,
+      getDataForAdd: this.getDataForAdd
     };
     return (
       <PageHeaderLayout>
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
-            <div className={styles.tableListOperator}>
-              <Button
-                type="primary"
-                onClick={() => this.getDataForAdd()}
-              >
-                新建
-              </Button>
-            </div>
+            <div className={styles.tableListOperator} />
             <Table
               dataSource={tableData.pageData.list}
               columns={columns}
@@ -282,7 +287,7 @@ export default class SysUser extends PureComponent {
           modalVisible={modalVisible}
           formData={tableData.formData}
           title={modalTitle}
-          state={this.state}
+          options={options}
         />
       </PageHeaderLayout>
     );

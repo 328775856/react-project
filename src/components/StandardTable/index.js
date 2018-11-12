@@ -89,7 +89,7 @@ class StandardTable extends PureComponent {
           loading={loading}
           rowKey={rowKey || 'key'}
           rowSelection={rowSelection}
-          dataSource={list}
+          dataSource={list||[]}
           columns={columns}
           pagination={paginationProps}
           onChange={this.handleTableChange}

@@ -19,12 +19,11 @@ import {
   Divider,
   Table
 } from 'antd';
-import StandardTable from 'components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from '../../assets/styles.less';
 import CreateEditForm from './PriPackage_edit';
 import CreateFindForm from './PriPackage_find';
-import { defaultPage } from '../../utils/utils.js';
+import { defaultPage, formatTime } from '../../utils/utils.js';
 
 const FormItem = Form.Item;
 @connect(({ commonTableData, loading }) => ({
@@ -54,6 +53,11 @@ export default class PriPackage extends PureComponent {
       modalVisible: false
     });
   };
+
+  componentWillMount() {
+    const { commonTableData } = this.props;
+    commonTableData.pageData.list = '';
+  }
 
   componentDidMount() {
     const { formValues, page } = this.state;
@@ -199,7 +203,7 @@ export default class PriPackage extends PureComponent {
 
     const columns = [
       {
-        title: '系统id',
+        title: '系统ID',
         dataIndex: 'priPackageId'
       },
       {
@@ -207,12 +211,17 @@ export default class PriPackage extends PureComponent {
         dataIndex: 'packageName'
       },
       {
+        title: '创建时间',
+        dataIndex: 'createTime',
+        render: (text, record) => <Fragment>{formatTime(text)}</Fragment>
+      },
+      {
         title: '操作',
         render: (text, record) => (
           <Fragment>
             <a onClick={() => this.getDataForUpdate(record)}>修改</a>
             <Divider type="vertical" />
-            <a onClick={() => this.detail(record, '/priServer/priPackageItem')}>权益包明细</a>
+            <a onClick={() => this.detail(record, '/vipServer/priPackageItem')}>权益包明细</a>
           </Fragment>
         )
       }
@@ -229,10 +238,7 @@ export default class PriPackage extends PureComponent {
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
             <div className={styles.tableListOperator}>
-              <Button
-                type="primary"
-                onClick={() => this.getDataForAdd()}
-              >
+              <Button type="primary" onClick={() => this.getDataForAdd()}>
                 新建
               </Button>
             </div>

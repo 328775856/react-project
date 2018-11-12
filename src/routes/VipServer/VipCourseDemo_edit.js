@@ -34,7 +34,10 @@ export default class CreateEditForm extends PureComponent {
 
   callSelectCourseInfoReturn = record => {
     if (record != null) {
-      const { dispatch } = this.props;
+      const { dispatch, form } = this.props;
+      form.resetFields('courseId');
+      form.resetFields('courseName');
+      form.resetFields('coverPath');
       const myFormData = {
         courseId: record[0].courseId,
         courseName: record[0].courseName,
@@ -86,6 +89,11 @@ export default class CreateEditForm extends PureComponent {
       });
     };
 
+    const cancelHandle = () => {
+      form.resetFields();
+      closeModal();
+    };
+
     const parentMethodsForCourseInfo = {
       callReturn: this.callSelectCourseInfoReturn,
       closeModal: this.closeSelectCourseInfoModal
@@ -105,33 +113,18 @@ export default class CreateEditForm extends PureComponent {
     };
 
     return (
-      <Modal
-        title={title}
-        visible={modalVisible}
-        onOk={okHandle}
-        onCancel={() => closeModal()}
-      >
-        <FormItem
-          {...formItemLayout}
-          label="vip包"
-        >
+      <Modal title={title} visible={modalVisible} onOk={okHandle} onCancel={cancelHandle}>
+        <FormItem {...formItemLayout} label="VIP包">
           {form.getFieldDecorator('vipPackageId', {
             initialValue: formData.vipPackageId == undefined ? '' : `${formData.vipPackageId}`
           })(
-            <Select
-              placeholder=""
-              style={{ width: '150px' }}
-            >
+            <Select placeholder="" style={{ width: '150px' }}>
               {optionsEle}
             </Select>
           )}
         </FormItem>
 
-        <FormItem
-          {...formItemLayout}
-          label="课程id"
-          style={{ display: 'none' }}
-        >
+        <FormItem {...formItemLayout} label="课程ID" style={{ display: 'none' }}>
           <Row>
             <Col span={20}>
               {form.getFieldDecorator('courseId', {
@@ -145,18 +138,12 @@ export default class CreateEditForm extends PureComponent {
               })(<Input />)}
             </Col>
             <Col>
-              <Button
-                onClick={this.selectCourseInfoModel}
-                icon="search"
-              />
+              <Button onClick={this.selectCourseInfoModel} icon="search" />
             </Col>
           </Row>
         </FormItem>
 
-        <FormItem
-          {...formItemLayout}
-          label="课程名称"
-        >
+        <FormItem {...formItemLayout} label="课程名称">
           <Row>
             <Col span={20}>
               {form.getFieldDecorator('courseName', {
@@ -170,18 +157,12 @@ export default class CreateEditForm extends PureComponent {
               })(<Input />)}
             </Col>
             <Col>
-              <Button
-                onClick={this.selectCourseInfoModel}
-                icon="search"
-              />
+              <Button onClick={this.selectCourseInfoModel} icon="search" />
             </Col>
           </Row>
         </FormItem>
 
-        <FormItem
-          {...formItemLayout}
-          label="课程封面图"
-        >
+        <FormItem {...formItemLayout} label="课程封面图">
           {form.getFieldDecorator('coverPath', {
             initialValue: formData.coverPath || '',
             rules: [
@@ -190,15 +171,12 @@ export default class CreateEditForm extends PureComponent {
                 message: '请输入课程封面(素材图片)...'
               }
             ]
-          })(<img
-            alt=""
-            style={{ width: 100, height: 100 }}
-            src={formData.coverPath}
-          />)}
+          })(<img alt="" style={{ width: 100, height: 100 }} src={formData.coverPath} />)}
         </FormItem>
 
         <SelectCourseInfo
           {...parentMethodsForCourseInfo}
+          courseId={formData.courseId}
           modalVisible={this.state.courseInfoModalVisible}
         />
       </Modal>

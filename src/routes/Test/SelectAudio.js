@@ -129,15 +129,8 @@ export default class SelectTest extends PureComponent {
       <PageHeaderLayout>
         <Card bordered={false}>
           <Divider orientation="left">选择音频</Divider>
-          <Form
-            onSubmit={this.handleSubmit}
-            hideRequiredMark
-            style={{ marginTop: 8 }}
-          >
-            <FormItem
-              {...formItemLayout}
-              label="选择音频"
-            >
+          <Form onSubmit={this.handleSubmit} hideRequiredMark style={{ marginTop: 8 }}>
+            <FormItem {...formItemLayout} label="选择音频">
               <Row gutter={0}>
                 <Col span={22}>
                   {getFieldDecorator('code', {
@@ -146,30 +139,18 @@ export default class SelectTest extends PureComponent {
                   })(<Input />)}
                 </Col>
                 <Col span={2}>
-                  <Button
-                    onClick={this.selectAudioModel}
-                    icon="search"
-                  />
+                  <Button onClick={this.selectAudioModel} icon="search" />
                 </Col>
               </Row>
             </FormItem>
-            <FormItem
-              {...formItemLayout}
-              label="音频ID"
-            >
+            <FormItem {...formItemLayout} label="音频ID">
               <input value={formData.mediaAudioId} />
             </FormItem>
-            <FormItem
-              {...formItemLayout}
-              label="音频名称"
-            >
+            <FormItem {...formItemLayout} label="音频名称">
               <input value={formData.audioName} />
             </FormItem>
             <Divider orientation="left">选择音频</Divider>
-            <FormItem
-              {...formItemLayout}
-              label="选择音频"
-            >
+            <FormItem {...formItemLayout} label="选择音频">
               <Row gutter={0}>
                 <Col span={22}>
                   {getFieldDecorator('code', {
@@ -178,30 +159,18 @@ export default class SelectTest extends PureComponent {
                   })(<Input />)}
                 </Col>
                 <Col span={2}>
-                  <Button
-                    onClick={this.selectVideoModel}
-                    icon="search"
-                  />
+                  <Button onClick={this.selectVideoModel} icon="search" />
                 </Col>
               </Row>
             </FormItem>
-            <FormItem
-              {...formItemLayout}
-              label="视频ID"
-            >
+            <FormItem {...formItemLayout} label="视频ID">
               <input value={formData.mediaVideoId} />
             </FormItem>
-            <FormItem
-              {...formItemLayout}
-              label="视频名称"
-            >
+            <FormItem {...formItemLayout} label="视频名称">
               <input value={formData.videoName} />
             </FormItem>
             <Divider orientation="left">选择图文</Divider>
-            <FormItem
-              {...formItemLayout}
-              label="选择图文"
-            >
+            <FormItem {...formItemLayout} label="选择图文">
               <Row gutter={0}>
                 <Col span={22}>
                   {getFieldDecorator('code', {
@@ -210,35 +179,19 @@ export default class SelectTest extends PureComponent {
                   })(<Input />)}
                 </Col>
                 <Col span={2}>
-                  <Button
-                    onClick={this.selectArticleModel}
-                    icon="search"
-                  />
+                  <Button onClick={this.selectArticleModel} icon="search" />
                 </Col>
               </Row>
             </FormItem>
-            <FormItem
-              {...formItemLayout}
-              label="图文ID"
-            >
+            <FormItem {...formItemLayout} label="图文ID">
               <input value={formData.mediaArticleId} />
             </FormItem>
-            <FormItem
-              {...formItemLayout}
-              label="图文标题"
-            >
+            <FormItem {...formItemLayout} label="图文标题">
               <input value={formData.articleTitle} />
             </FormItem>
 
-            <FormItem
-              {...submitFormLayout}
-              style={{ marginTop: 32 }}
-            >
-              <Button
-                type="primary"
-                htmlType="submit"
-                loading={submitting}
-              >
+            <FormItem {...submitFormLayout} style={{ marginTop: 32 }}>
+              <Button type="primary" htmlType="submit" loading={submitting}>
                 提交
               </Button>
               <Button style={{ marginLeft: 8 }}>返回</Button>
@@ -247,14 +200,17 @@ export default class SelectTest extends PureComponent {
         </Card>
         <SelectAudio
           {...parentMethodsForAudio}
+          mediaAudioId={formData.mediaAudioId}
           modalVisible={audioModalVisible}
         />
         <SelectVideo
           {...parentMethodsForVideo}
+          mediaVideoId={formData.mediaVideoId}
           modalVisible={videoModalVisible}
         />
         <SelectArticle
           {...parentMethodsForArticle}
+          mediaArticleId={formData.mediaArticleId}
           modalVisible={articleModalVisible}
         />
       </PageHeaderLayout>

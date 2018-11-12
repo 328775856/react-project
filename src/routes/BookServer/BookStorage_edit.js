@@ -46,7 +46,9 @@ export default class CreateEditForm extends PureComponent {
 
   callSelectBookStyleReturn = record => {
     if (record != null) {
-      const { dispatch } = this.props;
+      const { dispatch, form } = this.props;
+      form.resetFields('bookStyleId');
+      form.resetFields('bookStyleName');
       const myFormData = {
         bookStyleId: record[0].bookStyleId,
         bookStyleName: record[0].styleName
@@ -104,6 +106,11 @@ export default class CreateEditForm extends PureComponent {
       });
     };
 
+    const cancelHandle = () => {
+      form.resetFields();
+      closeModal();
+    };
+
     const parentMethodsForBookStyle = {
       callReturn: this.callSelectBookStyleReturn,
       closeModal: this.closeSelectBookStyleModal
@@ -130,16 +137,8 @@ export default class CreateEditForm extends PureComponent {
     };
 
     return (
-      <Modal
-        title={title}
-        visible={modalVisible}
-        onOk={okHandle}
-        onCancel={() => closeModal()}
-      >
-        <FormItem
-          {...formItemLayout}
-          label="图书存放类型"
-        >
+      <Modal title={title} visible={modalVisible} onOk={okHandle} onCancel={cancelHandle}>
+        <FormItem {...formItemLayout} label="图书存放类型">
           {form.getFieldDecorator('bookStorageType', {
             initialValue:
               formData.bookStorageType === undefined ? '-1' : `${formData.bookStorageType}` || '',
@@ -154,10 +153,7 @@ export default class CreateEditForm extends PureComponent {
             ]
           })(<Select style={{ width: '150px' }}>{opt10}</Select>)}
         </FormItem>
-        <FormItem
-          {...formItemLayout}
-          label="图书格式"
-        >
+        <FormItem {...formItemLayout} label="图书格式">
           <Row gutter={0}>
             <Col span={22}>
               {form.getFieldDecorator('bookStyleName', {
@@ -171,10 +167,7 @@ export default class CreateEditForm extends PureComponent {
               })(<Input />)}
             </Col>
             <Col span={2}>
-              <Button
-                onClick={this.selectBookStyleModel}
-                icon="search"
-              />
+              <Button onClick={this.selectBookStyleModel} icon="search" />
             </Col>
           </Row>
         </FormItem>
@@ -188,10 +181,7 @@ export default class CreateEditForm extends PureComponent {
             <Input />
           )}
         </FormItem>
-        <FormItem
-          {...formItemLayout}
-          label="存储名"
-        >
+        <FormItem {...formItemLayout} label="存储名">
           {form.getFieldDecorator('storageName', {
             initialValue: formData.storageName || '',
             rules: [
@@ -202,10 +192,7 @@ export default class CreateEditForm extends PureComponent {
             ]
           })(<Input />)}
         </FormItem>
-        <FormItem
-          {...formItemLayout}
-          label="存储地址"
-        >
+        <FormItem {...formItemLayout} label="存储地址">
           {form.getFieldDecorator('storagePath', {
             initialValue: formData.storagePath || '',
             rules: [
@@ -216,10 +203,7 @@ export default class CreateEditForm extends PureComponent {
             ]
           })(<Input />)}
         </FormItem>
-        <FormItem
-          {...formItemLayout}
-          label="访问url"
-        >
+        <FormItem {...formItemLayout} label="访问url">
           {form.getFieldDecorator('accessUrl', {
             initialValue: formData.accessUrl || '',
             rules: [
@@ -230,10 +214,7 @@ export default class CreateEditForm extends PureComponent {
             ]
           })(<Input />)}
         </FormItem>
-        <FormItem
-          {...formItemLayout}
-          label="是否已满"
-        >
+        <FormItem {...formItemLayout} label="是否已满">
           {form.getFieldDecorator('isFull', {
             initialValue: formData.isFull === undefined ? '0' : `${formData.isFull}` || '',
             rules: [
@@ -249,6 +230,7 @@ export default class CreateEditForm extends PureComponent {
         </FormItem>
         <SelectBookStyle
           {...parentMethodsForBookStyle}
+          bookStyleId={formData.bookStyleId}
           modalVisible={this.state.bookStyleModalVisible}
         />
       </Modal>

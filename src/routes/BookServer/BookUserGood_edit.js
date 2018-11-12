@@ -34,6 +34,11 @@ const CreateEditForm = Form.create()(props => {
     });
   };
 
+  const cancelHandle = () => {
+    form.resetFields();
+    closeModal();
+  };
+
   const formItemLayout = {
     labelCol: {
       xs: { span: 24 },
@@ -48,16 +53,8 @@ const CreateEditForm = Form.create()(props => {
   };
 
   return (
-    <Modal
-      title={title}
-      visible={modalVisible}
-      onOk={okHandle}
-      onCancel={() => closeModal()}
-    >
-      <FormItem
-        {...formItemLayout}
-        label="图书-用户id"
-      >
+    <Modal title={title} visible={modalVisible} onOk={okHandle} onCancel={cancelHandle}>
+      <FormItem {...formItemLayout} label="图书-用户id">
         {form.getFieldDecorator('bookUserId', {
           initialValue: formData.bookUserId || '',
           rules: [

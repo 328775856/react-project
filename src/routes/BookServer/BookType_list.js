@@ -19,12 +19,11 @@ import {
   Divider,
   Table
 } from 'antd';
-import StandardTable from 'components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from '../../assets/styles.less';
 import CreateEditForm from './BookType_edit';
 import CreateFindForm from './BookType_find';
-import { defaultPage } from '../../utils/utils.js';
+import { defaultPage, isEmpty, formatTime } from '../../utils/utils.js';
 
 const FormItem = Form.Item;
 @connect(({ tableData, loading }) => ({
@@ -39,6 +38,53 @@ export default class BookType extends PureComponent {
     formValues: {},
     page: defaultPage(),
     options: {}
+  };
+
+  componentWillMount() {
+    const { tableData } = this.props;
+    tableData.pageData.list = '';
+  }
+
+  componentDidMount() {
+    const { formValues, page, options } = this.state;
+    this.initOptions();
+    this.refresh(formValues, page);
+  }
+
+  getDataForAdd = fields => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'tableData/getDataForAdd',
+      path: 'bookType/getDataForAdd',
+      payload: fields
+    });
+    this.setState({
+      modalTitle: '新增',
+      modalVisible: true
+    });
+  };
+
+  getDataForUpdate = record => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'tableData/getDataForUpdate',
+      path: 'bookType/getDataForUpdate',
+      payload: { bookTypeId: record.bookTypeId }
+    });
+    this.setState({
+      modalTitle: '修改',
+      modalVisible: true
+    });
+  };
+
+  add = fields => {
+    const { dispatch, tableData } = this.props;
+    dispatch({
+      type: 'tableData/add',
+      path: 'bookType/add',
+      payload: fields,
+      callback: this.callback
+    });
   };
 
   refresh = (values, page) => {
@@ -56,12 +102,6 @@ export default class BookType extends PureComponent {
     });
   };
 
-  componentDidMount() {
-    const { formValues, page, options } = this.state;
-    this.initOptions();
-    this.refresh(formValues, page);
-  }
-
   tableChange = (pagination, filtersArg, sorter) => {
     const { formValues } = this.state;
     const page = {
@@ -74,12 +114,6 @@ export default class BookType extends PureComponent {
     this.refresh(formValues, page);
   };
 
-  isEmptyObject = e => {
-    let t;
-    for (t in e) return !1;
-    return !0;
-  };
-
   formReset = () => {
     const { form } = this.props;
     form.resetFields();
@@ -87,7 +121,7 @@ export default class BookType extends PureComponent {
 
   callback = () => {
     const { tableData } = this.props;
-    if (tableData.status == 200) {
+    if (tableData.status === 200) {
       const { formValues, page } = this.state;
       this.refresh(formValues, page);
     } else {
@@ -142,42 +176,6 @@ export default class BookType extends PureComponent {
     });
   };
 
-  getDataForAdd = fields => {
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'tableData/getDataForAdd',
-      path: 'bookType/getDataForAdd',
-      payload: fields
-    });
-    this.setState({
-      modalTitle: '新增',
-      modalVisible: true
-    });
-  };
-
-  add = fields => {
-    const { dispatch, tableData } = this.props;
-    dispatch({
-      type: 'tableData/add',
-      path: 'bookType/add',
-      payload: fields,
-      callback: this.callback
-    });
-  };
-
-  getDataForUpdate = record => {
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'tableData/getDataForUpdate',
-      path: 'bookType/getDataForUpdate',
-      payload: { bookTypeId: record.bookTypeId }
-    });
-    this.setState({
-      modalTitle: '修改',
-      modalVisible: true
-    });
-  };
-
   initOptions = () => {
     const { dispatch } = this.props;
     dispatch({
@@ -203,7 +201,7 @@ export default class BookType extends PureComponent {
   };
 
   renderForm() {
-    return CreateFindForm(this.props, this.query, this.formReset, this.isEmptyObject, this.state);
+    return CreateFindForm(this.props, this.query, this.formReset, this.state);
   }
 
   render() {
@@ -212,7 +210,7 @@ export default class BookType extends PureComponent {
 
     const columns = [
       {
-        title: '系统id',
+        title: '系统ID',
         dataIndex: 'bookTypeId'
       },
       {
@@ -231,9 +229,9 @@ export default class BookType extends PureComponent {
         title: '是否禁用',
         dataIndex: 'isForbid',
         render(text, record) {
-          const dict = record => {
+          const dict = () => {
             let res = '';
-            for (let i = 0; i < options.length; i++) {
+            for (let i = 0; i < options.length; i += 1) {
               if (record.isForbid === options[i].itemNo) {
                 res = options[i].itemLabel;
                 break;
@@ -246,7 +244,21 @@ export default class BookType extends PureComponent {
       },
       {
         title: '分类图标',
-        dataIndex: 'typeIco'
+        dataIndex: 'wholePhotoPath',
+        render: (text, record) => {
+          if (!isEmpty(record.wholePhotoPath)) {
+            return (
+              <Fragment>
+                <img alt="" style={{ width: 50, height: 50 }} src={record.wholePhotoPath} />
+              </Fragment>
+            );
+          }
+        }
+      },
+      {
+        title: '创建时间',
+        dataIndex: 'createTime',
+        render: (text, record) => <Fragment>{formatTime(text)}</Fragment>
       },
       {
         title: '操作',
@@ -260,12 +272,12 @@ export default class BookType extends PureComponent {
       }
     ];
 
+    const { dispatch } = this.props;
     const parentMethods = {
       add: this.add,
       update: this.update,
       closeModal: this.closeModal,
-      isEmptyObject: this.isEmptyObject,
-      dispatch: this.props.dispatch
+      dispatch
     };
     return (
       <PageHeaderLayout>
@@ -273,10 +285,7 @@ export default class BookType extends PureComponent {
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
             <div className={styles.tableListOperator}>
-              <Button
-                type="primary"
-                onClick={() => this.getDataForAdd()}
-              >
+              <Button type="primary" onClick={() => this.getDataForAdd()}>
                 新建
               </Button>
             </div>

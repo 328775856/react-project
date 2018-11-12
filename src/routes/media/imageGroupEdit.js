@@ -33,12 +33,19 @@ const CreateEditForm = Form.create()(props => {
       }
     });
   };
+
+  const cancelHandle = () => {
+    form.resetFields();
+    closeModal();
+  };
+
   return (
     <Modal
+      destroyOnClose
       title={title}
       visible={modalVisible}
       onOk={okHandle}
-      onCancel={() => closeModal()}
+      onCancel={cancelHandle}
     >
       <FormItem
         labelCol={{ span: 5 }}
@@ -48,44 +55,24 @@ const CreateEditForm = Form.create()(props => {
       >
         {form.getFieldDecorator('mediaImageGroupId', {})(<Input />)}
       </FormItem>
-      <FormItem
-        labelCol={{ span: 5 }}
-        wrapperCol={{ span: 15 }}
-        label="分组名称"
-      >
+      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="分组名称">
         {form.getFieldDecorator('imageGroupName', {
           initialValue: formData.imageGroupName || '',
           rules: [{ required: true, message: '请输入分组名称...' }]
-        })(<Input
-          placeholder="请输入"
-          value={formData.imageGroupName}
-        />)}
+        })(<Input placeholder="请输入" />)}
       </FormItem>
-      <FormItem
-        labelCol={{ span: 5 }}
-        wrapperCol={{ span: 15 }}
-        label="顺序"
-      >
+      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="顺序">
         {form.getFieldDecorator('indexNo', {
           initialValue: formData.indexNo || '',
           rules: [{ required: true, message: '请输入顺序...' }]
-        })(<Input
-          placeholder="请输入"
-          value={formData.indexNo}
-        />)}
+        })(<InputNumber min={0} max={255} placeholder="请输入" />)}
       </FormItem>
-      <FormItem
-        labelCol={{ span: 5 }}
-        wrapperCol={{ span: 15 }}
-        label="是否默认"
-      >
+      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="是否默认">
         {form.getFieldDecorator('isDefault', {
-          initialValue: formData.isDefault || ''
+          initialValue: formData.isDefault === undefined ? '' : `${formData.isDefault}`,
+          rules: [{ required: true, message: '请选择是否默认...' }]
         })(
-          <Select
-            value={formData.isDefault}
-            style={{ width: '100%' }}
-          >
+          <Select style={{ width: '100%' }}>
             <Select.Option value="1">是</Select.Option>
             <Select.Option value="0">否</Select.Option>
           </Select>

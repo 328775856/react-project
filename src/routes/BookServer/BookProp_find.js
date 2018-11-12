@@ -19,6 +19,7 @@ import {
 } from 'antd';
 
 const FormItem = Form.Item;
+
 function CreateFindFrom(props, formQuery, formReset, isEmptyObject, state) {
   const { form } = props;
   const { getFieldDecorator } = form;
@@ -30,62 +31,39 @@ function CreateFindFrom(props, formQuery, formReset, isEmptyObject, state) {
   opt1.push(<Option key="-1">请选择</Option>);
   opt1.push(opt);
   return (
-    <Form
-      onSubmit={formQuery}
-      layout="inline"
-    >
+    <Form onSubmit={formQuery} layout="inline">
       <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
-        <Col
-          md={8}
-          sm={24}
-        >
+        <Col md={8} sm={24}>
           <FormItem label="名称">
             {form.getFieldDecorator('propName')(<Input placeholder="" />)}
           </FormItem>
         </Col>
-        <Col
-          md={8}
-          sm={24}
-        >
+
+        <Col md={8} sm={24}>
           <FormItem label="是否可借">
-            {form.getFieldDecorator('isLend', { initialValue: '-1' })(
-              <Select style={{ width: '150px' }}>{opt1}</Select>
-            )}
+            {form.getFieldDecorator('isLend', { initialValue: '-1' })(<Select>{opt1}</Select>)}
           </FormItem>
         </Col>
-        <Col
-          md={8}
-          sm={24}
-        >
+
+        <Col md={8} sm={24}>
           <FormItem label="借阅天数">
             {form.getFieldDecorator('dayLend')(<Input placeholder="" />)}
           </FormItem>
         </Col>
-        <Col
-          md={8}
-          sm={24}
-        >
+      </Row>
+      <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
+        <Col md={8} sm={24}>
           <FormItem label="是否限制">
-            {form.getFieldDecorator('isLimit', { initialValue: '-1' })(
-              <Select style={{ width: '150px' }}>{opt1}</Select>
-            )}
+            {form.getFieldDecorator('isLimit', { initialValue: '-1' })(<Select>{opt1}</Select>)}
           </FormItem>
         </Col>
-        <Col
-          md={8}
-          sm={24}
-        >
+
+        <Col md={8} sm={24}>
           <span>
-            <Button
-              type="primary"
-              htmlType="submit"
-            >
+            <Button type="primary" htmlType="submit">
               查询
             </Button>
-            <Button
-              style={{ marginLeft: 8 }}
-              onClick={formReset}
-            >
+            <Button style={{ marginLeft: 8 }} onClick={formReset}>
               重置
             </Button>
           </span>
@@ -94,4 +72,5 @@ function CreateFindFrom(props, formQuery, formReset, isEmptyObject, state) {
     </Form>
   );
 }
+
 export default CreateFindFrom;

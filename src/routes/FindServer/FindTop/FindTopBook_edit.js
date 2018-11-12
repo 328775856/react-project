@@ -52,6 +52,11 @@ export default class CreateEditForm extends PureComponent {
       });
     };
 
+    const cancelHandle = () => {
+      form.resetFields();
+      closeModal();
+    };
+
     const formItemLayout = {
       labelCol: {
         xs: { span: 24 },
@@ -66,16 +71,8 @@ export default class CreateEditForm extends PureComponent {
     };
 
     return (
-      <Modal
-        title={title}
-        visible={modalVisible}
-        onOk={okHandle}
-        onCancel={() => closeModal()}
-      >
-        <FormItem
-          {...formItemLayout}
-          label="排序"
-        >
+      <Modal title={title} visible={modalVisible} onOk={okHandle} onCancel={cancelHandle}>
+        <FormItem {...formItemLayout} label="排序">
           {form.getFieldDecorator('indexNo', {
             initialValue: formData.indexNo || '',
             rules: [

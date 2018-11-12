@@ -15,13 +15,13 @@ import {
   Modal,
   message,
   Badge,
-  Divider,
+  Divider
 } from 'antd';
 
 const FormItem = Form.Item;
 const { TextArea } = Input;
 const CreateEditForm = Form.create()(props => {
-  const { updateModalVisible, form, add, update, closeModal, formData, title } = props;
+  const { updateModalVisible, form, update, closeModal, formData, title } = props;
   const okHandle = () => {
     form.validateFields((err, fieldsValue) => {
       if (err) return;
@@ -32,36 +32,35 @@ const CreateEditForm = Form.create()(props => {
       }
     });
   };
+  const cancelHandle = () => {
+    form.resetFields();
+    closeModal();
+  };
 
   const formItemLayout = {
     labelCol: {
       xs: { span: 24 },
       sm: { span: 7 },
-      md: { span: 5 },
+      md: { span: 5 }
     },
     wrapperCol: {
       xs: { span: 24 },
       sm: { span: 12 },
-      md: { span: 13 },
-    },
+      md: { span: 13 }
+    }
   };
 
   return (
-    <Modal
-      title={title}
-      visible={updateModalVisible}
-      onOk={okHandle}
-      onCancel={() => closeModal('updateModalVisible')}
-    >
+    <Modal title={title} visible={updateModalVisible} onOk={okHandle} onCancel={cancelHandle}>
       <FormItem {...formItemLayout} label="顺序">
         {form.getFieldDecorator('indexNo', {
           initialValue: formData.indexNo,
           rules: [
             {
               required: true,
-              message: '请输入推荐顺序...',
-            },
-          ],
+              message: '请输入推荐顺序...'
+            }
+          ]
         })(<Input />)}
       </FormItem>
       <FormItem {...formItemLayout} label="推荐语">
@@ -71,9 +70,9 @@ const CreateEditForm = Form.create()(props => {
             {
               required: true,
               message: '请输入长度小于75个字符的推荐语...',
-              max: 75,
-            },
-          ],
+              max: 75
+            }
+          ]
         })(<TextArea autosize={{ minRows: 2, maxRows: 6 }} />)}
       </FormItem>
     </Modal>

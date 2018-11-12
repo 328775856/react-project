@@ -17,6 +17,11 @@ const CreateEditForm = Form.create()(props => {
     });
   };
 
+  const cancelHandle = () => {
+    form.resetFields();
+    closeModal();
+  };
+
   const formItemLayout = {
     labelCol: {
       xs: { span: 24 },
@@ -31,16 +36,8 @@ const CreateEditForm = Form.create()(props => {
   };
 
   return (
-    <Modal
-      title={title}
-      visible={modalVisible}
-      onOk={okHandle}
-      onCancel={() => closeModal()}
-    >
-      <FormItem
-        {...formItemLayout}
-        label="字典项"
-      >
+    <Modal title={title} visible={modalVisible} onOk={okHandle} onCancel={cancelHandle}>
+      <FormItem {...formItemLayout} label="字典项">
         {form.getFieldDecorator('itemNo', {
           initialValue: formData.itemNo || '',
           rules: [
@@ -49,12 +46,9 @@ const CreateEditForm = Form.create()(props => {
               message: '请输入字典项...'
             }
           ]
-        })(<InputNumber />)}
+        })(<InputNumber min={1} />)}
       </FormItem>
-      <FormItem
-        {...formItemLayout}
-        label="字典名称"
-      >
+      <FormItem {...formItemLayout} label="字典名称">
         {form.getFieldDecorator('itemLabel', {
           initialValue: formData.itemLabel || '',
           rules: [
@@ -65,10 +59,7 @@ const CreateEditForm = Form.create()(props => {
           ]
         })(<Input />)}
       </FormItem>
-      <FormItem
-        {...formItemLayout}
-        label="字典备注"
-      >
+      <FormItem {...formItemLayout} label="字典备注">
         {form.getFieldDecorator('itemRemark', {
           initialValue: formData.itemRemark || '',
           rules: [

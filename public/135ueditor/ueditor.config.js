@@ -20,6 +20,7 @@
    */
   var URL = window.UEDITOR_HOME_URL || getUEBasePath();
   // alert(getUEBasePath())
+
   /**
    * 配置项主体。注意，此处所有涉及到路径的配置别遗漏URL变量。
    */
@@ -54,7 +55,7 @@
         '|',
         'removeformat',
         'formatmatch',
-        'autotypeset',
+        'autotypeset'
       ],
       [
         'cleardoc',
@@ -71,7 +72,7 @@
         'undo',
         'redo',
         '|',
-        'more',
+        'more'
       ],
       [
         'source',
@@ -87,8 +88,11 @@
         'directionalityrtl',
         'searchreplace',
         'help',
-        'message',
-      ],
+        'book',
+        'note',
+        'course',
+        'message'
+      ]
     ],
     // 'simpleupload','music','pagebreak','touppercase', 'tolowercase',
     //当鼠标放在工具栏上时显示的tooltip提示,留空支持自动多语言配置，否则以配置值为准
@@ -206,7 +210,7 @@
       'upper-alpha': '', //lang   //'A,B,C'
       'upper-roman': '', //'I,II,III...'
       'cjk-ideographic': '一、二、三、',
-      'lower-greek': 'α,β,γ,δ',
+      'lower-greek': 'α,β,γ,δ'
     },
 
     //insertunorderedlist
@@ -218,7 +222,7 @@
       //系统自带
       circle: '', // '○ 小圆圈'
       disc: '', // '● 小圆点'
-      square: '', //'■ 小方块'
+      square: '' //'■ 小方块'
     },
     listDefaultPaddingLeft: '30', //默认的左边缩进的基数倍
     //,listiconpath : 'http://bs.baidu.com/listicon/'//自定义标号的路径
@@ -242,12 +246,81 @@
       //{ label:'思源粗体',name:'',val:'Source Han Sans K Heavy'},
       //{ label:'思源极细',name:'',val:'Source Han Sans K ExtraLight'},
 
-      { label: '', name: 'arial', val: 'arial,helvetica,sans-serif' },
+      { label: '', name: 'arial', val: 'arial,helvetica,sans-serif' }
     ],
 
     //fontsize
     //字号
     fontsize: [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 24, 28, 32, 36],
+    //book
+    book: [
+      '图书1',
+      '图书2',
+      '图书3',
+      '图书4',
+      '图书5',
+      '图书6',
+      '图书7',
+      '图书8',
+      '图书9',
+      '图书10',
+      '图书11',
+      '图书12',
+      '图书13',
+      '图书14',
+      '图书15',
+      '图书16',
+      '图书17',
+      '图书18',
+      '图书19',
+      '图书20'
+    ],
+    //note
+    note: [
+      '笔记1',
+      '笔记2',
+      '笔记3',
+      '笔记4',
+      '笔记5',
+      '笔记6',
+      '笔记7',
+      '笔记8',
+      '笔记9',
+      '笔记10',
+      '笔记11',
+      '笔记12',
+      '笔记13',
+      '笔记14',
+      '笔记15',
+      '笔记16',
+      '笔记17',
+      '笔记18',
+      '笔记19',
+      '笔记20'
+    ],
+    //course
+    course: [
+      '课程1',
+      '课程2',
+      '课程3',
+      '课程4',
+      '课程5',
+      '课程6',
+      '课程7',
+      '课程8',
+      '课程9',
+      '课程10',
+      '课程11',
+      '课程12',
+      '课程13',
+      '课程14',
+      '课程15',
+      '课程16',
+      '课程17',
+      '课程18',
+      '课程19',
+      '课程20'
+    ],
 
     //paragraph
     //段落格式 值留空时支持多语言自动识别，若配置，则以配置值为准
@@ -302,7 +375,7 @@
       'indent',
       'rowspacingtop',
       'rowspacingbottom',
-      'lineheight',
+      'lineheight'
     ],
 
     //elementPathEnabled
@@ -357,7 +430,7 @@
     //,toolbarTopOffset:400
 
     //设置远程图片是否抓取到本地保存
-    catchRemoteImageEnable: true, //设置是否抓取远程图片
+    catchRemoteImageEnable: false, //设置是否抓取远程图片
 
     //autotypeset
     //自动排版参数
@@ -377,7 +450,7 @@
       indent: false, // 行首缩进
       indentValue: '2em', //行首缩进的大小
       bdc2sb: false,
-      tobdc: false,
+      tobdc: false
     },
 
     //tableDragable
@@ -416,7 +489,7 @@
     //默认过滤规则相关配置项目
     //,disabledTableInTable:true  //禁止表格嵌套
     //,allowDivTransToP:true      //允许进入编辑器的div标签自动变成p标签
-    rgb2Hex: true, //默认产出的数据中的color自动从rgb格式变成16进制格式
+    rgb2Hex: true //默认产出的数据中的color自动从rgb格式变成16进制格式
   };
 
   function getUEBasePath(docUrl, confUrl) {
@@ -443,16 +516,18 @@
         .split('?')[0]
         .replace(/[^\\\/]+$/, '');
 
-      basePath = docUrl + '' + confUrl;
+      basePath = String(docUrl) + confUrl;
     }
 
     return optimizationPath(basePath);
   }
 
   function optimizationPath(path) {
-    var protocol = /^[a-z]+:\/\//.exec(path)[0],
-      tmp = null,
-      res = [];
+    var protocol = /^[a-z]+:\/\//.exec(path)[0];
+
+    var tmp = null;
+
+    var res = [];
 
     path = path
       .replace(protocol, '')
@@ -475,6 +550,6 @@
   }
 
   window.UE = {
-    getUEBasePath: getUEBasePath,
+    getUEBasePath: getUEBasePath
   };
 })();

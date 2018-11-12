@@ -14,60 +14,43 @@ import {
   DatePicker,
   Modal,
   message,
-  Badge,
-  Divider
+  Badge
 } from 'antd';
 
 const FormItem = Form.Item;
-function CreateFindFrom(props, formQuery, formReset) {
+function CreateFindFrom(props, formQuery, formReset, clearES) {
   const { form } = props;
   const { getFieldDecorator } = form;
   return (
-    <Form
-      onSubmit={formQuery}
-      layout="inline"
-    >
+    <Form onSubmit={formQuery} layout="inline">
       <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
-        <Col
-          md={8}
-          sm={24}
-        >
-          <FormItem label="图书编号">
-            {form.getFieldDecorator('bookCode')(<Input placeholder="" />)}
+        <Col md={8} sm={24}>
+          <FormItem label="上传用户ID">
+            {form.getFieldDecorator('userId')(<InputNumber />)}
           </FormItem>
         </Col>
-        <Col
-          md={8}
-          sm={24}
-        >
+        <Col md={8} sm={24}>
           <FormItem label="图书名">
             {form.getFieldDecorator('bookName')(<Input placeholder="" />)}
           </FormItem>
         </Col>
-        <Col
-          md={8}
-          sm={24}
-        >
+        <Col md={8} sm={24}>
           <FormItem label="作者">
             {form.getFieldDecorator('bookAuthor')(<Input placeholder="" />)}
           </FormItem>
         </Col>
-        <Col
-          md={8}
-          sm={24}
-        >
+      </Row>
+      <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
+        <Col md={8} sm={24}>
           <span>
-            <Button
-              type="primary"
-              htmlType="submit"
-            >
+            <Button type="primary" htmlType="submit">
               查询
             </Button>
-            <Button
-              style={{ marginLeft: 8 }}
-              onClick={formReset}
-            >
+            <Button style={{ marginLeft: 8 }} onClick={formReset}>
               重置
+            </Button>
+            <Button style={{ marginLeft: 8 }} type="primary" onClick={() => clearES()}>
+              清除ES
             </Button>
           </span>
         </Col>

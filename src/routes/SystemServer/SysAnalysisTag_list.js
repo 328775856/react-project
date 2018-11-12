@@ -5,7 +5,7 @@ import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from '../../assets/styles.less';
 import CreateEditForm from './SysAnalysisTag_edit';
 import CreateFindForm from './SysAnalysisTag_find';
-import { defaultPage } from '../../utils/utils.js';
+import { defaultPage, formatTime } from '../../utils/utils.js';
 
 const FormItem = Form.Item;
 @connect(({ tableData, loading }) => ({
@@ -166,7 +166,7 @@ export default class SysAnalysisTag extends PureComponent {
 
     const columns = [
       {
-        title: '系统id',
+        title: '系统ID',
         dataIndex: 'sysAnalysisTagId'
       },
       {
@@ -179,11 +179,13 @@ export default class SysAnalysisTag extends PureComponent {
       },
       {
         title: '创建时间',
-        dataIndex: 'createTime'
+        dataIndex: 'createTime',
+        render: (text, record) => <Fragment>{formatTime(text)}</Fragment>
       },
       {
         title: '修改时间',
-        dataIndex: 'modifyTime'
+        dataIndex: 'modifyTime',
+        render: (text, record) => <Fragment>{formatTime(text)}</Fragment>
       },
       {
         title: '操作',
@@ -208,10 +210,7 @@ export default class SysAnalysisTag extends PureComponent {
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
             <div className={styles.tableListOperator}>
-              <Button
-                type="primary"
-                onClick={() => this.getDataForAdd()}
-              >
+              <Button type="primary" onClick={() => this.getDataForAdd()}>
                 新建
               </Button>
             </div>

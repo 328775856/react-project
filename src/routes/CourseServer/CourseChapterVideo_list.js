@@ -1,5 +1,6 @@
 import React, { Fragment, PureComponent } from 'react';
 import { connect } from 'dva';
+import qs from 'qs';
 import {
   Row,
   Col,
@@ -52,7 +53,7 @@ export default class CourseChapterVideo extends PureComponent {
       type: 'commonTableData/list',
       path: 'courseChapterVideo/page',
       payload: {
-        data: values,
+        data: params,
         page
       }
     });
@@ -61,12 +62,17 @@ export default class CourseChapterVideo extends PureComponent {
     });
   };
 
+  componentWillMount() {
+    const { commonTableData } = this.props;
+    commonTableData.pageData.list = [];
+  }
+
   componentDidMount() {
     const { formValues, page } = this.state;
     const { commonTableData } = this.props;
-    const paramData = {
-      ...commonTableData.formData
-    };
+    console.log(this.props.location.search);
+    let paramData = commonTableData.formData;
+    paramData = qs.parse(paramData);
     this.setState({
       paramData
     });
@@ -252,16 +258,10 @@ export default class CourseChapterVideo extends PureComponent {
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
             <div className={styles.tableListOperator}>
-              <Button
-                type="primary"
-                onClick={() => this.getDataForAdd()}
-              >
+              <Button type="primary" onClick={() => this.getDataForAdd()}>
                 新建
               </Button>
-              <Button
-                type="default"
-                onClick={() => this.back()}
-              >
+              <Button type="default" onClick={() => this.back()}>
                 返回
               </Button>
             </div>

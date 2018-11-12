@@ -15,7 +15,7 @@ import {
   Modal,
   message,
   Badge,
-  Divider,
+  Divider
 } from 'antd';
 
 const FormItem = Form.Item;
@@ -34,20 +34,9 @@ function CreateFindFrom(props, formQuery, formReset, options, handleChange) {
         <Col md={8} sm={24}>
           <FormItem label="所属栏目">
             {form.getFieldDecorator('findChannelId', {
-              initialValue: options.length === 0 ? '' : options[0].findChannelId,
-            })(
-              <Select style={{ width: '150px' }} onChange={handleChange}>
-                {opt}
-              </Select>
-            )}
+              initialValue: options.length === 0 ? '' : options[0].findChannelId
+            })(<Select onChange={handleChange}>{opt}</Select>)}
           </FormItem>
-        </Col>
-        <Col md={8} sm={24}>
-          <span>
-            <Button type="primary" htmlType="submit">
-              查询
-            </Button>
-          </span>
         </Col>
       </Row>
     </Form>

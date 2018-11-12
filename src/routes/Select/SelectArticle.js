@@ -20,11 +20,8 @@ import {
   Divider,
   Table
 } from 'antd';
-import StandardTable from 'components/StandardTable';
-import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from '../../assets/styles.less';
 import CreateConditionForm from './SelectArticle_condition';
-import { getUrl, postUrl } from '../../services/api';
 
 const FormItem = Form.Item;
 
@@ -37,7 +34,7 @@ export default class SelectArticle extends React.Component {
   state = {
     selectedRows: [],
     formValues: {},
-    modalVisibleTemp: true
+    modalVisibleTemp: false
   };
 
   constructor(props) {
@@ -45,7 +42,8 @@ export default class SelectArticle extends React.Component {
   }
 
   initGroup = () => {
-    const { dispatch } = this.props;
+    const { dispatch, mediaArticleId } = this.props;
+    this.setState({ mediaArticleId: mediaArticleId });
     dispatch({
       type: 'restTableData/initOptionElement',
       path: 'media/articleGroup/page',
@@ -76,19 +74,17 @@ export default class SelectArticle extends React.Component {
     });
   };
 
-  componentDidMount() {
-    this.init();
-  }
-
   componentDidUpdate() {
     const { modalVisible } = this.props;
     if (modalVisible === this.state.modalVisibleTemp) {
       return;
     }
-    this.setState({ modalVisibleTemp: modalVisible });
     if (modalVisible === true) {
+      const { restTableData } = this.props;
+      restTableData.pageData.list = '';
       this.init();
     }
+    this.setState({ modalVisibleTemp: modalVisible });
   }
 
   init = () => {
@@ -143,7 +139,29 @@ export default class SelectArticle extends React.Component {
   }
 
   render() {
-    const { restTableData, formData, loading, callReturn, closeModal, modalVisible } = this.props;
+    const {
+      restTableData,
+      formData,
+      form,
+      loading,
+      callReturn,
+      closeModal,
+      modalVisible
+    } = this.props;
+    const { selectedRows } = this.state;
+
+    const okHandle = () => {
+      if (selectedRows.length < 1) {
+        message.success('请选择一条数据');
+      } else {
+        callReturn(selectedRows);
+      }
+    };
+
+    const cancelHandle = () => {
+      form.resetFields();
+      closeModal();
+    };
 
     const columns = [
       {
@@ -156,7 +174,13 @@ export default class SelectArticle extends React.Component {
       },
       {
         title: '图文描述',
-        dataIndex: 'articleDesc'
+        dataIndex: 'articleDesc',
+        render(text, record) {
+          if ((text || '.').length > 40) {
+            return `${text.substring(0, 40)}......`;
+          }
+          return text;
+        }
       },
       {
         title: '上传时间',
@@ -169,16 +193,24 @@ export default class SelectArticle extends React.Component {
       hideDefaultSelections: 'true',
       onChange: (selectedRowKeys, selectedRows) => {
         // console.log('selectedRows',selectedRows);//得到每一项的信息，也就是每一项的信息[{key: 1, name: "花骨朵", age: 18, hobby: "看书"}]
+        this.setState({ mediaArticleId: selectedRows[0].mediaArticleId });
       },
       onSelect: (record, selected, selectedRows) => {
         // console.log('selectedRows',selectedRows); //选中的每行信息，是一个数组
-        callReturn(selectedRows);
+        // callReturn(selectedRows);
+        this.onRowClick(selectedRows);
       },
       onSelectAll: (selected, selectedRows, changeRows) => {
         // console.log('changeRows',changeRows);   //变化的每一项
       },
       onSelectInvert: selectedRows => {
         // console.log('selectedRows',selectedRows);
+      },
+      getCheckboxProps: record => {
+        const { mediaArticleId } = this.state;
+        return {
+          checked: record.mediaArticleId === mediaArticleId
+        };
       }
     };
 
@@ -186,14 +218,14 @@ export default class SelectArticle extends React.Component {
       <Modal
         title="选择图文"
         visible={modalVisible}
-        width={650}
-        onOk={closeModal}
-        onCancel={() => closeModal()}
+        width={1000}
+        onOk={okHandle}
+        onCancel={cancelHandle}
       >
         <div className={styles.tableList}>
           <div className={styles.tableListForm}>{this.renderForm()}</div>
           <Table
-            dataSource={restTableData.pageData.list}
+            dataSource={restTableData.pageData.list || []}
             columns={columns}
             rowKey="mediaArticleId"
             pagination={restTableData.pageData.pagination}

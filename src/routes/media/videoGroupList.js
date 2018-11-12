@@ -1,30 +1,11 @@
 import React, { Fragment, PureComponent } from 'react';
 import { connect } from 'dva';
-import {
-  Row,
-  Col,
-  Card,
-  Form,
-  Input,
-  Select,
-  Icon,
-  Button,
-  Dropdown,
-  Menu,
-  InputNumber,
-  DatePicker,
-  Modal,
-  message,
-  Badge,
-  Divider,
-  Table
-} from 'antd';
-import StandardTable from 'components/StandardTable';
+import { Card, Form, Button, Modal, message, Divider, Table } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from '../../assets/styles.less';
 import CreateEditForm from './videoGroupEdit';
 import CreateFindForm from './videoGroupFind';
-import { defaultPage } from '../../utils/utils.js';
+import { defaultPage, formatTime } from '../../utils/utils.js';
 
 const FormItem = Form.Item;
 @connect(({ restTableData, loading }) => ({
@@ -54,6 +35,11 @@ export default class MediaVideoGroup extends PureComponent {
       modalVisible: false
     });
   };
+
+  componentWillMount() {
+    const { restTableData } = this.props;
+    restTableData.pageData.list = '';
+  }
 
   componentDidMount() {
     const { formValues, page } = this.state;
@@ -154,7 +140,7 @@ export default class MediaVideoGroup extends PureComponent {
   getDataForUpdate = record => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'restTableData/getDataForUpdate',
+      type: 'restTableData/getData',
       path: 'media/videoGroup/getDataForUpdate',
       payload: { mediaVideoGroupId: record.mediaVideoGroupId }
     });
@@ -188,7 +174,7 @@ export default class MediaVideoGroup extends PureComponent {
 
     const columns = [
       {
-        title: '系统id',
+        title: '系统ID',
         dataIndex: 'mediaVideoGroupId'
       },
       {
@@ -203,6 +189,11 @@ export default class MediaVideoGroup extends PureComponent {
         title: '默认分组',
         dataIndex: 'isDefault',
         render: (text, record) => <Fragment>{text === 1 ? '是' : '否'}</Fragment>
+      },
+      {
+        title: '创建时间',
+        dataIndex: 'createTime',
+        render: (text, record) => <Fragment>{formatTime(text)}</Fragment>
       },
       {
         title: '操作',
@@ -227,15 +218,12 @@ export default class MediaVideoGroup extends PureComponent {
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
             <div className={styles.tableListOperator}>
-              <Button
-                type="primary"
-                onClick={() => this.getDataForAdd()}
-              >
+              <Button type="primary" onClick={() => this.getDataForAdd()}>
                 新建
               </Button>
             </div>
             <Table
-              dataSource={restTableData.pageData.list}
+              dataSource={restTableData.pageData.list || []}
               columns={columns}
               rowKey="mediaVideoGroupId"
               pagination={restTableData.pageData.pagination}

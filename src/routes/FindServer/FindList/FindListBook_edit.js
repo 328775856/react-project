@@ -15,7 +15,7 @@ import {
   Modal,
   message,
   Badge,
-  Divider,
+  Divider
 } from 'antd';
 
 const FormItem = Form.Item;
@@ -32,17 +32,22 @@ const CreateEditForm = Form.create()(props => {
     });
   };
 
+  const cancelHandle = key => {
+    form.resetFields();
+    closeModal(key);
+  };
+
   const formItemLayout = {
     labelCol: {
       xs: { span: 24 },
       sm: { span: 7 },
-      md: { span: 5 },
+      md: { span: 5 }
     },
     wrapperCol: {
       xs: { span: 24 },
       sm: { span: 12 },
-      md: { span: 13 },
-    },
+      md: { span: 13 }
+    }
   };
 
   return (
@@ -50,7 +55,7 @@ const CreateEditForm = Form.create()(props => {
       title={title}
       visible={updateModalVisible}
       onOk={okHandle}
-      onCancel={() => closeModal('updateModalVisible')}
+      onCancel={() => cancelHandle('updateModalVisible')}
     >
       <FormItem {...formItemLayout} label="顺序">
         {form.getFieldDecorator('indexNo', {
@@ -58,9 +63,9 @@ const CreateEditForm = Form.create()(props => {
           rules: [
             {
               required: true,
-              message: '请输入推荐顺序...',
-            },
-          ],
+              message: '请输入推荐顺序...'
+            }
+          ]
         })(<Input />)}
       </FormItem>
     </Modal>

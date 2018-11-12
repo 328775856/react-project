@@ -34,6 +34,11 @@ const CreateEditForm = Form.create()(props => {
     });
   };
 
+  const cancelHandle = () => {
+    form.resetFields();
+    closeModal();
+  };
+
   const formItemLayout = {
     labelCol: {
       xs: { span: 24 },
@@ -48,16 +53,8 @@ const CreateEditForm = Form.create()(props => {
   };
 
   return (
-    <Modal
-      title={title}
-      visible={modalVisible}
-      onOk={okHandle}
-      onCancel={() => closeModal()}
-    >
-      <FormItem
-        {...formItemLayout}
-        label="系统id"
-      >
+    <Modal title={title} visible={modalVisible} onOk={okHandle} onCancel={cancelHandle}>
+      <FormItem {...formItemLayout} label="系统id">
         {form.getFieldDecorator('priPackageId', {
           initialValue: formData.priPackageId || '',
           rules: [
@@ -66,13 +63,10 @@ const CreateEditForm = Form.create()(props => {
               message: '请输入系统id...'
             }
           ]
-        })(<Input />)}
+        })(<Input disabled={formData.priPackageId >= 0} />)}
       </FormItem>
 
-      <FormItem
-        {...formItemLayout}
-        label="包名"
-      >
+      <FormItem {...formItemLayout} label="包名">
         {form.getFieldDecorator('packageName', {
           initialValue: formData.packageName || '',
           rules: [

@@ -17,21 +17,21 @@ import {
   message,
   Badge,
   Divider,
-  Table,
+  Table
 } from 'antd';
 import moment from 'moment';
 import PageHeaderLayout from '../../../layouts/PageHeaderLayout';
 import styles from '../../../assets/styles.less';
 import CreateEditForm from './FindList_edit';
 import CreateFindForm from './FindList_find';
-import { defaultPage } from '../../../utils/utils.js';
+import { defaultPage, formatDate } from '../../../utils/utils.js';
 import TimeToPublishForm from './ListTimeToPublish';
 
 const FormItem = Form.Item;
 @connect(({ tableData, restTableData, loading }) => ({
   tableData,
   restTableData,
-  loading: loading.models.crud,
+  loading: loading.models.crud
 }))
 @Form.create()
 export default class FindList extends PureComponent {
@@ -41,7 +41,7 @@ export default class FindList extends PureComponent {
     modalTitle: '',
     formValues: {},
     page: defaultPage(),
-    options: [],
+    options: []
   };
 
   refresh = (values, page) => {
@@ -51,14 +51,19 @@ export default class FindList extends PureComponent {
       path: 'findList/page',
       payload: {
         data: values,
-        page: page,
-      },
+        page: page
+      }
     });
     this.setState({
       modalVisible: false,
-      timeToPushModalVisible: false,
+      timeToPushModalVisible: false
     });
   };
+
+  componentWillMount() {
+    const { tableData } = this.props;
+    tableData.pageData.list = [];
+  }
 
   componentDidMount() {
     const { formValues, page } = this.state;
@@ -70,10 +75,10 @@ export default class FindList extends PureComponent {
     const { formValues } = this.state;
     let page = {
       pageSize: pagination.pageSize,
-      pageNo: pagination.current,
+      pageNo: pagination.current
     };
     this.setState({
-      page: page,
+      page: page
     });
     this.refresh(formValues, page);
   };
@@ -103,28 +108,29 @@ export default class FindList extends PureComponent {
           type: 'tableData/remove',
           path: 'findList/remove',
           payload: { findListId: record.findListId },
-          callback: cb,
+          callback: cb
         });
       },
-      onCancel() {},
+      onCancel() {}
     });
   };
+
   query = e => {
     e.preventDefault();
     const { dispatch, form } = this.props;
     form.validateFields((err, fieldsValue) => {
       if (err) return;
       const values = {
-        ...fieldsValue,
+        ...fieldsValue
       };
-      values.publishDateStart = values.publishDateStart
-        ? values.publishDateStart.format('YYYYMMDD')
-        : '';
+      values.publishDateStart = values.publishDateStart ?
+        values.publishDateStart.format('YYYYMMDD') :
+        '';
       values.publishDateEnd = values.publishDateEnd ? values.publishDateEnd.format('YYYYMMDD') : '';
       const page = defaultPage();
       this.setState({
         formValues: values,
-        page: page,
+        page: page
       });
       this.refresh(values, page);
     });
@@ -133,7 +139,7 @@ export default class FindList extends PureComponent {
   closeModal = key => {
     if (!key) {
       this.setState({
-        modalVisible: false,
+        modalVisible: false
       });
     } else {
       let newState = {};
@@ -146,7 +152,7 @@ export default class FindList extends PureComponent {
     const { page } = this.state;
     const result = JSON.parse(response.data);
     this.setState({
-      options: result,
+      options: result
     });
   };
 
@@ -156,7 +162,7 @@ export default class FindList extends PureComponent {
       type: 'tableData/initOptions',
       path: 'findList/getDataForAdd',
       payload: {},
-      callback: this.initOptionsCallback,
+      callback: this.initOptionsCallback
     });
   };
 
@@ -170,12 +176,12 @@ export default class FindList extends PureComponent {
           type: 'tableData/update',
           path: 'findList/publish',
           payload: {
-            findListId: record.findListId,
+            findListId: record.findListId
           },
-          callback: cb,
+          callback: cb
         });
       },
-      onCancel() {},
+      onCancel() {}
     });
   };
 
@@ -189,12 +195,12 @@ export default class FindList extends PureComponent {
           type: 'tableData/update',
           path: 'findList/off',
           payload: {
-            findListId: record.findListId,
+            findListId: record.findListId
           },
-          callback: cb,
+          callback: cb
         });
       },
-      onCancel() {},
+      onCancel() {}
     });
   };
 
@@ -203,11 +209,11 @@ export default class FindList extends PureComponent {
     dispatch({
       type: 'tableData/getDataForUpdate',
       path: 'findList/getDataForUpdate',
-      payload: { findListId: record.findListId },
+      payload: { findListId: record.findListId }
     });
     this.setState({
       modalTitle: '定时发布',
-      timeToPushModalVisible: true,
+      timeToPushModalVisible: true
     });
   };
 
@@ -218,9 +224,9 @@ export default class FindList extends PureComponent {
       path: 'findList/timeToPublish',
       payload: {
         findListId: record.findListId,
-        publishDate: record.publishDate,
+        publishDate: record.publishDate
       },
-      callback: this.callback,
+      callback: this.callback
     });
   };
 
@@ -229,11 +235,11 @@ export default class FindList extends PureComponent {
     dispatch({
       type: 'tableData/getDataForAdd',
       path: 'findList/getDataForAdd',
-      payload: fields,
+      payload: fields
     });
     this.setState({
       modalTitle: '新增',
-      modalVisible: true,
+      modalVisible: true
     });
   };
 
@@ -243,7 +249,7 @@ export default class FindList extends PureComponent {
       type: 'tableData/add',
       path: 'findList/add',
       payload: fields,
-      callback: this.callback,
+      callback: this.callback
     });
   };
 
@@ -252,11 +258,11 @@ export default class FindList extends PureComponent {
     dispatch({
       type: 'tableData/getDataForUpdate',
       path: 'findList/getDataForUpdate',
-      payload: { findListId: record.findListId },
+      payload: { findListId: record.findListId }
     });
     this.setState({
       modalTitle: '修改',
-      modalVisible: true,
+      modalVisible: true
     });
   };
 
@@ -264,13 +270,13 @@ export default class FindList extends PureComponent {
     const { dispatch, tableData } = this.props;
     let payload = {
       ...tableData.formData,
-      ...fields,
+      ...fields
     };
     dispatch({
       type: 'tableData/update',
       path: 'findList/update',
       payload: payload,
-      callback: this.callback,
+      callback: this.callback
     });
   };
 
@@ -290,48 +296,50 @@ export default class FindList extends PureComponent {
       type: 'tableData/goUrl',
       path: '/FindServer/findListBook',
       payload: {
-        listId: record.findListId,
-      },
+        listId: record.findListId
+      }
     });
   };
 
-  formatDate = text => {
-    if (text == null || text === 0) {
-      return '';
-    } else {
-      let str = new String(text);
-      let time = {
-        year: str.substr(0, 4),
-        month: parseInt(str.substr(4, 2)) - 1,
-        date: str.substr(6, 2),
-      };
-      return moment()
-        .set(time)
-        .format('YYYY-MM-DD');
-    }
-  };
+  publishOP = record => (
+    <Fragment>
+      <a onClick={() => this.off(record)}>下架</a>
+      <Divider type="vertical" />
+      <a onClick={() => this.showBookList(record)}>图书列表</a>
+    </Fragment>
+  );
 
-  formatTime = text => {
-    if (text == null || text === 0) {
-      return '';
-    } else {
-      let str = new String(text);
-      let time = {
-        year: str.substr(0, 4),
-        month: parseInt(str.substr(4, 2)) - 1,
-        date: str.substr(6, 2),
-        hour: str.substr(8, 2),
-        minute: str.substr(10, 2),
-        second: str.substr(12, 2),
-      };
-      return moment()
-        .set(time)
-        .format('YYYY-MM-DD HH:mm:ss');
-    }
-  };
+  unPublishOP = record => (
+    <Fragment>
+      <a onClick={() => this.publish(record)}>发布</a>
+      <Divider type="vertical" />
+      <a onClick={() => this.getDataForTimeToPublish(record)}>定时发布</a>
+      <Divider type="vertical" />
+      <a onClick={() => this.getDataForUpdate(record)}>修改</a>
+      <Divider type="vertical" />
+      <a onClick={() => this.remove(record)}>删除</a>
+      <Divider type="vertical" />
+      <a onClick={() => this.showBookList(record)}>图书列表</a>
+    </Fragment>
+  );
+
+  timingPublishOP = record => (
+    <Fragment>
+      <a onClick={() => this.off(record)}>下架</a>
+      <Divider type="vertical" />
+      <a onClick={() => this.showBookList(record)}>图书列表</a>
+    </Fragment>
+  );
+
+  renderPublishOP = record =>
+    record.publishStatus === 0 ?
+      this.unPublishOP(record) :
+      record.publishStatus === 1 ?
+        this.publishOP(record) :
+        this.timingPublishOP(record);
 
   renderForm() {
-    return CreateFindForm(this.props, this.query, this.formReset);
+    return CreateFindForm(this.props, this.query, this.formReset, this.getDataForAdd);
   }
 
   render() {
@@ -340,16 +348,33 @@ export default class FindList extends PureComponent {
 
     const columns = [
       {
-        title: '系统id',
-        dataIndex: 'findListId',
+        title: '系统ID',
+        dataIndex: 'findListId'
+      },
+      {
+        title: '所属栏目ID',
+        dataIndex: 'findChannelId',
+        render(text, record) {
+          const dict = () => {
+            let res = '';
+            for (let i = 0; i < options.length; i += 1) {
+              if (record.findChannelId === options[i].findChannelId) {
+                res = options[i].channelName;
+                break;
+              }
+            }
+            return res;
+          };
+          return <Fragment>{dict()}</Fragment>;
+        }
       },
       {
         title: '书单名称',
-        dataIndex: 'listName',
+        dataIndex: 'listName'
       },
       {
-        title: '用户ID',
-        dataIndex: 'nickname',
+        title: '推荐人',
+        dataIndex: 'nickname'
       },
       {
         title: '书单图片',
@@ -358,59 +383,26 @@ export default class FindList extends PureComponent {
           <Fragment>
             <img alt="" style={{ width: 50, height: 50 }} src={record.wholePhotoPath} />
           </Fragment>
-        ),
+        )
       },
       {
         title: '书单介绍',
-        dataIndex: 'listIntro',
-      },
-      {
-        title: '是否推荐',
-        dataIndex: 'isRecc',
-        render: (text, record) => <Fragment>{record.isRecc === 0 ? '未推荐' : '已推荐'}</Fragment>,
-      },
-      {
-        title: '是否首页',
-        dataIndex: 'isIndex',
-        render: (text, record) => <Fragment>{record.isIndex === 1 ? '是' : '否'}</Fragment>,
-      },
-      {
-        title: '排版显示书数量',
-        dataIndex: 'numShow',
+        dataIndex: 'listIntro'
       },
       {
         title: '发布状态',
         dataIndex: 'publishStatus',
-        render: (text, record) => <Fragment>{this.formatState(text)}</Fragment>,
+        render: (text, record) => <Fragment>{this.formatState(text)}</Fragment>
       },
       {
         title: '发布时间',
         dataIndex: 'publishDate',
-        render: (text, record) => <Fragment>{this.formatDate(text)}</Fragment>,
-      },
-      {
-        title: '创建时间',
-        dataIndex: 'createTime',
-        render: (text, record) => <Fragment>{this.formatTime(text)}</Fragment>,
+        render: (text, record) => <Fragment>{formatDate(text)}</Fragment>
       },
       {
         title: '操作',
-        render: (text, record) => (
-          <Fragment>
-            <a onClick={() => this.publish(record)}>发布</a>
-            <Divider type="vertical" />
-            <a onClick={() => this.off(record)}>下架</a>
-            <Divider type="vertical" />
-            <a onClick={() => this.getDataForTimeToPublish(record)}>定时发布</a>
-            <Divider type="vertical" />
-            <a onClick={() => this.getDataForUpdate(record)}>修改</a>
-            <Divider type="vertical" />
-            <a onClick={() => this.remove(record)}>删除</a>
-            <Divider type="vertical" />
-            <a onClick={() => this.showBookList(record)}>图书列表</a>
-          </Fragment>
-        ),
-      },
+        render: (text, record) => <Fragment>{this.renderPublishOP(record)}</Fragment>
+      }
     ];
 
     const parentMethods = {
@@ -419,17 +411,14 @@ export default class FindList extends PureComponent {
       closeModal: this.closeModal,
       dispatch: this.props.dispatch,
       timeToPublish: this.timeToPublish,
+      getDataForAdd: this.getDataForAdd
     };
     return (
       <PageHeaderLayout>
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
-            <div className={styles.tableListOperator}>
-              <Button type="primary" onClick={() => this.getDataForAdd()}>
-                新建
-              </Button>
-            </div>
+            <div className={styles.tableListOperator} />
             <Table
               dataSource={tableData.pageData.list}
               columns={columns}

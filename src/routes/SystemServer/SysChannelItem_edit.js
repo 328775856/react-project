@@ -34,6 +34,11 @@ const CreateEditForm = Form.create()(props => {
     });
   };
 
+  const cancelHandle = () => {
+    form.resetFields();
+    closeModal();
+  };
+
   const formItemLayout = {
     labelCol: {
       xs: { span: 24 },
@@ -48,16 +53,8 @@ const CreateEditForm = Form.create()(props => {
   };
 
   return (
-    <Modal
-      title={title}
-      visible={modalVisible}
-      onOk={okHandle}
-      onCancel={() => closeModal()}
-    >
-      <FormItem
-        {...formItemLayout}
-        label="渠道明细编号"
-      >
+    <Modal title={title} visible={modalVisible} onOk={okHandle} onCancel={cancelHandle}>
+      <FormItem {...formItemLayout} label="渠道明细编号">
         {form.getFieldDecorator('channelItemCode', {
           initialValue: formData.channelItemCode || '',
           rules: [
@@ -68,10 +65,7 @@ const CreateEditForm = Form.create()(props => {
           ]
         })(<Input />)}
       </FormItem>
-      <FormItem
-        {...formItemLayout}
-        label="明细名称"
-      >
+      <FormItem {...formItemLayout} label="明细名称">
         {form.getFieldDecorator('channelItemName', {
           initialValue: formData.channelItemName || '',
           rules: [

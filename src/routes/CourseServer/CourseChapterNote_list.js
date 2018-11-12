@@ -20,6 +20,7 @@ import {
   Table
 } from 'antd';
 import StandardTable from 'components/StandardTable';
+import qs from 'qs';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from '../../assets/styles.less';
 import CreateEditForm from './CourseChapterNote_edit';
@@ -52,7 +53,7 @@ export default class CourseChapterNote extends PureComponent {
       type: 'commonTableData/list',
       path: 'courseChapterNote/page',
       payload: {
-        data: values,
+        data: params,
         page
       }
     });
@@ -61,12 +62,16 @@ export default class CourseChapterNote extends PureComponent {
     });
   };
 
+  componentWillMount() {
+    const { commonTableData } = this.props;
+    commonTableData.pageData.list = [];
+  }
+
   componentDidMount() {
     const { formValues, page } = this.state;
     const { commonTableData } = this.props;
-    const paramData = {
-      ...commonTableData.formData
-    };
+    let paramData = this.props.location.search.replace('?', '');
+    paramData = qs.parse(paramData);
     this.setState({
       paramData
     });
@@ -155,7 +160,6 @@ export default class CourseChapterNote extends PureComponent {
   };
 
   add = fields => {
-    debugger;
     const { dispatch, commonTableData } = this.props;
     const { paramData } = this.state;
     const params = {
@@ -254,17 +258,11 @@ export default class CourseChapterNote extends PureComponent {
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
             <div className={styles.tableListOperator}>
-              <Button
-                type="primary"
-                onClick={() => this.getDataForAdd()}
-              >
+              <Button type="primary" onClick={() => this.getDataForAdd()}>
                 新建
               </Button>
 
-              <Button
-                type="default"
-                onClick={() => this.back()}
-              >
+              <Button type="default" onClick={() => this.back()}>
                 返回
               </Button>
             </div>

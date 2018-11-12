@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
-import { Layout, Icon, message } from 'antd';
+import { Layout, Icon, message, BackTop } from 'antd';
 import DocumentTitle from 'react-document-title';
 import { connect } from 'dva';
 import { Route, Redirect, Switch, routerRedux } from 'dva/router';
@@ -15,6 +15,7 @@ import NotFound from '../routes/Exception/404';
 import { getRoutes } from '../utils/utils';
 import Authorized from '../utils/Authorized';
 import { getMenuData } from '../common/menu';
+import { getMenuData2 } from '../common/menu2';
 import logo from '../assets/logo.png';
 
 const { Content, Header, Footer } = Layout;
@@ -37,7 +38,6 @@ const getRedirect = item => {
     }
   }
 };
-getMenuData().forEach(getRedirect);
 
 /**
  * 获取面包屑映射
@@ -89,33 +89,53 @@ enquireScreen(b => {
 });
 
 class BasicLayout extends React.PureComponent {
+  constructor(props) {
+    super(props);
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'user/fetchCurrent'
+    });
+  }
+
   static childContextTypes = {
     location: PropTypes.object,
     breadcrumbNameMap: PropTypes.object
   };
 
   state = {
-    isMobile
+    isMobile,
+    routeData: getMenuData
   };
 
   getChildContext() {
     const { location, routerData } = this.props;
     return {
       location,
-      breadcrumbNameMap: getBreadcrumbNameMap(getMenuData(), routerData)
+      breadcrumbNameMap: getBreadcrumbNameMap(this.state.routeData(), routerData)
+    };
+  }
+
+  componentWillReceiveProps(r) {
+    // console.log(r.currentUser.sysRoleId);
+    if (r.currentUser.sysRoleId === 2) {
+      this.setState({ routeData: getMenuData2 });
+    } else {
+      this.setState({ routeData: getMenuData });
+    }
+    this.state.routeData().forEach(getRedirect);
+    const { location, routerData } = this.props;
+    return {
+      location,
+      breadcrumbNameMap: getBreadcrumbNameMap(this.state.routeData(), routerData)
     };
   }
 
   componentDidMount() {
-    console.log(this.props);
+    // console.log(this.props);
     this.enquireHandler = enquireScreen(mobile => {
       this.setState({
         isMobile: mobile
       });
-    });
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'user/fetchCurrent'
     });
   }
 
@@ -214,13 +234,14 @@ class BasicLayout extends React.PureComponent {
     const bashRedirect = this.getBaseRedirect();
     const layout = (
       <Layout>
+        <BackTop visibilityHeight={200} />
         <SiderMenu
           logo={logo}
           // 不带Authorized参数的情况下如果没有权限,会强制跳到403界面
           // If you do not have the Authorized parameter
           // you will be forced to jump to the 403 interface without permission
           Authorized={Authorized}
-          menuData={getMenuData()}
+          menuData={this.state.routeData()}
           collapsed={collapsed}
           location={location}
           isMobile={mb}
@@ -244,12 +265,7 @@ class BasicLayout extends React.PureComponent {
           <Content style={{ margin: '24px 24px 0', height: '100%' }}>
             <Switch>
               {redirectData.map(item => (
-                <Redirect
-                  key={item.from}
-                  exact
-                  from={item.from}
-                  to={item.to}
-                />
+                <Redirect key={item.from} exact from={item.from} to={item.to} />
               ))}
               {getRoutes(match.path, routerData).map(item => (
                 <AuthorizedRoute
@@ -261,11 +277,7 @@ class BasicLayout extends React.PureComponent {
                   redirectPath="/exception/403"
                 />
               ))}
-              <Redirect
-                exact
-                from="/"
-                to={bashRedirect}
-              />
+              <Redirect exact from="/" to={bashRedirect} />
               <Route render={NotFound} />
             </Switch>
           </Content>

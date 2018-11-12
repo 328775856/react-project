@@ -20,11 +20,8 @@ import {
   Divider,
   Table
 } from 'antd';
-import StandardTable from 'components/StandardTable';
-import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from '../../assets/styles.less';
 import CreateConditionForm from './SelectVipCourseType_condition';
-import { getUrl, postUrl } from '../../services/api';
 
 const FormItem = Form.Item;
 
@@ -45,7 +42,8 @@ export default class SelectVipCourseType extends React.Component {
   }
 
   query = (params, page) => {
-    const { dispatch } = this.props;
+    const { dispatch, vipCourseTypeId } = this.props;
+    this.setState({ vipCourseTypeId: vipCourseTypeId });
     dispatch({
       type: 'selectData/query',
       path: 'vipCourseType/page',
@@ -56,19 +54,21 @@ export default class SelectVipCourseType extends React.Component {
     });
   };
 
-  componentDidMount() {
-    this.query({}, { pageNo: 1, pageSize: 10 });
-  }
+  // componentDidMount() {
+  //   this.query({}, { pageNo: 1, pageSize: 10 });
+  // }
 
   componentDidUpdate() {
     const { modalVisible } = this.props;
     if (modalVisible === this.state.modalVisibleTemp) {
       return;
     }
-    this.setState({ modalVisibleTemp: modalVisible });
     if (modalVisible === true) {
+      const { selectData } = this.props;
+      selectData.pageData.list = '';
       this.init();
     }
+    this.setState({ modalVisibleTemp: modalVisible });
   }
 
   init = () => {
@@ -111,7 +111,7 @@ export default class SelectVipCourseType extends React.Component {
     });
   };
 
-  renderForm(groupList) {
+  renderForm() {
     return CreateConditionForm(this.props, this.formSubmit, this.formReset);
   }
 
@@ -121,8 +121,24 @@ export default class SelectVipCourseType extends React.Component {
       selectData: { formData },
       callReturn,
       closeModal,
-      modalVisible
+      modalVisible,
+      form
     } = this.props;
+
+    const { selectedRows } = this.state;
+
+    const okHandle = () => {
+      if (selectedRows.length < 1) {
+        message.success('请选择一条数据');
+      } else {
+        callReturn(selectedRows);
+      }
+    };
+
+    const cancelHandle = () => {
+      form.resetFields();
+      closeModal();
+    };
 
     const columns = [
       {
@@ -145,16 +161,24 @@ export default class SelectVipCourseType extends React.Component {
       hideDefaultSelections: 'true',
       onChange: (selectedRowKeys, selectedRows) => {
         // console.log('selectedRows',selectedRows);//得到每一项的信息，也就是每一项的信息[{key: 1, name: "花骨朵", age: 18, hobby: "看书"}]
+        this.setState({ vipCourseTypeId: selectedRows[0].vipCourseTypeId });
       },
       onSelect: (record, selected, selectedRows) => {
         // console.log('selectedRows',selectedRows); //选中的每行信息，是一个数组
-        callReturn(selectedRows);
+        // callReturn(selectedRows);
+        this.onRowClick(selectedRows);
       },
       onSelectAll: (selected, selectedRows, changeRows) => {
         // console.log('changeRows',changeRows);   //变化的每一项
       },
       onSelectInvert: selectedRows => {
         // console.log('selectedRows',selectedRows);
+      },
+      getCheckboxProps: record => {
+        const { vipCourseTypeId } = this.state;
+        return {
+          checked: record.vipCourseTypeId === vipCourseTypeId
+        };
       }
     };
 
@@ -163,11 +187,11 @@ export default class SelectVipCourseType extends React.Component {
         title="选择标签"
         visible={modalVisible}
         width={650}
-        onOk={closeModal}
-        onCancel={() => closeModal()}
+        onOk={okHandle}
+        onCancel={cancelHandle}
       >
         <div className={styles.tableList}>
-          <div className={styles.tableListForm}>{this.renderForm(formData.rows)}</div>
+          <div className={styles.tableListForm}>{this.renderForm()}</div>
           <Table
             dataSource={pageData.list}
             columns={columns}

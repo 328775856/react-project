@@ -20,6 +20,11 @@ export default class FindSpecCourse extends PureComponent {
     paramData: {}
   };
 
+  componentWillMount() {
+    const { commonTableData } = this.props;
+    commonTableData.pageData.list = '';
+  }
+
   componentDidMount() {
     const { commonTableData } = this.props;
     const id = commonTableData.formData.findSpecId;
@@ -182,11 +187,7 @@ export default class FindSpecCourse extends PureComponent {
         dataIndex: 'wholeCoverPath',
         render: (text, record) => (
           <Fragment>
-            <img
-              alt=""
-              style={{ width: 100, height: 100 }}
-              src={record.wholeCoverPath}
-            />
+            <img alt="" style={{ width: 50, height: 50 }} src={record.wholeCoverPath} />
           </Fragment>
         )
       },
@@ -219,7 +220,7 @@ export default class FindSpecCourse extends PureComponent {
 
     const parentCourseMethods = {
       callReturn: this.addSave,
-      closeModal: this.closeIndexNoModal
+      closeModal: this.closeCourseModal
     };
 
     return (
@@ -227,17 +228,11 @@ export default class FindSpecCourse extends PureComponent {
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListOperator}>
-              <Button
-                type="primary"
-                onClick={() => this.getSelect()}
-              >
+              <Button type="primary" onClick={() => this.getSelect()}>
                 新增课程
               </Button>
-              <Button
-                type="primary"
-                onClick={() => this.goBackSpec()}
-              >
-                返回榜单
+              <Button type="primary" onClick={() => this.goBackSpec()}>
+                返回专题
               </Button>
             </div>
             <Table
@@ -257,10 +252,7 @@ export default class FindSpecCourse extends PureComponent {
           title={modalTitle}
           state={this.state}
         />
-        <SelectCourseInfo
-          {...parentCourseMethods}
-          modalVisible={modalCourseVisible}
-        />
+        <SelectCourseInfo {...parentCourseMethods} modalVisible={modalCourseVisible} />
       </PageHeaderLayout>
     );
   }

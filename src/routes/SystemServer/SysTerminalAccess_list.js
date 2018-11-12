@@ -24,7 +24,7 @@ import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from '../../assets/styles.less';
 import CreateEditForm from './SysTerminalAccess_edit';
 import CreateFindForm from './SysTerminalAccess_find';
-import { defaultPage } from '../../utils/utils.js';
+import { defaultPage, formatTime } from '../../utils/utils.js';
 
 const FormItem = Form.Item;
 @connect(({ tableData, loading }) => ({
@@ -55,6 +55,11 @@ export default class SysTerminalAccess extends PureComponent {
       modalVisible: false
     });
   };
+
+  componentWillMount() {
+    const { tableData } = this.props;
+    tableData.pageData.list = [];
+  }
 
   componentDidMount() {
     const { formValues, page, options } = this.state;
@@ -218,7 +223,7 @@ export default class SysTerminalAccess extends PureComponent {
 
     const columns = [
       {
-        title: '系统id',
+        title: '系统ID',
         dataIndex: 'sysTerminalAccessId'
       },
       {
@@ -256,11 +261,13 @@ export default class SysTerminalAccess extends PureComponent {
       },
       {
         title: '有效开始日期',
-        dataIndex: 'beginDate'
+        dataIndex: 'beginDate',
+        render: (text, record) => <Fragment>{formatTime(text)}</Fragment>
       },
       {
         title: '有效结束日期',
-        dataIndex: 'endDate'
+        dataIndex: 'endDate',
+        render: (text, record) => <Fragment>{formatTime(text)}</Fragment>
       },
       {
         title: '操作',
@@ -286,10 +293,7 @@ export default class SysTerminalAccess extends PureComponent {
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
             <div className={styles.tableListOperator}>
-              <Button
-                type="primary"
-                onClick={() => this.getDataForAdd()}
-              >
+              <Button type="primary" onClick={() => this.getDataForAdd()}>
                 新建
               </Button>
             </div>

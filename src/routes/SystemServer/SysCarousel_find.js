@@ -30,44 +30,26 @@ function CreateFindFrom(props, formQuery, formReset, isEmptyObject, state) {
   opt1.push(<Option key="-1">请选择</Option>);
   opt1.push(opt);
   return (
-    <Form
-      onSubmit={formQuery}
-      layout="inline"
-    >
+    <Form onSubmit={formQuery} layout="inline">
       <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
-        <Col
-          md={8}
-          sm={24}
-        >
+        <Col md={8} sm={24}>
           <FormItem label="名称">
             {form.getFieldDecorator('carouselName')(<Input placeholder="" />)}
           </FormItem>
         </Col>
-        <Col
-          md={8}
-          sm={24}
-        >
+        <Col md={8} sm={24}>
           <FormItem label="轮播类型">
             {form.getFieldDecorator('carouselType', { initialValue: '-1' })(
-              <Select style={{ width: '150px' }}>{opt1}</Select>
+              <Select>{opt1}</Select>
             )}
           </FormItem>
         </Col>
-        <Col
-          md={8}
-          sm={24}
-        >
+        <Col md={8} sm={24}>
           <span>
-            <Button
-              type="primary"
-              htmlType="submit"
-            >
+            <Button type="primary" htmlType="submit">
               查询
             </Button>
-            <Button
-              style={{ marginLeft: 8 }}
-              onClick={formReset}
-            >
+            <Button style={{ marginLeft: 8 }} onClick={formReset}>
               重置
             </Button>
           </span>

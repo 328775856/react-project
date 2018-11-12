@@ -28,7 +28,7 @@ const CreateEditForm = Form.create()(props => {
       form.resetFields();
       fieldsValue.publishTime = fieldsValue.publishTime ?
         fieldsValue.publishTime.format('YYYYMMDDHHmmss') :
-        '';
+        '0';
       if (formData.dynaTopicId >= 0) {
         fieldsValue.dynaTopicId = formData.dynaTopicId;
         update(fieldsValue);
@@ -36,6 +36,11 @@ const CreateEditForm = Form.create()(props => {
         add(fieldsValue);
       }
     });
+  };
+
+  const cancelHandle = () => {
+    form.resetFields();
+    closeModal();
   };
 
   const formItemLayout = {
@@ -52,16 +57,8 @@ const CreateEditForm = Form.create()(props => {
   };
 
   return (
-    <Modal
-      title={title}
-      visible={modalVisible}
-      onOk={okHandle}
-      onCancel={() => closeModal()}
-    >
-      <FormItem
-        {...formItemLayout}
-        label="话题标题"
-      >
+    <Modal title={title} visible={modalVisible} onOk={okHandle} onCancel={cancelHandle}>
+      <FormItem {...formItemLayout} label="话题标题">
         {form.getFieldDecorator('topicTitle', {
           initialValue: formData.topicTitle || '',
           rules: [
@@ -72,10 +69,7 @@ const CreateEditForm = Form.create()(props => {
           ]
         })(<Input />)}
       </FormItem>
-      <FormItem
-        {...formItemLayout}
-        label="话题类型"
-      >
+      <FormItem {...formItemLayout} label="话题类型">
         {form.getFieldDecorator('topicType', {
           initialValue: formData.topicType || '',
           rules: [
@@ -85,20 +79,14 @@ const CreateEditForm = Form.create()(props => {
             }
           ]
         })(
-          <Select
-            value={formData.topicType}
-            style={{ width: '100%' }}
-          >
+          <Select style={{ width: '100%' }}>
             <Select.Option value="1">话题</Select.Option>
             <Select.Option value="2">活动</Select.Option>
             <Select.Option value="3">投票</Select.Option>
           </Select>
         )}
       </FormItem>
-      <FormItem
-        {...formItemLayout}
-        label="排序(0为不启用推荐)"
-      >
+      <FormItem {...formItemLayout} label="排序">
         {form.getFieldDecorator('indexNo', {
           initialValue: formData.indexNo || '',
           rules: [
@@ -107,12 +95,9 @@ const CreateEditForm = Form.create()(props => {
               message: '请输入排序...'
             }
           ]
-        })(<Input />)}
+        })(<InputNumber min={0} max={255} />)}
       </FormItem>
-      <FormItem
-        {...formItemLayout}
-        label="话题内容"
-      >
+      <FormItem {...formItemLayout} label="话题内容">
         {form.getFieldDecorator('dynaTopicContent', {
           initialValue: formData.dynaTopicContent || '',
           rules: [
@@ -121,15 +106,9 @@ const CreateEditForm = Form.create()(props => {
               message: '请输入话题内容...'
             }
           ]
-        })(<Input
-          type="textarea"
-          autosize={{ minRows: 4 }}
-        />)}
+        })(<Input type="textarea" autosize={{ minRows: 4 }} />)}
       </FormItem>
-      <FormItem
-        {...formItemLayout}
-        label="定时发布"
-      >
+      <FormItem {...formItemLayout} label="定时发布">
         {form.getFieldDecorator('publishTime', {
           initialValue: formData.publishTime || '',
           rules: [
@@ -138,10 +117,7 @@ const CreateEditForm = Form.create()(props => {
               message: '请输入定时发布...'
             }
           ]
-        })(<DatePicker
-          format="YYYY-MM-DD HH:mm:ss"
-          showTime={{}}
-        />)}
+        })(<DatePicker format="YYYY-MM-DD HH:mm:ss" showTime={{}} />)}
       </FormItem>
     </Modal>
   );

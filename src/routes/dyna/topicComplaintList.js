@@ -19,7 +19,6 @@ import {
   Divider,
   Table
 } from 'antd';
-import StandardTable from 'components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from '../../assets/styles.less';
 import CreateEditForm from './topicComplaintEdit';
@@ -54,6 +53,11 @@ export default class DynaTopicComplaint extends PureComponent {
       modalVisible: false
     });
   };
+
+  componentWillMount() {
+    const { restTableData } = this.props;
+    restTableData.pageData.list = [];
+  }
 
   componentDidMount() {
     const { formValues, page } = this.state;
@@ -109,7 +113,6 @@ export default class DynaTopicComplaint extends PureComponent {
     const { dispatch, form } = this.props;
     form.validateFields((err, fieldsValue) => {
       if (err) return;
-
       const values = {
         ...fieldsValue
       };
@@ -159,7 +162,7 @@ export default class DynaTopicComplaint extends PureComponent {
       payload: { dynaTopicComplaintId: record.dynaTopicComplaintId }
     });
     this.setState({
-      modalTitle: '修改',
+      modalTitle: '查看',
       modalVisible: true
     });
   };
@@ -188,42 +191,62 @@ export default class DynaTopicComplaint extends PureComponent {
 
     const columns = [
       {
-        title: '系统id',
+        title: '系统ID',
         dataIndex: 'dynaTopicComplaintId'
       },
       {
         title: '举报内容',
-        dataIndex: 'complaintContent'
+        dataIndex: 'complaintContent',
+        render(text, record) {
+          if ((text || '.').length > 40) {
+            return `${text.substring(0, 40)}......`;
+          }
+          return text;
+        }
       },
       {
-        title: '举报类型(字典:1,色情相关;2,不友善行为;3,广告推销;4,其他, 默认为4 )',
-        dataIndex: 'complaintType'
+        title: '举报类型',
+        dataIndex: 'complaintType',
+        render: (text, record) => {
+          //举报类型(字典:1,色情相关;2,不友善行为;3,广告推销;4,其他, 默认为4 )
+          if (text == 1) {
+            return <Fragment>色情相关</Fragment>;
+          } else if (text == 2) {
+            return <Fragment>不友善行为</Fragment>;
+          } else if (text == 3) {
+            return <Fragment>广告推销</Fragment>;
+          } else {
+            return <Fragment>其他</Fragment>;
+          }
+        }
       },
       {
-        title: '举报人id',
+        title: '举报人ID',
         dataIndex: 'userId'
       },
       {
-        title: '被举报人id',
+        title: '被举报人ID',
         dataIndex: 'toUserId'
       },
       {
-        title: '举报状态(字典:0待处理;1已驳回,2已隐藏.默认为0)',
-        dataIndex: 'complaintStatus'
-      },
-      {
-        title: '评论或回复id',
-        dataIndex: 'contentId'
-      },
-      {
-        title: '举报对象(字典:1评论,2回复,默认为1)',
-        dataIndex: 'complaintObj'
+        title: '举报状态',
+        dataIndex: 'complaintStatus',
+        render: (text, record) => {
+          //举报状态(字典:0待处理;1已驳回,2已隐藏.默认为0)
+          if (text == 0) {
+            return <Fragment>待处理</Fragment>;
+          } else if (text == 1) {
+            return <Fragment>已驳回</Fragment>;
+          } else if (text == 2) {
+            return <Fragment>已隐藏</Fragment>;
+          }
+        }
       },
       {
         title: '操作',
         render: (text, record) => (
           <Fragment>
-            <a onClick={() => this.getDataForUpdate(record)}>修改</a>
+            <a onClick={() => this.getDataForUpdate(record)}>查看</a>
             <Divider type="vertical" />
             <a onClick={() => this.delete(record)}>删除</a>
           </Fragment>
@@ -241,16 +264,9 @@ export default class DynaTopicComplaint extends PureComponent {
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
-            <div className={styles.tableListOperator}>
-              <Button
-                type="primary"
-                onClick={() => this.getDataForAdd()}
-              >
-                新建
-              </Button>
-            </div>
+            <div className={styles.tableListOperator} />
             <Table
-              dataSource={restTableData.pageData.list}
+              dataSource={restTableData.pageData.list || []}
               columns={columns}
               rowKey="dynaTopicComplaintId"
               pagination={restTableData.pageData.pagination}

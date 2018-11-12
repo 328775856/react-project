@@ -34,7 +34,9 @@ export default class CreateEditForm extends PureComponent {
 
   callSelectReturn = record => {
     if (record != null) {
-      const { dispatch } = this.props;
+      const { dispatch, form } = this.props;
+      form.resetFields('labelPath');
+      form.resetFields('wholeLabelPath');
       const myFormData = {
         labelPath: record[0].imagePath,
         wholeLabelPath: record[0].domain
@@ -67,6 +69,12 @@ export default class CreateEditForm extends PureComponent {
         }
       });
     };
+
+    const cancelHandle = () => {
+      form.resetFields();
+      closeModal();
+    };
+
     const parentMethods = {
       callReturn: this.callSelectReturn,
       closeModal: this.closeSelectModal
@@ -85,16 +93,8 @@ export default class CreateEditForm extends PureComponent {
       }
     };
     return (
-      <Modal
-        title={title}
-        visible={modalVisible}
-        onOk={okHandle}
-        onCancel={() => closeModal()}
-      >
-        <FormItem
-          {...formItemLayout}
-          label="标签名称"
-        >
+      <Modal title={title} visible={modalVisible} onOk={okHandle} onCancel={cancelHandle}>
+        <FormItem {...formItemLayout} label="标签名称">
           {form.getFieldDecorator('labelName', {
             initialValue: formData.labelName || '',
             rules: [
@@ -105,10 +105,7 @@ export default class CreateEditForm extends PureComponent {
             ]
           })(<Input />)}
         </FormItem>
-        <FormItem
-          {...formItemLayout}
-          label="标签图片"
-        >
+        <FormItem {...formItemLayout} label="标签图片">
           <Row>
             <Col span={20}>
               {form.getFieldDecorator('labelPath', {
@@ -122,25 +119,16 @@ export default class CreateEditForm extends PureComponent {
               })(<Input />)}
             </Col>
             <Col>
-              <Button
-                onClick={this.selectImage}
-                icon="search"
-              />
+              <Button onClick={this.selectImage} icon="search" />
             </Col>
           </Row>
         </FormItem>
-        <FormItem
-          {...formItemLayout}
-          label="图片显示"
-        >
-          <img
-            alt=""
-            style={{ width: 100, height: 100 }}
-            src={formData.wholeLabelPath}
-          />
+        <FormItem {...formItemLayout} label="图片显示">
+          <img alt="" style={{ width: 100, height: 100 }} src={formData.wholeLabelPath} />
         </FormItem>
         <SelectImage
           {...parentMethods}
+          imagePath={formData.labelPath}
           modalVisible={this.state.modalVisible}
         />
       </Modal>

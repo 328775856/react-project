@@ -21,7 +21,6 @@ import {
 const FormItem = Form.Item;
 
 const CreateEditForm = Form.create()(props => {
-  debugger;
   const Option = Select.Option;
   const {
     modalVisible,
@@ -41,7 +40,6 @@ const CreateEditForm = Form.create()(props => {
   }
   const okHandle = () => {
     form.validateFields((err, fieldsValue) => {
-      debugger;
       if (err) return;
       form.resetFields();
       if (formData.id >= 0) {
@@ -52,57 +50,37 @@ const CreateEditForm = Form.create()(props => {
       }
     });
   };
+
+  const cancelHandle = () => {
+    form.resetFields();
+    closeModal();
+  };
+
   return (
-    <Modal
-      title={title}
-      visible={modalVisible}
-      onOk={okHandle}
-      onCancel={() => closeModal()}
-    >
-      <FormItem
-        labelCol={{ span: 5 }}
-        wrapperCol={{ span: 15 }}
-        label="serviceId"
-      >
+    <Modal title={title} visible={modalVisible} onOk={okHandle} onCancel={cancelHandle}>
+      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="serviceId">
         {form.getFieldDecorator('serviceId', {
           initialValue: `${formData.serviceId}` || ''
         })(
-          <Select
-            placeholder=""
-            style={{ width: '150px' }}
-          >
+          <Select placeholder="" style={{ width: '150px' }}>
             {gateClientOptionsHtm}
           </Select>
         )}
       </FormItem>
-      <FormItem
-        labelCol={{ span: 5 }}
-        wrapperCol={{ span: 15 }}
-        label="clientId"
-      >
+      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="clientId">
         {form.getFieldDecorator('clientId', {
           initialValue: `${formData.clientId}` || ''
         })(
-          <Select
-            placeholder=""
-            style={{ width: '150px' }}
-          >
+          <Select placeholder="" style={{ width: '150px' }}>
             {gateClientOptionsHtm}
           </Select>
         )}
       </FormItem>
-      <FormItem
-        labelCol={{ span: 5 }}
-        wrapperCol={{ span: 15 }}
-        label="description"
-      >
+      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="description">
         {form.getFieldDecorator('description', {
           initialValue: formData.description || '',
           rules: [{ required: true, message: 'description...' }]
-        })(<Input
-          placeholder="请输入"
-          value={formData.description}
-        />)}
+        })(<Input placeholder="请输入" value={formData.description} />)}
       </FormItem>
     </Modal>
   );

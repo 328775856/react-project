@@ -55,6 +55,11 @@ export default class DynaTopicContent extends PureComponent {
     });
   };
 
+  componentWillMount() {
+    const { restTableData } = this.props;
+    restTableData.pageData.list = [];
+  }
+
   componentDidMount() {
     const { formValues, page } = this.state;
     this.refresh(formValues, page);
@@ -218,15 +223,12 @@ export default class DynaTopicContent extends PureComponent {
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
             <div className={styles.tableListOperator}>
-              <Button
-                type="primary"
-                onClick={() => this.getDataForAdd()}
-              >
+              <Button type="primary" onClick={() => this.getDataForAdd()}>
                 新建
               </Button>
             </div>
             <Table
-              dataSource={restTableData.pageData.list}
+              dataSource={restTableData.pageData.list || []}
               columns={columns}
               rowKey="dynaTopicContentId"
               pagination={restTableData.pageData.pagination}

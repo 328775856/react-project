@@ -234,7 +234,7 @@ export default class MediaAudioGroup extends PureComponent {
               </Button>
             </div>
             <Table
-              dataSource={restTableData.pageData.list}
+              dataSource={restTableData.pageData.list||[]}
               columns={columns}
               rowKey="mediaAudioGroupId"
               pagination={restTableData.pageData.pagination}

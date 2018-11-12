@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { Button, Col, Form, Input, Modal, Row } from 'antd';
+import { Button, Col, Form, Input, InputNumber, Modal, Row } from 'antd';
 import SelectVideo from '../Select/SelectVideo';
 
 const FormItem = Form.Item;
@@ -17,7 +17,9 @@ export default class CreateEditForm extends PureComponent {
 
   callSelectVideoReturn = record => {
     if (record != null) {
-      const { dispatch } = this.props;
+      const { dispatch, form } = this.props;
+      form.resetFields('mediaVideoId');
+      form.resetFields('videoName');
       const myFormData = {
         mediaVideoId: record[0].mediaVideoId,
         videoName: record[0].videoName
@@ -51,6 +53,11 @@ export default class CreateEditForm extends PureComponent {
       });
     };
 
+    const cancelHandle = () => {
+      form.resetFields();
+      closeModal();
+    };
+
     const parentMethodsForVideo = {
       callReturn: this.callSelectVideoReturn,
       closeModal: this.closeSelectVideoModal
@@ -70,16 +77,8 @@ export default class CreateEditForm extends PureComponent {
     };
 
     return (
-      <Modal
-        title={title}
-        visible={modalVisible}
-        onOk={okHandle}
-        onCancel={() => closeModal()}
-      >
-        <FormItem
-          {...formItemLayout}
-          label="素材视频id"
-        >
+      <Modal title={title} visible={modalVisible} onOk={okHandle} onCancel={cancelHandle}>
+        <FormItem {...formItemLayout} label="素材视频id">
           <Row>
             <Col span={20}>
               {form.getFieldDecorator('mediaVideoId', {
@@ -90,21 +89,15 @@ export default class CreateEditForm extends PureComponent {
                     message: '请输入素材视频id...'
                   }
                 ]
-              })(<Input />)}
+              })(<Input readOnly />)}
             </Col>
             <Col>
-              <Button
-                onClick={this.selectVideoModel}
-                icon="search"
-              />
+              <Button onClick={this.selectVideoModel} icon="search" />
             </Col>
           </Row>
         </FormItem>
 
-        <FormItem
-          {...formItemLayout}
-          label="名称"
-        >
+        <FormItem {...formItemLayout} label="名称">
           {form.getFieldDecorator('videoName', {
             initialValue: formData.videoName || '',
             rules: [
@@ -113,13 +106,10 @@ export default class CreateEditForm extends PureComponent {
                 message: '请输入名称...'
               }
             ]
-          })(<Input />)}
+          })(<Input readOnly />)}
         </FormItem>
 
-        <FormItem
-          {...formItemLayout}
-          label="顺序"
-        >
+        <FormItem {...formItemLayout} label="顺序">
           {form.getFieldDecorator('indexNo', {
             initialValue: formData.indexNo || '',
             rules: [
@@ -128,12 +118,9 @@ export default class CreateEditForm extends PureComponent {
                 message: '请输入顺序...'
               }
             ]
-          })(<Input />)}
+          })(<InputNumber min={0} max={255} />)}
         </FormItem>
-        <SelectVideo
-          {...parentMethodsForVideo}
-          modalVisible={this.state.videoModalVisible}
-        />
+        <SelectVideo {...parentMethodsForVideo} modalVisible={this.state.videoModalVisible} />
       </Modal>
     );
   }

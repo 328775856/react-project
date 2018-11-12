@@ -20,13 +20,8 @@ import {
 
 const FormItem = Form.Item;
 const CreateEditForm = Form.create()(props => {
-  const { modalVisible, form, add, update, closeModal, formData, title, isEmptyObject } = props;
-  let options = '';
-  if (!isEmptyObject(props.state.options)) {
-    options = props.state.options.map(item => (
-      <Option key={item.sysRoleId}>{item.roleName}</Option>
-    ));
-  }
+  const { modalVisible, form, add, update, closeModal, formData, title, options } = props;
+  let opt = options.map(item => <Option key={item.sysRoleId}>{item.roleName}</Option>);
   const okHandle = () => {
     form.validateFields((err, fieldsValue) => {
       if (err) return;
@@ -38,6 +33,11 @@ const CreateEditForm = Form.create()(props => {
         add(fieldsValue);
       }
     });
+  };
+
+  const cancelHandle = () => {
+    form.resetFields();
+    closeModal();
   };
 
   const formItemLayout = {
@@ -53,25 +53,14 @@ const CreateEditForm = Form.create()(props => {
     }
   };
   const isTrueSelect = (
-    <Select
-      placeholder=""
-      style={{ width: '150px' }}
-    >
+    <Select placeholder="" style={{ width: '150px' }}>
       <Option key={1}>是</Option>
       <Option key={0}>否</Option>
     </Select>
   );
   return (
-    <Modal
-      title={title}
-      visible={modalVisible}
-      onOk={okHandle}
-      onCancel={() => closeModal()}
-    >
-      <FormItem
-        {...formItemLayout}
-        label="编号"
-      >
+    <Modal title={title} visible={modalVisible} onOk={okHandle} onCancel={cancelHandle}>
+      <FormItem {...formItemLayout} label="编号">
         {form.getFieldDecorator('userCode', {
           initialValue: formData.userCode || '',
           rules: [
@@ -82,10 +71,7 @@ const CreateEditForm = Form.create()(props => {
           ]
         })(<Input />)}
       </FormItem>
-      <FormItem
-        {...formItemLayout}
-        label="名称"
-      >
+      <FormItem {...formItemLayout} label="名称">
         {form.getFieldDecorator('userName', {
           initialValue: formData.userName || '',
           rules: [
@@ -96,10 +82,7 @@ const CreateEditForm = Form.create()(props => {
           ]
         })(<Input />)}
       </FormItem>
-      <FormItem
-        {...formItemLayout}
-        label="登录密码"
-      >
+      <FormItem {...formItemLayout} label="登录密码">
         {form.getFieldDecorator('passwd', {
           initialValue: formData.passwd || '',
           rules: [
@@ -110,12 +93,9 @@ const CreateEditForm = Form.create()(props => {
           ]
         })(<Input />)}
       </FormItem>
-      <FormItem
-        {...formItemLayout}
-        label="是否停止"
-      >
+      <FormItem {...formItemLayout} label="是否停止">
         {form.getFieldDecorator('isStop', {
-          initialValue: formData.isStop === undefined ? '' : formData.isStop,
+          initialValue: formData.isStop === undefined ? '' : `${formData.isStop}`,
           rules: [
             {
               required: true,
@@ -124,10 +104,7 @@ const CreateEditForm = Form.create()(props => {
           ]
         })(isTrueSelect)}
       </FormItem>
-      <FormItem
-        {...formItemLayout}
-        label="备注"
-      >
+      <FormItem {...formItemLayout} label="备注">
         {form.getFieldDecorator('remark', {
           initialValue: formData.remark || '',
           rules: [
@@ -138,34 +115,19 @@ const CreateEditForm = Form.create()(props => {
           ]
         })(<Input />)}
       </FormItem>
-      <FormItem
-        {...formItemLayout}
-        label="权限组id"
-      >
+      <FormItem {...formItemLayout} label="权限组id">
         {form.getFieldDecorator('sysRoleId', {
           initialValue: `${formData.sysRoleId}` || undefined
         })(
-          <Select
-            placeholder=""
-            style={{ width: '150px' }}
-          >
-            {options}
+          <Select placeholder="" style={{ width: '150px' }}>
+            {opt}
           </Select>
         )}
       </FormItem>
-      <FormItem
-        {...formItemLayout}
-        label="藏书馆用户id"
-      >
+      <FormItem {...formItemLayout} label="藏书馆用户id">
         {form.getFieldDecorator('userId', {
-          initialValue: formData.userId || '',
-          rules: [
-            {
-              required: true,
-              message: '请输入藏书馆用户id...'
-            }
-          ]
-        })(<Input />)}
+          initialValue: formData.userId || ''
+        })(<InputNumber min={0} />)}
       </FormItem>
     </Modal>
   );

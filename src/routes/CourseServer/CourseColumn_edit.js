@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { Button, Col, Form, Input, Modal, Row } from 'antd';
+import { Button, Col, Form, Input, InputNumber, Modal, Row } from 'antd';
 import { Select } from 'antd/lib/index';
 import SelectImage from '../Select/SelectImage';
 import SelectArticle from '../Select/SelectArticle';
@@ -27,7 +27,9 @@ export default class CreateEditForm extends PureComponent {
 
   callSelectReturn = record => {
     if (record != null) {
-      const { dispatch } = this.props;
+      const { dispatch, form } = this.props;
+      form.resetFields('coverPath');
+      form.resetFields('wholeCoverPath');
       const myFormData = {
         coverPath: record[0].imagePath,
         wholeCoverPath: record[0].domain
@@ -42,7 +44,9 @@ export default class CreateEditForm extends PureComponent {
 
   callSelectArticleReturn = record => {
     if (record != null) {
-      const { dispatch } = this.props;
+      const { dispatch, form } = this.props;
+      form.resetFields('mediaArticleId');
+      form.resetFields('articleTitle');
       const myFormData = {
         mediaArticleId: record[0].mediaArticleId,
         articleTitle: record[0].articleTitle
@@ -81,6 +85,12 @@ export default class CreateEditForm extends PureComponent {
         }
       });
     };
+
+    const cancelHandle = () => {
+      form.resetFields();
+      closeModal();
+    };
+
     const parentMethods = {
       callReturn: this.callSelectReturn,
       closeModal: this.closeSelectModal
@@ -105,26 +115,15 @@ export default class CreateEditForm extends PureComponent {
     };
 
     const isTrueSelect = (
-      <Select
-        placeholder=""
-        style={{ width: '150px' }}
-      >
+      <Select placeholder="" style={{ width: '150px' }}>
         <Option key={1}>是</Option>
         <Option key={0}>否</Option>
       </Select>
     );
 
     return (
-      <Modal
-        title={title}
-        visible={modalVisible}
-        onOk={okHandle}
-        onCancel={() => closeModal()}
-      >
-        <FormItem
-          {...formItemLayout}
-          label="专栏名称"
-        >
+      <Modal title={title} visible={modalVisible} onOk={okHandle} onCancel={cancelHandle}>
+        <FormItem {...formItemLayout} label="专栏名称">
           {form.getFieldDecorator('columnName', {
             initialValue: formData.columnName || '',
             rules: [
@@ -135,11 +134,7 @@ export default class CreateEditForm extends PureComponent {
             ]
           })(<Input />)}
         </FormItem>
-        <FormItem
-          {...formItemLayout}
-          label="专栏图片"
-          style={{ display: 'none' }}
-        >
+        <FormItem {...formItemLayout} label="专栏图片" style={{ display: 'none' }}>
           <Row>
             <Col span={20}>
               {form.getFieldDecorator('coverPath', {
@@ -153,18 +148,12 @@ export default class CreateEditForm extends PureComponent {
               })(<Input />)}
             </Col>
             <Col>
-              <Button
-                onClick={this.selectImage}
-                icon="search"
-              />
+              <Button onClick={this.selectImage} icon="search" />
             </Col>
           </Row>
         </FormItem>
 
-        <FormItem
-          {...formItemLayout}
-          label="图片显示"
-        >
+        <FormItem {...formItemLayout} label="图片显示">
           <Row>
             <Col span={20}>
               {form.getFieldDecorator('wholeCoverPath', {
@@ -175,21 +164,15 @@ export default class CreateEditForm extends PureComponent {
                     message: '请输入专栏图片...'
                   }
                 ]
-              })(<Input />)}
+              })(<img alt="" style={{ width: 100, height: 100 }} src={formData.wholeCoverPath} />)}
             </Col>
             <Col>
-              <Button
-                onClick={this.selectImage}
-                icon="search"
-              />
+              <Button onClick={this.selectImage} icon="search" />
             </Col>
           </Row>
         </FormItem>
 
-        <FormItem
-          {...formItemLayout}
-          label="专栏连接"
-        >
+        <FormItem {...formItemLayout} label="专栏连接">
           {form.getFieldDecorator('columnLink', {
             initialValue: formData.columnLink || '',
             rules: [
@@ -201,10 +184,7 @@ export default class CreateEditForm extends PureComponent {
           })(<Input />)}
         </FormItem>
 
-        <FormItem
-          {...formItemLayout}
-          label="上架状态:"
-        >
+        <FormItem {...formItemLayout} label="上架状态:">
           {form.getFieldDecorator('shelfStatus', {
             initialValue: formData.shelfStatus === undefined ? '' : `${formData.shelfStatus}`,
             rules: [
@@ -214,20 +194,14 @@ export default class CreateEditForm extends PureComponent {
               }
             ]
           })(
-            <Select
-              placeholder=""
-              style={{ width: '150px' }}
-            >
+            <Select placeholder="" style={{ width: '150px' }}>
               <Option key={0}>未上架</Option>
               <Option key={1}>上架</Option>
               <Option key={2}>下架</Option>
             </Select>
           )}
         </FormItem>
-        <FormItem
-          {...formItemLayout}
-          label="是否展示首页"
-        >
+        <FormItem {...formItemLayout} label="是否展示首页">
           {form.getFieldDecorator('isRecommend', {
             initialValue: formData.isRecommend === undefined ? '' : `${formData.isRecommend}`,
             rules: [
@@ -238,39 +212,18 @@ export default class CreateEditForm extends PureComponent {
             ]
           })(isTrueSelect)}
         </FormItem>
-        <FormItem
-          {...formItemLayout}
-          label="排序"
-        >
+        <FormItem {...formItemLayout} label="排序">
           {form.getFieldDecorator('indexNo', {
-            initialValue: `${formData.indexNo}` || '',
+            initialValue: formData.indexNo === undefined ? '' : `${formData.indexNo}`,
             rules: [
               {
                 required: true,
                 message: '请输入排序...'
               }
             ]
-          })(<Input />)}
+          })(<InputNumber min={0} max={255} />)}
         </FormItem>
-        <FormItem
-          {...formItemLayout}
-          label="是否删除"
-        >
-          {form.getFieldDecorator('isDel', {
-            initialValue: formData.isDel === undefined ? '' : `${formData.isDel}`,
-            rules: [
-              {
-                required: true,
-                message: '请输入是否删除,0:未删除,1:已删除...'
-              }
-            ]
-          })(isTrueSelect)}
-        </FormItem>
-        <FormItem
-          {...formItemLayout}
-          label="选择图文"
-          style={{ display: 'none' }}
-        >
+        <FormItem {...formItemLayout} label="选择图文" style={{ display: 'none' }}>
           <Row gutter={0}>
             <Col span={22}>
               {form.getFieldDecorator('mediaArticleId', {
@@ -279,39 +232,32 @@ export default class CreateEditForm extends PureComponent {
               })(<Input />)}
             </Col>
             <Col span={2}>
-              <Button
-                onClick={this.selectArticleModel}
-                icon="search"
-              />
+              <Button onClick={this.selectArticleModel} icon="search" />
             </Col>
           </Row>
         </FormItem>
-        <FormItem
-          {...formItemLayout}
-          label="图文标题"
-        >
+        <FormItem {...formItemLayout} label="图文标题">
           <Row gutter={0}>
             <Col span={22}>
               {form.getFieldDecorator('articleTitle', {
                 initialValue: formData.articleTitle === undefined ? '' : formData.articleTitle,
                 rules: [{ required: true, message: '请选择图文!' }]
-              })(<Input />)}
+              })(<Input readOnly />)}
             </Col>
             <Col span={2}>
-              <Button
-                onClick={this.selectArticleModel}
-                icon="search"
-              />
+              <Button onClick={this.selectArticleModel} icon="search" />
             </Col>
           </Row>
         </FormItem>
 
         <SelectImage
           {...parentMethods}
+          imagePath={formData.coverPath}
           modalVisible={this.state.modalVisible}
         />
         <SelectArticle
           {...parentMethodsForArticle}
+          mediaArticleId={formData.mediaArticleId}
           modalVisible={this.state.articleModalVisible}
         />
       </Modal>

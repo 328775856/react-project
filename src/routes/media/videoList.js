@@ -1,5 +1,6 @@
 import React, { Fragment, PureComponent } from 'react';
 import { connect } from 'dva';
+import moment from 'moment';
 import {
   Row,
   Col,
@@ -24,7 +25,7 @@ import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from '../../assets/styles.less';
 import CreateEditForm from './videoEdit';
 import CreateFindForm from './videoFind';
-import { defaultPage, mul, div } from '../../utils/utils.js';
+import { defaultPage, mul, div, formatTime } from '../../utils/utils.js';
 
 const FormItem = Form.Item;
 @connect(({ restTableData, loading }) => ({
@@ -74,6 +75,11 @@ export default class MediaVideo extends PureComponent {
       modalVisible: false
     });
   };
+
+  componentWillMount() {
+    const { restTableData } = this.props;
+    restTableData.pageData.list = '';
+  }
 
   componentDidMount() {
     const { formValues, page } = this.state;
@@ -175,7 +181,7 @@ export default class MediaVideo extends PureComponent {
   getDataForUpdate = record => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'restTableData/getDataForUpdate',
+      type: 'restTableData/getData',
       path: 'media/video/getDataForUpdate',
       payload: { mediaVideoId: record.mediaVideoId }
     });
@@ -210,16 +216,16 @@ export default class MediaVideo extends PureComponent {
 
     const columns = [
       {
-        title: '系统id',
-        dataIndex: 'mediaVideoId'
-      },
-      {
-        title: '分组ID',
-        dataIndex: 'mediaVideoGroupId'
+        title: '分组',
+        dataIndex: 'mediaVideoGroupName'
       },
       {
         title: '名称',
         dataIndex: 'videoName'
+      },
+      {
+        title: '视频路径',
+        dataIndex: 'videoPath'
       },
       {
         title: '视频格式(字典)',
@@ -232,6 +238,11 @@ export default class MediaVideo extends PureComponent {
       {
         title: '时长-秒',
         dataIndex: 'videoSecond'
+      },
+      {
+        title: '创建时间',
+        dataIndex: 'createTime',
+        render: (text, record) => <Fragment>{formatTime(text)}</Fragment>
       },
       {
         title: '操作',
@@ -248,7 +259,8 @@ export default class MediaVideo extends PureComponent {
     const parentMethods = {
       add: this.add,
       update: this.update,
-      closeModal: this.closeModal
+      closeModal: this.closeModal,
+      getDataForUpdate: this.getDataForUpdate
     };
     return (
       <PageHeaderLayout>
@@ -256,15 +268,12 @@ export default class MediaVideo extends PureComponent {
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
             <div className={styles.tableListOperator}>
-              <Button
-                type="primary"
-                onClick={() => this.getDataForAdd()}
-              >
+              <Button type="primary" onClick={() => this.getDataForAdd()}>
                 新建
               </Button>
             </div>
             <Table
-              dataSource={restTableData.pageData.list}
+              dataSource={restTableData.pageData.list || []}
               columns={columns}
               rowKey="mediaVideoId"
               pagination={restTableData.pageData.pagination}

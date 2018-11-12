@@ -33,47 +33,29 @@ const CreateEditForm = Form.create()(props => {
       }
     });
   };
+  const cancelHandle = () => {
+    form.resetFields();
+    closeModal();
+  };
+
   return (
-    <Modal
-      title={title}
-      visible={modalVisible}
-      onOk={okHandle}
-      onCancel={() => closeModal()}
-    >
-      <FormItem
-        labelCol={{ span: 5 }}
-        wrapperCol={{ span: 15 }}
-        label="编号"
-      >
+    <Modal title={title} visible={modalVisible} onOk={okHandle} onCancel={cancelHandle}>
+      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="编号">
         {form.getFieldDecorator('code', {
           initialValue: formData.code || '',
           rules: [{ required: true, message: '请输入编号...' }]
         })(<Input placeholder="请输入" />)}
       </FormItem>
-      <FormItem
-        labelCol={{ span: 5 }}
-        wrapperCol={{ span: 15 }}
-        label="名称"
-      >
+      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="名称">
         {form.getFieldDecorator('name', {
           initialValue: formData.name || '',
           rules: [{ required: true, message: '请输入名称...' }]
-        })(<Input
-          placeholder="请输入"
-          value={formData.name}
-        />)}
+        })(<Input placeholder="请输入" value={formData.name} />)}
       </FormItem>
-      <FormItem
-        labelCol={{ span: 5 }}
-        wrapperCol={{ span: 15 }}
-        label="备注"
-      >
+      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="备注">
         {form.getFieldDecorator('memo', {
           initialValue: formData.memo || ''
-        })(<Input
-          placeholder=""
-          value={formData.memo}
-        />)}
+        })(<Input placeholder="" value={formData.memo} />)}
       </FormItem>
     </Modal>
   );

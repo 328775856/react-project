@@ -1,30 +1,11 @@
 import React, { Fragment, PureComponent } from 'react';
 import { connect } from 'dva';
-import {
-  Row,
-  Col,
-  Card,
-  Form,
-  Input,
-  Select,
-  Icon,
-  Button,
-  Dropdown,
-  Menu,
-  InputNumber,
-  DatePicker,
-  Modal,
-  message,
-  Badge,
-  Divider,
-  Table
-} from 'antd';
-import StandardTable from 'components/StandardTable';
+import { Card, Form, Button, Modal, message, Divider, Table } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from '../../assets/styles.less';
 import CreateEditForm from './BookShare_edit';
 import CreateFindForm from './BookShare_find';
-import { defaultPage } from '../../utils/utils.js';
+import { defaultPage, isEmpty, formatTime } from '../../utils/utils.js';
 
 const FormItem = Form.Item;
 @connect(({ tableData, loading }) => ({
@@ -55,6 +36,11 @@ export default class BookShare extends PureComponent {
       modalVisible: false
     });
   };
+
+  componentWillMount() {
+    const { tableData } = this.props;
+    tableData.pageData.list = '';
+  }
 
   componentDidMount() {
     const { formValues, page, options } = this.state;
@@ -126,12 +112,30 @@ export default class BookShare extends PureComponent {
     const { dispatch, tableData } = this.props;
     const cb = this.userGoodCallback;
     Modal.confirm({
-      title: '确定设置优选图书吗?',
+      title: '确定设置优质图书吗?',
       onOk() {
         dispatch({
           type: 'tableData/update',
           path: 'bookShare/setUserGood',
           payload: { bookId: record.bookId },
+          callback: cb
+        });
+      },
+      onCancel() {}
+    });
+  };
+
+  unSetUserGood = record => {
+    const { dispatch, tableData } = this.props;
+    const cb = this.userGoodCallback;
+    console.log('bookUserId', record.bookUserId);
+    Modal.confirm({
+      title: '确定取消优质图书吗?',
+      onOk() {
+        dispatch({
+          type: 'tableData/update',
+          path: 'bookShare/unSetUserGood',
+          payload: { bookUserId: record.bookUserId },
           callback: cb
         });
       },
@@ -173,6 +177,14 @@ export default class BookShare extends PureComponent {
     this.setState({
       modalTitle: '新增',
       modalVisible: true
+    });
+  };
+
+  clearES = () => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'tableData/add',
+      path: 'bookShare/clearES'
     });
   };
 
@@ -223,8 +235,23 @@ export default class BookShare extends PureComponent {
     });
   };
 
+  isHiddenAdminChange = fields => {
+    const { dispatch, tableData } = this.props;
+
+    const payload = {
+      ...tableData.formData,
+      ...fields
+    };
+    dispatch({
+      type: 'tableData/update',
+      path: 'bookShare/isHiddenAdminChange',
+      payload,
+      callback: this.callback
+    });
+  };
+
   renderForm() {
-    return CreateFindForm(this.props, this.query, this.formReset);
+    return CreateFindForm(this.props, this.query, this.formReset, this.clearES);
   }
 
   render() {
@@ -233,57 +260,68 @@ export default class BookShare extends PureComponent {
 
     const columns = [
       {
-        title: '系统id',
+        title: '图书ID',
         dataIndex: 'bookId'
       },
+
       {
-        title: '图书编号',
-        dataIndex: 'bookCode'
+        title: '上传用户ID',
+        dataIndex: 'userId'
+      },
+      {
+        title: '上传用户昵称',
+        dataIndex: 'nickname'
       },
       {
         title: '图书名',
         dataIndex: 'bookName'
       },
       {
-        title: '图书属性',
-        dataIndex: 'bookPropName'
-      },
-      {
-        title: '图书分类',
-        dataIndex: 'bookTypeName'
-      },
-      {
-        title: '图书格式',
-        dataIndex: 'bookStyleName'
-      },
-      {
-        title: '封面路径',
+        title: '封面',
         dataIndex: 'wholePhotoPath',
-        render: (text, record) => (
-          <Fragment>
-            <img
-              alt=""
-              style={{ width: 100, height: 100 }}
-              src={record.wholePhotoPath}
-            />
-          </Fragment>
-        )
+        render: (text, record) => {
+          if (!isEmpty(record.wholePhotoPath)) {
+            return (
+              <Fragment>
+                <img alt="" style={{ width: 50, height: 50 }} src={record.wholePhotoPath} />
+              </Fragment>
+            );
+          }
+        }
       },
       {
         title: '作者',
         dataIndex: 'bookAuthor'
       },
       {
-        title: '存储名',
-        dataIndex: 'bookStorageName'
+        title: '图书分类',
+        dataIndex: 'bookTypeName'
       },
       {
-        title: '存储文件名',
-        dataIndex: 'fileName'
+        title: '用户设置属性',
+        dataIndex: 'isHiddenUser',
+        render: (text, record) => (
+          <Fragment>{record.isHiddenUser === 1 ? '私藏' : '公开'}</Fragment>
+        )
       },
       {
-        title: '资源大小',
-        dataIndex: 'fileSize'
+        title: '是否屏蔽',
+        dataIndex: 'isHiddenAdmin',
+        render: (text, record) => <Fragment>{record.isHiddenAdmin === 1 ? '是' : '否'}</Fragment>
+      },
+      {
+        title: '图书简介',
+        dataIndex: 'bookIntro',
+        render(text, record) {
+          if ((text || '.').length > 25) {
+            return `${text.substring(0, 25)}......`;
+          }
+          return text;
+        }
+      },
+      {
+        title: '图书格式',
+        dataIndex: 'bookStyleName'
       },
       {
         title: '是否优质图书',
@@ -303,14 +341,27 @@ export default class BookShare extends PureComponent {
         }
       },
       {
+        title: '审核时间',
+        dataIndex: 'createTime',
+        render: (text, record) => <Fragment>{formatTime(text)}</Fragment>
+      },
+      {
         title: '操作',
         render: (text, record) => (
           <Fragment>
             <a onClick={() => this.getDataForUpdate(record)}>修改</a>
             <Divider type="vertical" />
-            <a onClick={() => this.remove(record)}>删除</a>
+            <a
+              onClick={() =>
+                record.isBookGood === 0 ? this.setUserGood(record) : this.unSetUserGood(record)
+              }
+            >
+              {record.isBookGood === 0 ? '设置优质' : '取消优质'}
+            </a>
             <Divider type="vertical" />
-            <a onClick={() => this.setUserGood(record)}>设置优选</a>
+            <a onClick={() => this.isHiddenAdminChange(record)}>
+              {record.isHiddenAdmin === 0 ? '屏蔽' : '取消屏蔽'}
+            </a>
           </Fragment>
         )
       }
@@ -327,6 +378,9 @@ export default class BookShare extends PureComponent {
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
+
+            <div className={styles.tableListOperator} />
+
             <Table
               dataSource={tableData.pageData.list}
               columns={columns}

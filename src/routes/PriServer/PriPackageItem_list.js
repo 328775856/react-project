@@ -62,6 +62,11 @@ export default class PriPackageItem extends PureComponent {
     });
   };
 
+  componentWillMount() {
+    const { commonTableData } = this.props;
+    commonTableData.pageData.list = '';
+  }
+
   componentDidMount() {
     const { formValues, page } = this.state;
     const { commonTableData } = this.props;
@@ -223,6 +228,15 @@ export default class PriPackageItem extends PureComponent {
     });
   };
 
+  back = () => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'commonTableData/goUrl',
+      path: '/vipServer/priPackage',
+      payload: {}
+    });
+  };
+
   renderForm() {
     return CreateFindForm(this.props, this.query, this.formReset);
   }
@@ -282,11 +296,11 @@ export default class PriPackageItem extends PureComponent {
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
             <div className={styles.tableListOperator}>
-              <Button
-                type="primary"
-                onClick={() => this.getDataForAdd()}
-              >
+              <Button type="primary" onClick={() => this.getDataForAdd()}>
                 新建
+              </Button>
+              <Button type="default" onClick={() => this.back()}>
+                返回
               </Button>
             </div>
             <Table

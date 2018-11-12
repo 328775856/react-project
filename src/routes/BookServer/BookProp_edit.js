@@ -51,6 +51,11 @@ const CreateEditForm = Form.create()(props => {
     });
   };
 
+  const cancelHandle = () => {
+    form.resetFields();
+    closeModal();
+  };
+
   const formItemLayout = {
     labelCol: {
       xs: { span: 24 },
@@ -73,16 +78,8 @@ const CreateEditForm = Form.create()(props => {
   };
 
   return (
-    <Modal
-      title={title}
-      visible={modalVisible}
-      onOk={okHandle}
-      onCancel={() => closeModal()}
-    >
-      <FormItem
-        {...formItemLayout}
-        label="名称"
-      >
+    <Modal title={title} visible={modalVisible} onOk={okHandle} onCancel={cancelHandle}>
+      <FormItem {...formItemLayout} label="名称">
         {form.getFieldDecorator('propName', {
           initialValue: formData.propName || '',
           rules: [
@@ -93,10 +90,7 @@ const CreateEditForm = Form.create()(props => {
           ]
         })(<Input />)}
       </FormItem>
-      <FormItem
-        {...formItemLayout}
-        label="是否可借"
-      >
+      <FormItem {...formItemLayout} label="是否可借">
         {form.getFieldDecorator('isLend', {
           initialValue: formData.isLend === undefined ? '1' : `${formData.isLend}` || '',
           rules: [
@@ -110,10 +104,7 @@ const CreateEditForm = Form.create()(props => {
           ]
         })(<Select style={{ width: '150px' }}>{opt1}</Select>)}
       </FormItem>
-      <FormItem
-        {...formItemLayout}
-        label="借阅天数"
-      >
+      <FormItem {...formItemLayout} label="借阅天数">
         {form.getFieldDecorator('dayLend', {
           initialValue: formData.dayLend || '',
           rules: [
@@ -124,10 +115,7 @@ const CreateEditForm = Form.create()(props => {
           ]
         })(<Input />)}
       </FormItem>
-      <FormItem
-        {...formItemLayout}
-        label="是否限制"
-      >
+      <FormItem {...formItemLayout} label="是否限制">
         {form.getFieldDecorator('isLimit', {
           initialValue: formData.isLimit === undefined ? '1' : `${formData.isLimit}` || '',
           rules: [

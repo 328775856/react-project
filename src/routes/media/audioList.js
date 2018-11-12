@@ -1,5 +1,6 @@
 import React, { Fragment, PureComponent } from 'react';
 import { connect } from 'dva';
+import moment from 'moment';
 import {
   Row,
   Col,
@@ -24,20 +25,24 @@ import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from '../../assets/styles.less';
 import CreateEditForm from './audioEdit';
 import CreateFindForm from './audioFind';
-import { defaultPage, mul, div } from '../../utils/utils.js';
+import { defaultPage, mul, div, formatTime } from '../../utils/utils.js';
 
 const FormItem = Form.Item;
+
+const formatList = ['aac','mp3']
 @connect(({ restTableData, loading }) => ({
   restTableData,
   loading: loading.models.crud
 }))
 @Form.create()
+
 export default class MediaAudio extends PureComponent {
   state = {
     modalVisible: false,
     modalTitle: '',
     formValues: {},
-    page: defaultPage()
+    page: defaultPage(),
+    options: {}
   };
 
   initGroup = () => {
@@ -75,8 +80,14 @@ export default class MediaAudio extends PureComponent {
     });
   };
 
+  componentWillMount() {
+    const { restTableData } = this.props;
+    restTableData.pageData.list = '';
+  }
+
   componentDidMount() {
     const { formValues, page } = this.state;
+    // this.initOptions();
     this.initGroup();
     this.refresh(formValues, page);
   }
@@ -149,6 +160,23 @@ export default class MediaAudio extends PureComponent {
     });
   };
 
+  initOptions = () => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'restTableData/initOptions',
+      path: 'media/audio/getDataForAdd',
+      payload: {},
+      callback: this.initOptionsCallback
+    });
+  };
+
+  initOptionsCallback = response => {
+    console.log(response)
+    this.setState({
+      options: JSON.parse(response.data)
+    });
+  };
+
   getDataForAdd = fields => {
     const { dispatch } = this.props;
     dispatch({
@@ -175,7 +203,7 @@ export default class MediaAudio extends PureComponent {
   getDataForUpdate = record => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'restTableData/getDataForUpdate',
+      type: 'restTableData/getData',
       path: 'media/audio/getDataForUpdate',
       payload: { mediaAudioId: record.mediaAudioId }
     });
@@ -206,16 +234,12 @@ export default class MediaAudio extends PureComponent {
 
   render() {
     const { restTableData, loading } = this.props;
-    const { modalVisible, modalTitle } = this.state;
+    const { modalVisible, modalTitle, options } = this.state;
 
     const columns = [
       {
-        title: '系统id',
-        dataIndex: 'mediaAudioId'
-      },
-      {
-        title: '分组ID',
-        dataIndex: 'mediaAudioGroupId'
+        title: '分组',
+        dataIndex: 'mediaAudioGroupName'
       },
       {
         title: '名称',
@@ -227,7 +251,10 @@ export default class MediaAudio extends PureComponent {
       },
       {
         title: '音频格式',
-        dataIndex: 'audioFormat'
+        dataIndex: 'audioFormat',
+        render(text, record) {
+          return <Fragment>{formatList[text-1]}</Fragment>;
+        }
       },
       {
         title: '时长-分钟',
@@ -236,6 +263,11 @@ export default class MediaAudio extends PureComponent {
       {
         title: '时长-秒',
         dataIndex: 'second'
+      },
+      {
+        title: '创建时间',
+        dataIndex: 'createTime',
+        render: (text, record) => <Fragment>{formatTime(text)}</Fragment>
       },
       {
         title: '操作',
@@ -248,11 +280,11 @@ export default class MediaAudio extends PureComponent {
         )
       }
     ];
-
     const parentMethods = {
       add: this.add,
       update: this.update,
-      closeModal: this.closeModal
+      closeModal: this.closeModal,
+      options
     };
     return (
       <PageHeaderLayout>
@@ -260,15 +292,12 @@ export default class MediaAudio extends PureComponent {
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
             <div className={styles.tableListOperator}>
-              <Button
-                type="primary"
-                onClick={() => this.getDataForAdd()}
-              >
+              <Button type="primary" onClick={() => this.getDataForAdd()}>
                 新建
               </Button>
             </div>
             <Table
-              dataSource={restTableData.pageData.list}
+              dataSource={restTableData.pageData.list || []}
               columns={columns}
               rowKey="mediaAudioId"
               pagination={restTableData.pageData.pagination}

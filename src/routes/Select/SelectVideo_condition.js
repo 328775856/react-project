@@ -26,37 +26,22 @@ function CreateConditionForm(props, formQuery, formReset, videoGroup) {
   return (
     <Form onSubmit={formQuery}>
       <Row gutter={4}>
-        <Col
-          md={12}
-          sm={12}
-        >
+        <Col md={8} sm={12}>
           <FormItem label="名称">
             {getFieldDecorator('videoName')(<Input placeholder="" />)}
           </FormItem>
         </Col>
-        <Col
-          md={12}
-          sm={12}
-        >
+        <Col md={6} sm={12}>
           <FormItem label="分组">
             {getFieldDecorator('mediaVideoGroupId')(<Select placeholder="">{videoGroup}</Select>)}
           </FormItem>
         </Col>
-        <Col
-          md={12}
-          sm={12}
-        >
+        <Col md={6} sm={12}>
           <span>
-            <Button
-              type="primary"
-              htmlType="submit"
-            >
+            <Button type="primary" htmlType="submit">
               查询
             </Button>
-            <Button
-              style={{ marginLeft: 8 }}
-              onClick={formReset}
-            >
+            <Button style={{ marginLeft: 8 }} onClick={formReset}>
               重置
             </Button>
           </span>

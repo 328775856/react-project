@@ -22,7 +22,16 @@ import GbUpload from '../../components/Upload/upload';
 
 const FormItem = Form.Item;
 const CreateEditForm = Form.create()(props => {
-  const { modalVisible, form, addSave, updateSave, closeModal, formData, title } = props;
+  const {
+    modalVisible,
+    form,
+    addSave,
+    updateSave,
+    closeModal,
+    formData,
+    title,
+    imageGroup
+  } = props;
   const handleUploadChange = fileList => {
     let imagePath = '';
     if (fileList.length != 0 && fileList[0].fileName) {
@@ -58,12 +67,18 @@ const CreateEditForm = Form.create()(props => {
       }
     });
   };
+  const cancelHandle = () => {
+    form.resetFields();
+    closeModal();
+  };
+
   return (
     <Modal
+      destroyOnClose
       title={title}
       visible={modalVisible}
       onOk={okHandle}
-      onCancel={() => closeModal()}
+      onCancel={cancelHandle}
     >
       <FormItem
         labelCol={{ span: 5 }}
@@ -75,57 +90,27 @@ const CreateEditForm = Form.create()(props => {
           <Input />
         )}
       </FormItem>
-      <FormItem
-        labelCol={{ span: 5 }}
-        wrapperCol={{ span: 15 }}
-        label="图片分组"
-      >
+      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="图片分组">
         {form.getFieldDecorator('mediaImageGroupId', {
-          initialValue: formData.mediaImageGroupId || '',
+          initialValue:
+            formData.mediaImageGroupId === undefined ? '' : `${formData.mediaImageGroupId}`,
           rules: [{ required: true, message: '请输入图片分组...' }]
-        })(
-          <Select
-            value={formData.mediaImageGroupId}
-            style={{ width: '100%' }}
-          >
-            <Select.Option value="1">默认分组</Select.Option>
-            <Select.Option value="2">分组1</Select.Option>
-          </Select>
-        )}
+        })(<Select style={{ width: '100%' }}>{imageGroup || ''}</Select>)}
       </FormItem>
-      <FormItem
-        labelCol={{ span: 5 }}
-        wrapperCol={{ span: 15 }}
-        label="图片名称"
-      >
+      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="图片名称">
         {form.getFieldDecorator('imageName', {
           initialValue: formData.imageName || '',
           rules: [{ required: true, message: '请输入图片名称...' }]
-        })(<Input
-          placeholder="请输入"
-          value={formData.imageName}
-        />)}
+        })(<Input placeholder="请输入" />)}
       </FormItem>
-      <FormItem
-        labelCol={{ span: 5 }}
-        wrapperCol={{ span: 15 }}
-        label="路径"
-        style={{}}
-      >
+      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="路径" style={{}}>
         {form.getFieldDecorator('imagePath', { initialValue: formData.imagePath || '' })(
-          <Input
-            readOnly
-            value={formData.imagePath}
-          />
+          <Input readOnly />
         )}
       </FormItem>
-      <FormItem
-        labelCol={{ span: 5 }}
-        wrapperCol={{ span: 15 }}
-        label="选择图片"
-      >
+      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="选择图片">
         {form.getFieldDecorator('imageUpload', {
-          initialValue: formData.imageUpload || '',
+          initialValue: formData.imagePath || '',
           rules: [{ required: true, message: '请选择图片...' }]
         })(<GbUpload {...uploadProps} />)}
       </FormItem>

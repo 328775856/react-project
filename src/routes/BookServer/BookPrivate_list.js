@@ -19,11 +19,15 @@ import {
   Divider,
   Table
 } from 'antd';
+import moment from 'moment';
 import StandardTable from 'components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from '../../assets/styles.less';
 import CreateEditForm from './BookPrivate_edit';
 import CreateFindForm from './BookPrivate_find';
+/*
+import CreateAuditForm from './BookPrivate_audit';
+*/
 import { defaultPage } from '../../utils/utils.js';
 
 const FormItem = Form.Item;
@@ -32,12 +36,15 @@ const FormItem = Form.Item;
   loading: loading.models.crud
 }))
 @Form.create()
-export default class BookPrivate extends PureComponent {
+export default class UploadBook extends PureComponent {
   state = {
     modalVisible: false,
+    modalAuditVisible: false,
     modalTitle: '',
+    modalAuditTitle: '',
     formValues: {},
-    page: defaultPage()
+    page: defaultPage(),
+    options: {}
   };
 
   refresh = (values, page) => {
@@ -55,8 +62,14 @@ export default class BookPrivate extends PureComponent {
     });
   };
 
+  componentWillMount() {
+    const { tableData } = this.props;
+    tableData.pageData.list = '';
+  }
+
   componentDidMount() {
-    const { formValues, page } = this.state;
+    const { formValues, page, options } = this.state;
+    this.initOptions();
     this.refresh(formValues, page);
   }
 
@@ -70,6 +83,12 @@ export default class BookPrivate extends PureComponent {
       page
     });
     this.refresh(formValues, page);
+  };
+
+  isEmptyObject = e => {
+    let t;
+    for (t in e) return !1;
+    return !0;
   };
 
   formReset = () => {
@@ -87,6 +106,13 @@ export default class BookPrivate extends PureComponent {
     }
   };
 
+  initOptionsCallback = response => {
+    console.log(response);
+    this.setState({
+      options: JSON.parse(response.data)
+    });
+  };
+
   remove = record => {
     const { dispatch, tableData } = this.props;
     const cb = this.callback;
@@ -96,12 +122,35 @@ export default class BookPrivate extends PureComponent {
         dispatch({
           type: 'tableData/remove',
           path: 'bookPrivate/remove',
-          payload: { bookId: record.bookId },
+          payload: { bookUserId: record.bookUserId },
           callback: cb
         });
       },
       onCancel() {}
     });
+  };
+
+  getDataForAudit = record => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'tableData/getDataForUpdate',
+      path: 'bookPrivate/getDataForUpdate',
+      payload: { bookUserId: record.bookUserId }
+    });
+    this.setState({
+      modalAuditTitle: '审核',
+      modalAuditVisible: true
+    });
+  };
+
+  auditcallback = () => {
+    const { tableData } = this.props;
+    if (tableData.status === 200) {
+      const { formValues, page } = this.state;
+      this.refresh(formValues, page);
+    } else {
+      message.success(tableData.message);
+    }
   };
 
   query = e => {
@@ -110,13 +159,19 @@ export default class BookPrivate extends PureComponent {
     form.validateFields((err, fieldsValue) => {
       if (err) return;
 
-      const values = {
+      let values = {
         ...fieldsValue
       };
+      values.createTimeStart = values.createTimeStart ?
+        values.createTimeStart.format('YYYYMMDDHHmmss') :
+        '';
+      values.createTimeEnd = values.createTimeEnd ?
+        values.createTimeEnd.format('YYYYMMDDHHmmss') :
+        '';
       const page = defaultPage();
       this.setState({
         formValues: values,
-        page
+        page: page
       });
       this.refresh(values, page);
     });
@@ -124,7 +179,8 @@ export default class BookPrivate extends PureComponent {
 
   closeModal = () => {
     this.setState({
-      modalVisible: false
+      modalVisible: false,
+      modalAuditVisible: false
     });
   };
 
@@ -156,11 +212,21 @@ export default class BookPrivate extends PureComponent {
     dispatch({
       type: 'tableData/getDataForUpdate',
       path: 'bookPrivate/getDataForUpdate',
-      payload: { bookId: record.bookId }
+      payload: { bookUserId: record.bookUserId }
     });
     this.setState({
       modalTitle: '修改',
       modalVisible: true
+    });
+  };
+
+  initOptions = () => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'tableData/initOptions',
+      path: 'bookPrivate/getDataForAdd',
+      payload: {},
+      callback: this.initOptionsCallback
     });
   };
 
@@ -178,75 +244,98 @@ export default class BookPrivate extends PureComponent {
     });
   };
 
+  audit = fields => {
+    const { dispatch, tableData } = this.props;
+    const payload = {
+      ...tableData.formData,
+      ...fields
+    };
+    dispatch({
+      type: 'tableData/update',
+      path: 'uploadBook/audit',
+      payload,
+      callback: this.auditcallback
+    });
+  };
+
+  formatTime = text => {
+    if (text == null || text === 0) {
+      return '';
+    } else {
+      let str = new String(text);
+      let time = {
+        year: str.substr(0, 4),
+        month: parseInt(str.substr(4, 2)) - 1,
+        date: str.substr(6, 2),
+        hour: str.substr(8, 2),
+        minute: str.substr(10, 2),
+        second: str.substr(12, 2)
+      };
+      return moment()
+        .set(time)
+        .format('YYYY-MM-DD HH:mm:ss');
+    }
+  };
+
   renderForm() {
-    return CreateFindForm(this.props, this.query, this.formReset);
+    return CreateFindForm(this.props, this.query, this.formReset, this.isEmptyObject, this.state);
   }
 
   render() {
     const { tableData, loading } = this.props;
-    const { modalVisible, modalTitle } = this.state;
+    const { modalVisible, modalTitle, modalAuditTitle, modalAuditVisible, options } = this.state;
 
     const columns = [
       {
         title: '系统id',
+        dataIndex: 'bookUserId'
+      },
+      {
+        title: '图书id',
         dataIndex: 'bookId'
       },
       {
-        title: '图书编号',
-        dataIndex: 'bookCode'
+        title: '上传用户id',
+        dataIndex: 'userId'
+      },
+
+      {
+        title: '上传用户昵称',
+        dataIndex: 'uploaderName'
       },
       {
         title: '图书名',
         dataIndex: 'bookName'
       },
-      {
-        title: '图书属性',
-        dataIndex: 'bookPropName'
-      },
-      {
-        title: '图书分类',
-        dataIndex: 'bookTypeName'
-      },
-      {
-        title: '图书格式',
-        dataIndex: 'bookStyleName'
-      },
+
       {
         title: '封面路径',
         dataIndex: 'wholePhotoPath',
         render: (text, record) => (
           <Fragment>
-            <img
-              alt=""
-              style={{ width: 100, height: 100 }}
-              src={record.wholePhotoPath}
-            />
+            <img alt="" style={{ width: 50, height: 50 }} src={record.wholePhotoPath} />
           </Fragment>
         )
       },
+
       {
-        title: '作者',
-        dataIndex: 'bookAuthor'
+        title: '图书格式',
+        dataIndex: 'bookStyleName'
       },
       {
-        title: '存储名',
-        dataIndex: 'bookStorageName'
-      },
-      {
-        title: '存储文件名',
-        dataIndex: 'fileName'
-      },
-      {
-        title: '资源大小',
-        dataIndex: 'fileSize'
+        title: '审核时间',
+        dataIndex: 'createTime',
+        render: (text, record) => <Fragment>{this.formatTime(text)}</Fragment>
       },
       {
         title: '操作',
         render: (text, record) => (
           <Fragment>
-            <a onClick={() => this.getDataForUpdate(record)}>修改</a>
-            <Divider type="vertical" />
-            <a onClick={() => this.remove(record)}>删除</a>
+            {/* <a onClick={() => this.getDataForUpdate(record)}>修改</a>
+    <Divider type="vertical" />
+    <a onClick={() => this.remove(record)}>删除</a>
+    <Divider type="vertical" />*/}
+            <a onClick={() => this.getDataForAudit(record)}>审核</a>
           </Fragment>
         )
       }
@@ -255,7 +344,9 @@ export default class BookPrivate extends PureComponent {
     const parentMethods = {
       add: this.add,
       update: this.update,
+      audit: this.audit,
       closeModal: this.closeModal,
+      isEmptyObject: this.isEmptyObject,
       dispatch: this.props.dispatch
     };
     return (
@@ -263,10 +354,11 @@ export default class BookPrivate extends PureComponent {
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
+            <div className={styles.tableListOperator} />
             <Table
               dataSource={tableData.pageData.list}
               columns={columns}
-              rowKey="bookId"
+              rowKey="bookUserId"
               pagination={tableData.pageData.pagination}
               loading={loading}
               onChange={this.tableChange}
@@ -278,6 +370,14 @@ export default class BookPrivate extends PureComponent {
           modalVisible={modalVisible}
           formData={tableData.formData}
           title={modalTitle}
+          options={options}
+        />
+        <CreateAuditForm
+          {...parentMethods}
+          modalVisible={modalAuditVisible}
+          formData={tableData.formData}
+          title={modalAuditTitle}
+          options={options}
         />
       </PageHeaderLayout>
     );

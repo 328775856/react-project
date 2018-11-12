@@ -3,13 +3,12 @@ import { connect } from 'dva';
 import { Card, Button, Modal, message, Divider, Table } from 'antd';
 import PageHeaderLayout from '../../../layouts/PageHeaderLayout';
 import styles from '../../../assets/styles.less';
-import SelectBookBuy from '../../Select/SelectBookBuy';
+import SelectBookShare from '../../Select/SelectBookShare';
 import ChangeIndexNoForm from './FindSpec_indexNo';
 import { defaultPage, translateDate } from '../../../utils/utils.js';
 
-@connect(({ commonTableData, restTableData, loading }) => ({
+@connect(({ commonTableData, loading }) => ({
   commonTableData,
-  restTableData,
   loading: loading.models.crud
 }))
 export default class FindSpecBook extends PureComponent {
@@ -21,6 +20,11 @@ export default class FindSpecBook extends PureComponent {
     page: defaultPage(),
     paramData: {}
   };
+
+  componentWillMount() {
+    const { commonTableData } = this.props;
+    commonTableData.pageData.list = '';
+  }
 
   componentDidMount() {
     const { page } = this.state;
@@ -51,7 +55,7 @@ export default class FindSpecBook extends PureComponent {
       ...values
     };
     dispatch({
-      type: 'restTableData/list',
+      type: 'commonTableData/list',
       path: 'findSpecBook/page',
       payload: {
         data: params,
@@ -180,8 +184,27 @@ export default class FindSpecBook extends PureComponent {
     this.refresh(formValues, page);
   };
 
+  closeSelectBookShareModal = () => {
+    this.setState({
+      modalVisible: false
+    });
+  };
+
+  callSelectBookShareReturn = record => {
+    if (record != null) {
+      const myFormData = {
+        bookUserId: record[0].bookUserId,
+        bookName: record[0].bookName,
+        coverPath: record[0].coverPath,
+        indexNo: 1
+      };
+      this.addSave(myFormData);
+    }
+    this.closeSelectBookShareModal();
+  };
+
   render() {
-    const { commonTableData, restTableData, loading } = this.props;
+    const { commonTableData, loading } = this.props;
     const { modalVisible, modalCreateEditVisible, modalTitle } = this.state;
 
     const columns = [
@@ -194,23 +217,9 @@ export default class FindSpecBook extends PureComponent {
         dataIndex: 'wholeCoverPath',
         render: (text, record) => (
           <Fragment>
-            <img
-              alt=""
-              style={{ width: 100, height: 100 }}
-              src={record.wholeCoverPath}
-            />
+            <img alt="" style={{ width: 50, height: 50 }} src={record.wholeCoverPath} />
           </Fragment>
         )
-      },
-      {
-        title: '创建时间',
-        dataIndex: 'createTime',
-        render: text => <Fragment>{translateDate(text)}</Fragment>
-      },
-      {
-        title: '更新时间',
-        dataIndex: 'modifyTime',
-        render: text => <Fragment>{translateDate(text) || '暂无更新'}</Fragment>
       },
       {
         title: '操作',
@@ -231,29 +240,28 @@ export default class FindSpecBook extends PureComponent {
       indexNoChange: this.indexNoChange
     };
 
+    const parentMethodsForBook = {
+      callReturn: this.callSelectBookShareReturn,
+      closeModal: this.closeSelectBookShareModal
+    };
+
     return (
       <PageHeaderLayout>
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListOperator}>
-              <Button
-                type="primary"
-                onClick={() => this.getSelect()}
-              >
+              <Button type="primary" onClick={() => this.getSelect()}>
                 新增图书
               </Button>
-              <Button
-                type="primary"
-                onClick={() => this.goBackSpec()}
-              >
-                返回榜单
+              <Button type="primary" onClick={() => this.goBackSpec()}>
+                返回专题
               </Button>
             </div>
             <Table
-              dataSource={restTableData.pageData.list}
+              dataSource={commonTableData.pageData.list}
               columns={columns}
               rowKey="findSpecBookId"
-              pagination={restTableData.pageData.pagination}
+              pagination={commonTableData.pageData.pagination}
               loading={loading}
               onChange={this.tableChange}
             />
@@ -266,9 +274,10 @@ export default class FindSpecBook extends PureComponent {
           title={modalTitle}
           state={this.state}
         />
-        <SelectBookBuy
-          {...parentMethods}
+        <SelectBookShare
+          {...parentMethodsForBook}
           modalVisible={modalVisible}
+          modalTitle={modalTitle}
         />
       </PageHeaderLayout>
     );

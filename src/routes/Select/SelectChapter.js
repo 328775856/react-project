@@ -20,16 +20,13 @@ import {
   Divider,
   Table
 } from 'antd';
-import StandardTable from 'components/StandardTable';
-import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from '../../assets/styles.less';
 import CreateConditionForm from './SelectChapter_condition';
-import { getUrl, postUrl } from '../../services/api';
 
 const FormItem = Form.Item;
 
-@connect(({ selectData, loading }) => ({
-  selectData,
+@connect(({ restTableData, loading }) => ({
+  restTableData,
   loading: loading.models.selectTable
 }))
 @Form.create()
@@ -46,7 +43,7 @@ export default class SelectChapter extends React.Component {
   query = (params, page) => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'selectData/query',
+      type: 'restTableData/list',
       path: 'courseChapter/page',
       payload: {
         data: params,
@@ -95,18 +92,22 @@ export default class SelectChapter extends React.Component {
     });
   };
 
-  renderForm(groupList) {
+  renderForm() {
     return CreateConditionForm(this.props, this.formSubmit, this.formReset);
   }
 
   render() {
-    const {
-      selectData: { pageData },
-      selectData: { formData },
-      callReturn,
-      closeModal,
-      modalVisible
-    } = this.props;
+    const { restTableData, callReturn, closeModal, modalVisible } = this.props;
+
+    const { selectedRows } = this.state;
+
+    const okHandle = () => {
+      if (selectedRows.length < 1) {
+        message.success('请选择一条数据');
+      } else {
+        callReturn(selectedRows);
+      }
+    };
 
     const columns = [
       {
@@ -122,11 +123,7 @@ export default class SelectChapter extends React.Component {
         dataIndex: 'coverPath',
         render: (text, record) => (
           <Fragment>
-            <img
-              alt=""
-              style={{ width: 100, height: 100 }}
-              src={record.wholeCoverPath}
-            />
+            <img alt="" style={{ width: 50, height: 50 }} src={record.wholeCoverPath} />
           </Fragment>
         )
       }
@@ -140,7 +137,8 @@ export default class SelectChapter extends React.Component {
       },
       onSelect: (record, selected, selectedRows) => {
         // console.log('selectedRows',selectedRows); //选中的每行信息，是一个数组
-        callReturn(selectedRows);
+        // callReturn(selectedRows);
+        this.onRowClick(selectedRows);
       },
       onSelectAll: (selected, selectedRows, changeRows) => {
         // console.log('changeRows',changeRows);   //变化的每一项
@@ -155,15 +153,15 @@ export default class SelectChapter extends React.Component {
         title="选择章节"
         visible={modalVisible}
         width={650}
-        onOk={closeModal}
+        onOk={okHandle}
         onCancel={() => closeModal()}
       >
         <div className={styles.tableList}>
-          <div className={styles.tableListForm}>{this.renderForm(formData.rows)}</div>
+          <div className={styles.tableListForm}>{this.renderForm()}</div>
           <Table
-            dataSource={pageData.list}
+            dataSource={restTableData.pageData.list}
             columns={columns}
-            pagination={pageData.pagination}
+            pagination={restTableData.pageData.pagination}
             onChange={this.tableChange}
             rowSelection={rowSelection}
             rowKey="createTime"

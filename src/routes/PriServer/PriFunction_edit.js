@@ -33,6 +33,10 @@ const CreateEditForm = Form.create()(props => {
       }
     });
   };
+  const cancelHandle = () => {
+    form.resetFields();
+    closeModal();
+  };
 
   const formItemLayout = {
     labelCol: {
@@ -48,16 +52,8 @@ const CreateEditForm = Form.create()(props => {
   };
 
   return (
-    <Modal
-      title={title}
-      visible={modalVisible}
-      onOk={okHandle}
-      onCancel={() => closeModal()}
-    >
-      <FormItem
-        {...formItemLayout}
-        label="系统ID"
-      >
+    <Modal title={title} visible={modalVisible} onOk={okHandle} onCancel={cancelHandle}>
+      <FormItem {...formItemLayout} label="系统ID">
         {form.getFieldDecorator('priFunctionId', {
           initialValue: formData.priFunctionId || '',
           rules: [
@@ -66,13 +62,10 @@ const CreateEditForm = Form.create()(props => {
               message: '请输入系统ID...'
             }
           ]
-        })(<Input />)}
+        })(<Input disabled={formData.priFunctionId >= 0} />)}
       </FormItem>
 
-      <FormItem
-        {...formItemLayout}
-        label="资源名称"
-      >
+      <FormItem {...formItemLayout} label="资源名称">
         {form.getFieldDecorator('functionName', {
           initialValue: formData.functionName || '',
           rules: [

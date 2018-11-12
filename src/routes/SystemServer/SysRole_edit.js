@@ -16,6 +16,10 @@ const CreateEditForm = Form.create()(props => {
       }
     });
   };
+  const cancelHandle = () => {
+    form.resetFields();
+    closeModal();
+  };
 
   const formItemLayout = {
     labelCol: {
@@ -31,16 +35,8 @@ const CreateEditForm = Form.create()(props => {
   };
 
   return (
-    <Modal
-      title={title}
-      visible={modalVisible}
-      onOk={okHandle}
-      onCancel={() => closeModal()}
-    >
-      <FormItem
-        {...formItemLayout}
-        label="编号"
-      >
+    <Modal title={title} visible={modalVisible} onOk={okHandle} onCancel={cancelHandle}>
+      <FormItem {...formItemLayout} label="编号">
         {form.getFieldDecorator('roleCode', {
           initialValue: formData.roleCode || '',
           rules: [
@@ -51,10 +47,7 @@ const CreateEditForm = Form.create()(props => {
           ]
         })(<Input />)}
       </FormItem>
-      <FormItem
-        {...formItemLayout}
-        label="名称"
-      >
+      <FormItem {...formItemLayout} label="名称">
         {form.getFieldDecorator('roleName', {
           initialValue: formData.roleName || '',
           rules: [
@@ -65,10 +58,7 @@ const CreateEditForm = Form.create()(props => {
           ]
         })(<Input />)}
       </FormItem>
-      <FormItem
-        {...formItemLayout}
-        label="备注"
-      >
+      <FormItem {...formItemLayout} label="备注">
         {form.getFieldDecorator('remark', {
           initialValue: formData.remark || '',
           rules: [

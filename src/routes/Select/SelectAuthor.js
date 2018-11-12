@@ -20,16 +20,13 @@ import {
   Divider,
   Table
 } from 'antd';
-import StandardTable from 'components/StandardTable';
-import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from '../../assets/styles.less';
 import CreateConditionForm from './SelectAuthor_condition';
-import { getUrl, postUrl } from '../../services/api';
 
 const FormItem = Form.Item;
 
-@connect(({ selectData, loading }) => ({
-  selectData,
+@connect(({ restTableData, loading }) => ({
+  restTableData,
   loading: loading.models.selectTable
 }))
 @Form.create()
@@ -37,7 +34,7 @@ export default class SelectAuthor extends React.Component {
   state = {
     selectedRows: [],
     formValues: {},
-    modalVisibleTemp: true
+    modalVisibleTemp: false
   };
 
   constructor(props) {
@@ -45,9 +42,10 @@ export default class SelectAuthor extends React.Component {
   }
 
   query = (params, page) => {
-    const { dispatch } = this.props;
+    const { dispatch, courseAuthorId } = this.props;
+    this.setState({ courseAuthorId: courseAuthorId });
     dispatch({
-      type: 'selectData/query',
+      type: 'restTableData/list',
       path: 'courseAuthor/page',
       payload: {
         data: params,
@@ -56,19 +54,17 @@ export default class SelectAuthor extends React.Component {
     });
   };
 
-  componentDidMount() {
-    this.query({}, { pageNo: 1, pageSize: 10 });
-  }
-
   componentDidUpdate() {
     const { modalVisible } = this.props;
     if (modalVisible === this.state.modalVisibleTemp) {
       return;
     }
-    this.setState({ modalVisibleTemp: modalVisible });
     if (modalVisible === true) {
+      const { restTableData } = this.props;
+      restTableData.pageData.list = '';
       this.init();
     }
+    this.setState({ modalVisibleTemp: modalVisible });
   }
 
   init = () => {
@@ -111,18 +107,27 @@ export default class SelectAuthor extends React.Component {
     });
   };
 
-  renderForm(groupList) {
+  renderForm() {
     return CreateConditionForm(this.props, this.formSubmit, this.formReset);
   }
 
   render() {
-    const {
-      selectData: { pageData },
-      selectData: { formData },
-      callReturn,
-      closeModal,
-      modalVisible
-    } = this.props;
+    const { restTableData, callReturn, closeModal, modalVisible, form } = this.props;
+
+    const { selectedRows } = this.state;
+
+    const okHandle = () => {
+      if (selectedRows.length < 1) {
+        message.success('请选择一条数据');
+      } else {
+        callReturn(selectedRows);
+      }
+    };
+
+    const cancelHandle = () => {
+      form.resetFields();
+      closeModal();
+    };
 
     const columns = [
       {
@@ -135,11 +140,7 @@ export default class SelectAuthor extends React.Component {
         dataIndex: 'wholePhotoPath',
         render: (text, record) => (
           <Fragment>
-            <img
-              alt=""
-              style={{ width: 100, height: 100 }}
-              src={record.wholePhotoPath}
-            />
+            <img alt="" style={{ width: 50, height: 50 }} src={record.wholePhotoPath} />
           </Fragment>
         )
       }
@@ -150,16 +151,24 @@ export default class SelectAuthor extends React.Component {
       hideDefaultSelections: 'true',
       onChange: (selectedRowKeys, selectedRows) => {
         // console.log('selectedRows',selectedRows);//得到每一项的信息，也就是每一项的信息[{key: 1, name: "花骨朵", age: 18, hobby: "看书"}]
+        this.setState({ courseAuthorId: selectedRows[0].courseAuthorId });
       },
       onSelect: (record, selected, selectedRows) => {
         // console.log('selectedRows',selectedRows); //选中的每行信息，是一个数组
-        callReturn(selectedRows);
+        // callReturn(selectedRows);
+        this.onRowClick(selectedRows);
       },
       onSelectAll: (selected, selectedRows, changeRows) => {
         // console.log('changeRows',changeRows);   //变化的每一项
       },
       onSelectInvert: selectedRows => {
         // console.log('selectedRows',selectedRows);
+      },
+      getCheckboxProps: record => {
+        const { courseAuthorId } = this.state;
+        return {
+          checked: record.courseAuthorId === courseAuthorId
+        };
       }
     };
 
@@ -168,15 +177,15 @@ export default class SelectAuthor extends React.Component {
         title="选择作者"
         visible={modalVisible}
         width={650}
-        onOk={closeModal}
-        onCancel={() => closeModal()}
+        onOk={okHandle}
+        onCancel={cancelHandle}
       >
         <div className={styles.tableList}>
-          <div className={styles.tableListForm}>{this.renderForm(formData.rows)}</div>
+          <div className={styles.tableListForm}>{this.renderForm()}</div>
           <Table
-            dataSource={pageData.list}
+            dataSource={restTableData.pageData.list}
             columns={columns}
-            pagination={pageData.pagination}
+            pagination={restTableData.pageData.pagination}
             onChange={this.tableChange}
             rowSelection={rowSelection}
             rowKey="createTime"

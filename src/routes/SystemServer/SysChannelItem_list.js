@@ -61,6 +61,11 @@ export default class SysChannelItem extends PureComponent {
     });
   };
 
+  componentWillMount() {
+    const { tableData } = this.props;
+    tableData.pageData.list = [];
+  }
+
   componentDidMount() {
     const { formValues, page } = this.state;
     const { tableData } = this.props;
@@ -243,10 +248,7 @@ export default class SysChannelItem extends PureComponent {
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
             <div className={styles.tableListOperator}>
-              <Button
-                type="primary"
-                onClick={() => this.getDataForAdd()}
-              >
+              <Button type="primary" onClick={() => this.getDataForAdd()}>
                 新建
               </Button>
             </div>

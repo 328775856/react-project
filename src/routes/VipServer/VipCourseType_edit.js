@@ -48,6 +48,11 @@ const CreateEditForm = Form.create()(props => {
     });
   };
 
+  const cancelHandle = () => {
+    form.resetFields();
+    closeModal();
+  };
+
   const formItemLayout = {
     labelCol: {
       xs: { span: 24 },
@@ -62,30 +67,19 @@ const CreateEditForm = Form.create()(props => {
   };
 
   return (
-    <Modal
-      title={title}
-      visible={modalVisible}
-      onOk={okHandle}
-      onCancel={() => closeModal()}
-    >
-      <FormItem
-        {...formItemLayout}
-        label="vip包id"
-      >
+    <Modal title={title} visible={modalVisible} onOk={okHandle} onCancel={cancelHandle}>
+      <FormItem {...formItemLayout} label="VIP包ID">
         {form.getFieldDecorator('vipPackageId', {
           initialValue: formData.vipPackageId || '',
           rules: [
             {
               required: true,
-              message: '请输入vip包id...'
+              message: '请输入VIP包ID...'
             }
           ]
         })(<Select style={{ width: '150px' }}>{optionsEle}</Select>)}
       </FormItem>
-      <FormItem
-        {...formItemLayout}
-        label="标签名"
-      >
+      <FormItem {...formItemLayout} label="标签名">
         {form.getFieldDecorator('typename', {
           initialValue: formData.typename || '',
           rules: [
@@ -96,10 +90,7 @@ const CreateEditForm = Form.create()(props => {
           ]
         })(<Input />)}
       </FormItem>
-      <FormItem
-        {...formItemLayout}
-        label="顺序"
-      >
+      <FormItem {...formItemLayout} label="顺序">
         {form.getFieldDecorator('indexNo', {
           initialValue: formData.indexNo || '',
           rules: [

@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { Button, Col, Form, Input, Modal, Row } from 'antd';
+import { Button, Col, Form, Input, InputNumber, Modal, Row } from 'antd';
 import SelectChapter from '../Select/SelectChapter';
 
 const FormItem = Form.Item;
@@ -16,10 +16,11 @@ export default class CreateEditForm extends PureComponent {
   };
 
   callSelectChapterReturn = record => {
-    debugger;
-    console.log(record);
     if (record != null) {
-      const { dispatch } = this.props;
+      const { dispatch, form } = this.props;
+      form.resetFields('courseChapterId');
+      form.resetFields('chapterTitle');
+      form.resetFields('coverPath');
       const myFormData = {
         courseChapterId: record[0].courseChapterId,
         chapterTitle: record[0].chapterTitle,
@@ -54,6 +55,11 @@ export default class CreateEditForm extends PureComponent {
       });
     };
 
+    const cancelHandle = () => {
+      form.resetFields();
+      closeModal();
+    };
+
     const parentMethodsForChapter = {
       callReturn: this.callSelectChapterReturn,
       closeModal: this.closeSelectChapterModal
@@ -73,16 +79,8 @@ export default class CreateEditForm extends PureComponent {
     };
 
     return (
-      <Modal
-        title={title}
-        visible={modalVisible}
-        onOk={okHandle}
-        onCancel={() => closeModal()}
-      >
-        <FormItem
-          {...formItemLayout}
-          label="章节id"
-        >
+      <Modal title={title} visible={modalVisible} onOk={okHandle} onCancel={cancelHandle}>
+        <FormItem {...formItemLayout} label="章节id">
           <Row>
             <Col span={20}>
               {form.getFieldDecorator('courseChapterId', {
@@ -93,21 +91,15 @@ export default class CreateEditForm extends PureComponent {
                     message: '请输入章节id...'
                   }
                 ]
-              })(<Input />)}
+              })(<Input readOnly />)}
             </Col>
             <Col>
-              <Button
-                onClick={this.selectChapterModel}
-                icon="search"
-              />
+              <Button onClick={this.selectChapterModel} icon="search" />
             </Col>
           </Row>
         </FormItem>
 
-        <FormItem
-          {...formItemLayout}
-          label="标题"
-        >
+        <FormItem {...formItemLayout} label="标题">
           {form.getFieldDecorator('chapterTitle', {
             initialValue: formData.chapterTitle || '',
             rules: [
@@ -116,13 +108,10 @@ export default class CreateEditForm extends PureComponent {
                 message: '请输入标题...'
               }
             ]
-          })(<Input />)}
+          })(<Input readOnly />)}
         </FormItem>
 
-        <FormItem
-          {...formItemLayout}
-          label="图片显示"
-        >
+        <FormItem {...formItemLayout} label="图片显示">
           {form.getFieldDecorator('coverPath', {
             initialValue: formData.coverPath || '',
             rules: [
@@ -131,17 +120,10 @@ export default class CreateEditForm extends PureComponent {
                 message: '请输入标题...'
               }
             ]
-          })(<img
-            alt=""
-            style={{ width: 100, height: 100 }}
-            src={formData.coverPath}
-          />)}
+          })(<img alt="" style={{ width: 100, height: 100 }} src={formData.coverPath} />)}
         </FormItem>
 
-        <FormItem
-          {...formItemLayout}
-          label="顺序"
-        >
+        <FormItem {...formItemLayout} label="顺序">
           {form.getFieldDecorator('indexNo', {
             initialValue: formData.indexNo || '',
             rules: [
@@ -150,12 +132,9 @@ export default class CreateEditForm extends PureComponent {
                 message: '请输入顺序...'
               }
             ]
-          })(<Input />)}
+          })(<InputNumber min={0} max={255} />)}
         </FormItem>
-        <SelectChapter
-          {...parentMethodsForChapter}
-          modalVisible={this.state.chapterModalVisible}
-        />
+        <SelectChapter {...parentMethodsForChapter} modalVisible={this.state.chapterModalVisible} />
       </Modal>
     );
   }

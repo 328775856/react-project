@@ -1,4 +1,3 @@
-/* eslint-disable no-debugger */
 import { getUrl, postUrl, putUrl, deleteUrl } from '../services/api';
 import request from '../utils/request';
 import { getToken } from '../utils/authority';
@@ -80,7 +79,6 @@ export default {
       });
     },
     *selectOld({ path, payload, callback }, { call, put }) {
-      debugger;
       const response = yield call(postUrl, path, payload);
       yield put({
         type: 'loadSelectOld',
@@ -136,7 +134,6 @@ export default {
       return newState;
     },
     loadPage(state, action) {
-      debugger;
       const newState = {
         ...state,
         pageData: {

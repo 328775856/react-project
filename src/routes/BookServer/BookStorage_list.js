@@ -19,12 +19,11 @@ import {
   Divider,
   Table
 } from 'antd';
-import StandardTable from 'components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from '../../assets/styles.less';
 import CreateEditForm from './BookStorage_edit';
 import CreateFindForm from './BookStorage_find';
-import { defaultPage } from '../../utils/utils.js';
+import { defaultPage, formatTime } from '../../utils/utils.js';
 
 const FormItem = Form.Item;
 @connect(({ tableData, loading }) => ({
@@ -38,7 +37,8 @@ export default class BookStorage extends PureComponent {
     modalTitle: '',
     formValues: {},
     page: defaultPage(),
-    options: {}
+    options: {},
+    TableData: []
   };
 
   refresh = (values, page) => {
@@ -55,6 +55,11 @@ export default class BookStorage extends PureComponent {
       modalVisible: false
     });
   };
+
+  componentWillMount() {
+    const { tableData } = this.props;
+    tableData.pageData.list = '';
+  }
 
   componentDidMount() {
     const { formValues, page, options } = this.state;
@@ -203,16 +208,23 @@ export default class BookStorage extends PureComponent {
   };
 
   renderForm() {
-    return CreateFindForm(this.props, this.query, this.formReset, this.isEmptyObject, this.state);
+    return CreateFindForm(
+      this.props,
+      this.query,
+      this.formReset,
+      this.getDataForAdd,
+      this.isEmptyObject,
+      this.state
+    );
   }
 
   render() {
     const { tableData, loading } = this.props;
-    const { modalVisible, modalTitle, options } = this.state;
-
+    const { modalVisible, modalTitle, options, TableData } = this.state;
+    this.setState({});
     const columns = [
       {
-        title: '系统id',
+        title: '系统ID',
         dataIndex: 'bookStorageId'
       },
       {
@@ -246,7 +258,7 @@ export default class BookStorage extends PureComponent {
         dataIndex: 'storagePath'
       },
       {
-        title: '访问url',
+        title: '访问URL',
         dataIndex: 'accessUrl'
       },
       {
@@ -266,6 +278,11 @@ export default class BookStorage extends PureComponent {
           };
           return <Fragment>{dict(record)}</Fragment>;
         }
+      },
+      {
+        title: '创建时间',
+        dataIndex: 'createTime',
+        render: (text, record) => <Fragment>{formatTime(text)}</Fragment>
       },
       {
         title: '操作',
@@ -291,14 +308,7 @@ export default class BookStorage extends PureComponent {
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
-            <div className={styles.tableListOperator}>
-              <Button
-                type="primary"
-                onClick={() => this.getDataForAdd()}
-              >
-                新建
-              </Button>
-            </div>
+            <div className={styles.tableListOperator} />
             <Table
               dataSource={tableData.pageData.list}
               columns={columns}

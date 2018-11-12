@@ -34,6 +34,11 @@ const CreateEditForm = Form.create()(props => {
     });
   };
 
+  const cancelHandle = () => {
+    form.resetFields();
+    closeModal();
+  };
+
   const formItemLayout = {
     labelCol: {
       xs: { span: 24 },
@@ -48,16 +53,8 @@ const CreateEditForm = Form.create()(props => {
   };
 
   return (
-    <Modal
-      title={title}
-      visible={modalVisible}
-      onOk={okHandle}
-      onCancel={() => closeModal()}
-    >
-      <FormItem
-        {...formItemLayout}
-        label="用户id"
-      >
+    <Modal title={title} visible={modalVisible} onOk={okHandle} onCancel={cancelHandle}>
+      <FormItem {...formItemLayout} label="用户id">
         {form.getFieldDecorator('userId', {
           initialValue: formData.userId || '',
           rules: [
@@ -68,10 +65,7 @@ const CreateEditForm = Form.create()(props => {
           ]
         })(<Input />)}
       </FormItem>
-      <FormItem
-        {...formItemLayout}
-        label="话题id"
-      >
+      <FormItem {...formItemLayout} label="话题id">
         {form.getFieldDecorator('dynaTopicId', {
           initialValue: formData.dynaTopicId || '',
           rules: [
@@ -82,10 +76,7 @@ const CreateEditForm = Form.create()(props => {
           ]
         })(<Input />)}
       </FormItem>
-      <FormItem
-        {...formItemLayout}
-        label="回复数"
-      >
+      <FormItem {...formItemLayout} label="回复数">
         {form.getFieldDecorator('numReply', {
           initialValue: formData.numReply || '',
           rules: [
@@ -96,10 +87,7 @@ const CreateEditForm = Form.create()(props => {
           ]
         })(<Input />)}
       </FormItem>
-      <FormItem
-        {...formItemLayout}
-        label="点赞数"
-      >
+      <FormItem {...formItemLayout} label="点赞数">
         {form.getFieldDecorator('numFavor', {
           initialValue: formData.numFavor || '',
           rules: [

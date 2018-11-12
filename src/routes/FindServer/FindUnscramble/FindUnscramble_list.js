@@ -21,10 +21,11 @@ import {
   Divider,
   Table
 } from 'antd';
+import moment from 'moment';
 import PageHeaderLayout from '../../../layouts/PageHeaderLayout';
 import styles from '../../../assets/styles.less';
-import SelectBookBuy from '../../Select/SelectUnscramble';
-import { defaultPage } from '../../../utils/utils.js';
+import SelectUnscramble from '../../Select/SelectUnscramble';
+import { defaultPage, formatDate } from '../../../utils/utils.js';
 import TimingPublishModal from './FindUnscramble_timing';
 import CreateFindForm from './FindUnscramble_find';
 import fetch from '../../../utils/fetch';
@@ -45,6 +46,11 @@ export default class FindUnscramble extends PureComponent {
     publishModalVisible: false,
     TableData: []
   };
+
+  componentWillMount() {
+    const { tableData } = this.props;
+    tableData.pageData.list = '';
+  }
 
   componentDidMount() {
     const { formValues, page, options } = this.state;
@@ -104,6 +110,28 @@ export default class FindUnscramble extends PureComponent {
       callback: this.callback
     });
     this.closeModal();
+  };
+
+  closeSelectUnscrambleModal = () => {
+    this.setState({
+      modalVisible: false
+    });
+  };
+
+  callSelectUnscrambleReturn = record => {
+    if (record != null) {
+      const myFormData = {
+        findChannelId: 3,
+        courseId: record[0].courseId,
+        courseTagId: record[0].courseTagId,
+        courseName: record[0].courseName,
+        coverPath: record[0].coverPath,
+        courseIntro: record[0].courseIntro,
+        upCourse: record[0].upCourse
+      };
+      this.addSave(myFormData);
+    }
+    this.closeSelectUnscrambleModal();
   };
 
   query = e => {
@@ -240,12 +268,15 @@ export default class FindUnscramble extends PureComponent {
     form.resetFields();
   };
 
-  formtTimeForTime = data => (
-    <Fragment>
-      定时发布 +
-      {data.substring(0, 4) + '-' + data.substring(4, 6) + '-' + data.substring(6, 8)}
-    </Fragment>
-  );
+  formatState = text => {
+    if (text == 0) {
+      return '未发布';
+    } else if (text == 1) {
+      return '已发布';
+    } else {
+      return '定时发布';
+    }
+  };
 
   renderPublishOP = record =>
     record.publishStatus === 0 ?
@@ -255,7 +286,7 @@ export default class FindUnscramble extends PureComponent {
         this.timingPublishOP(record);
 
   renderForm() {
-    return CreateFindForm(this.props, this.query, this.formReset, this.state);
+    return CreateFindForm(this.props, this.query, this.formReset, this.state, this.getSelect);
   }
 
   render() {
@@ -263,66 +294,34 @@ export default class FindUnscramble extends PureComponent {
     const { modalVisible, publishModalVisible, publishForm, TableData } = this.state;
 
     const columns = [
-      { title: 'Id', dataIndex: 'findUnscrambleId' },
+      { title: 'ID', dataIndex: 'findUnscrambleId' },
       {
         title: '所属栏目',
         dataIndex: 'findChannelId',
         render: () => '好书推荐'
       },
       { title: '课程标签', dataIndex: 'courseTagName' },
-      { title: '课程Id', dataIndex: 'courseId' },
       { title: '课程名称', dataIndex: 'courseName' },
       {
         title: '课程封面',
         dataIndex: 'wholeCoverPath',
         render: (text, record) => (
           <Fragment>
-            <img
-              alt=""
-              style={{ width: 100, height: 100 }}
-              src={record.wholeCoverPath}
-            />
+            <img alt="" style={{ width: 50, height: 50 }} src={record.wholeCoverPath} />
           </Fragment>
         )
       },
       { title: '简介', dataIndex: 'courseIntro' },
       { title: '课程价格', dataIndex: 'upCourse' },
       {
-        title: '创建时间',
-        dataIndex: 'createTime',
-        render: (text, record) => (
-          <Fragment>
-            {record.createTime === undefined ? '' : this.formtTime(record.createTime.toString())}
-          </Fragment>
-        )
-      },
-      {
-        title: '更新时间',
-        dataIndex: 'modifyTime',
-        render: (text, record) => (
-          <Fragment>
-            {record.modifyTime === undefined ?
-              '' :
-              record.modifyTime === 0 ?
-                '暂无更新' :
-                this.formtTime(record.modifyTime.toString())}
-          </Fragment>
-        )
-      },
-      {
-        title: '状态',
+        title: '发布状态',
         dataIndex: 'publishStatus',
-        render: (text, record) => (
-          <Fragment>
-            {record.publishStatus === undefined ?
-              '' :
-              record.publishStatus === 1 ?
-                '已发布' :
-                record.publishStatus === 0 ?
-                  '未发布' :
-                  this.formtTimeForTime(record.publishDate.toString())}
-          </Fragment>
-        )
+        render: (text, record) => <Fragment>{this.formatState(text)}</Fragment>
+      },
+      {
+        title: '发布时间',
+        dataIndex: 'publishDate',
+        render: (text, record) => <Fragment>{formatDate(text)}</Fragment>
       },
       {
         title: '操作',
@@ -330,11 +329,9 @@ export default class FindUnscramble extends PureComponent {
       }
     ];
 
-    const parentMethods = {
-      add: this.add,
-      update: this.update,
-      closeModal: this.closeModal,
-      addSave: this.addSave
+    const parentMethodsForUnscramble = {
+      callReturn: this.callSelectUnscrambleReturn,
+      closeModal: this.closeSelectUnscrambleModal
     };
 
     return (
@@ -343,11 +340,8 @@ export default class FindUnscramble extends PureComponent {
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
             <div className={styles.tableListOperator}>
-              <Button
-                type="primary"
-                onClick={() => this.getSelect()}
-              >
-                新增课程
+              <Button type="primary" style={{ marginLeft: 8 }} onClick={() => this.getSelect()}>
+                新建
               </Button>
             </div>
             <Table
@@ -365,10 +359,7 @@ export default class FindUnscramble extends PureComponent {
           publishForm={publishForm}
           parent={this}
         />
-        <SelectBookBuy
-          {...parentMethods}
-          modalVisible={modalVisible}
-        />
+        <SelectUnscramble {...parentMethodsForUnscramble} modalVisible={modalVisible} />
       </PageHeaderLayout>
     );
   }

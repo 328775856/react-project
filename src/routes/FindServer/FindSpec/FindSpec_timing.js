@@ -35,7 +35,6 @@ export default class TimingPublishModal extends PureComponent {
     const { refresh, publishForm, publishChange } = this.props;
     publishChange(publishForm, 2, publishDate);
     this.closeModal();
-    refresh();
   };
 
   closeModal = () => {
@@ -50,16 +49,8 @@ export default class TimingPublishModal extends PureComponent {
     const { onChange, onOk, closeModal, onOK } = this;
     const { modalVisible } = this.props;
     return (
-      <Modal
-        title="定时上架"
-        visible={modalVisible}
-        onOk={onOk}
-        onCancel={() => closeModal()}
-      >
-        上架时间：<DatePicker
-          format="YYYYMMDD"
-          onChange={onChange}
-        />
+      <Modal title="定时上架" visible={modalVisible} onOk={onOk} onCancel={() => closeModal()}>
+        上架时间：<DatePicker format="YYYYMMDD" onChange={onChange} />
       </Modal>
     );
   }

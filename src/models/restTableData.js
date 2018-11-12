@@ -46,7 +46,7 @@ export default {
     *getById({ path, payload, callback }, { call, put }) {
       const response = yield call(getUrl, path, payload);
       yield put({
-        type: 'loadForm',
+        type: 'dataForm',
         payload: response
       });
       if (callback) callback();
@@ -54,7 +54,7 @@ export default {
     *getDataForAdd({ path, payload, callback }, { call, put }) {
       const response = yield call(postUrl, path, payload);
       yield put({
-        type: 'loadForm',
+        type: 'dataForm',
         payload: response
       });
       if (callback) callback();
@@ -69,6 +69,24 @@ export default {
       if (callback) callback();
     },
     *getDataForUpdate({ path, payload, callback, processor }, { call, put }) {
+      const response = yield call(postUrl, path, payload);
+      yield put({
+        type: 'dataForm',
+        payload: response,
+        processor
+      });
+      if (callback) callback();
+    },
+    *getData({ path, payload, callback, processor }, { call, put }) {
+      const response = yield call(postUrl, path, payload);
+      yield put({
+        type: 'dataForm',
+        payload: response,
+        processor
+      });
+      if (callback) callback();
+    },
+    *getUEData({ path, payload, callback, processor }, { call, put }) {
       const response = yield call(postUrl, path, payload);
       yield put({
         type: 'loadForm',
@@ -89,7 +107,7 @@ export default {
       const response = yield call(deleteUrl, path, payload);
       yield put({
         type: 'loadResponse',
-        payload: response
+        payload: JSON.parse(response)
       });
       if (callback) callback();
     },
@@ -108,6 +126,11 @@ export default {
       });
       if (callback) callback();
     },
+    *initOptions({ path, payload, callback }, { call, put }) {
+      const response = yield call(postUrl, path, payload);
+
+      if (callback) callback(response);
+    },
     *initOptionElement({ path, payload, option, callback }, { call, put }) {
       const response = yield call(postUrl, path, payload);
       yield put({
@@ -120,9 +143,17 @@ export default {
     *goUrl({ path, payload }, { call, put }) {
       yield put(routerRedux.push(path));
       yield put({
-        type: 'loadForm',
+        type: 'dataForm',
         payload: { data: payload }
       });
+    },
+    *init({ path, payload, callback }, { call, put }) {
+      const response = yield call(postUrl, path, payload);
+      yield put({
+        type: 'dataForm',
+        payload: response
+      });
+      if (callback) callback();
     }
   },
 
@@ -143,7 +174,37 @@ export default {
       };
       return myState;
     },
+    //ueditor编辑器加载时调用，一般情况使用下面dataform
     loadForm(state, action) {
+      let formData = null;
+      // console.log(UE);
+      let ue = UE.getEditor('content');
+      // console.log(action.payload.data);
+      if (action.payload.data == undefined) {
+        formData = {};
+        ue.ready(function() {
+          ue.reset();
+          ue.setContent('');
+        });
+      } else {
+        formData = action.payload.data;
+        ue.ready(function() {
+          // console.log(formData.content);
+          ue.setContent(formData.content);
+        });
+      }
+      if (action.processor) {
+        formData = action.processor(formData, action.payload);
+      }
+      const myState = {
+        ...state,
+        formData,
+        status: action.payload.status,
+        message: action.payload.message
+      };
+      return myState;
+    },
+    dataForm(state, action) {
       let formData = null;
       if (action.payload.data == null) {
         formData = {};

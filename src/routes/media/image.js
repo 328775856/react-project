@@ -24,6 +24,8 @@ import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from '../../assets/styles.less';
 import CreateEditForm from './imageEdit';
 import CreateFindForm from './imageFind';
+import { defaultPage, mul, div, formatTime } from '../../utils/utils.js';
+import SelectUserInfo from '../Select/SelectUserInfo';
 
 const FormItem = Form.Item;
 
@@ -37,66 +39,56 @@ export default class TableList extends PureComponent {
     modalVisible: false,
     modalTitle: '',
     selectedRows: [],
-    formValues: {}
+    formValues: {},
+    options: [],
+    userInfoModalVisible: false,
+    page: defaultPage(),
+    userId: '',
+    nickname: ''
   };
 
-  refresh() {
+  refresh = (values, page) => {
     const { dispatch } = this.props;
     dispatch({
       type: 'restTableData/list',
       path: 'media/image/getImagePage',
       payload: {
-        page: {
-          pageNo: 1,
-          pageSize: 10
-        }
+        data: values,
+        page
       }
     });
     this.setState({
-      modalVisible: false
+      modalVisible: false,
+      userInfoModalVisible: false
     });
+  };
+
+  componentWillMount() {
+    const { restTableData } = this.props;
+    restTableData.pageData.list = [];
   }
 
   componentDidMount() {
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'restTableData/list',
-      path: 'media/image/getImagePage',
-      payload: {
-        page: {
-          pageNo: 1,
-          pageSize: 10
-        }
-      }
-    });
+    const { formValues, page } = this.state;
+    this.initOptions();
+    this.refresh(formValues, page);
   }
 
   tableChange = (pagination, filtersArg, sorter) => {
-    const { dispatch } = this.props;
     const { formValues } = this.state;
-    const params = {
-      pageNo: pagination.current,
+    const page = {
       pageSize: pagination.pageSize,
-      ...formValues
+      pageNo: pagination.current
     };
-    dispatch({
-      type: 'restTableData/list',
-      path: 'media/image/getImagePage',
-      payload: params
+    this.setState({
+      page
     });
+    this.refresh(formValues, page);
   };
 
   formReset = () => {
-    const { form, dispatch } = this.props;
-    this.setState({
-      formValues: {}
-    });
-    dispatch({
-      type: 'restTableData/list',
-      path: 'media/image/getImagePage',
-      payload: {}
-    });
-
+    const { form } = this.props;
+    this.setState({ userId: '' });
     form.resetFields();
   };
 
@@ -109,35 +101,43 @@ export default class TableList extends PureComponent {
   query = e => {
     e.preventDefault();
     const { dispatch, form } = this.props;
-
     form.validateFields((err, fieldsValue) => {
       if (err) return;
-
       const values = {
-        data: {
-          ...fieldsValue
-        },
-        page: {
-          pageNo: 1,
-          pageSize: 10
-        }
+        ...fieldsValue
       };
-
+      const page = defaultPage();
       this.setState({
-        formValues: values
+        formValues: values,
+        page
       });
-
-      dispatch({
-        type: 'restTableData/list',
-        path: 'media/image/getImagePage',
-        payload: values
-      });
+      this.refresh(values, page);
     });
   };
 
   closeModal = () => {
     this.setState({
       modalVisible: false
+    });
+  };
+
+  initOptions = () => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'restTableData/initOptionElement',
+      path: 'media/imageGroup/getGroupPage',
+      payload: {
+        data: {},
+        page: {
+          pageNo: 1,
+          pageSize: 1000
+        }
+      },
+      option: {
+        optionKey: 'imageGroup',
+        key: 'mediaImageGroupId',
+        value: 'imageGroupName'
+      }
     });
   };
 
@@ -159,10 +159,9 @@ export default class TableList extends PureComponent {
     dispatch({
       type: 'restTableData/add',
       path: 'media/image',
-      payload: fields
+      payload: fields,
+      callback: this.callback
     });
-    message.success('保存成功');
-    this.refresh();
   };
 
   update = record => {
@@ -178,44 +177,85 @@ export default class TableList extends PureComponent {
   };
 
   updateSave = fields => {
-    const { dispatch, formData } = this.props;
+    const { dispatch, restTableData } = this.props;
+    const payload = {
+      ...restTableData.formData,
+      ...fields
+    };
     dispatch({
       type: 'restTableData/update',
       path: 'media/image',
-      payload: fields
+      payload: payload,
+      callback: this.callback
     });
-    message.success('修改成功');
-    this.refresh();
+  };
+
+  callback = () => {
+    const { restTableData } = this.props;
+    if (restTableData.status == 200) {
+      const { formValues, page } = this.state;
+      this.refresh(formValues, page);
+    } else {
+      message.success(restTableData.message);
+    }
   };
 
   delete = record => {
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'restTableData/delete',
-      path: 'media/image',
-      payload: { mediaImageId: record.mediaImageId }
+    const { dispatch, restTableData } = this.props;
+    const cb = this.callback;
+    Modal.confirm({
+      title: '确定删除吗?',
+      onOk() {
+        dispatch({
+          type: 'restTableData/delete',
+          path: 'media/image',
+          payload: { mediaImageId: record.mediaImageId },
+          callback: cb
+        });
+      },
+      onCancel() {}
     });
-    message.success('删除成功');
-    this.refresh();
+  };
+
+  openSelectUserInfoModal = () => {
+    this.setState({
+      modalTitle: '选择用户',
+      userInfoModalVisible: true
+    });
+  };
+
+  callSelectUserInfoReturn = record => {
+    if (record != null) {
+      this.setState({ userId: record[0].userId });
+      this.setState({ nickname: record[0].nickname });
+    }
+    this.closeSelectUserInfoModal();
+  };
+
+  closeSelectUserInfoModal = () => {
+    this.setState({
+      userInfoModalVisible: false
+    });
   };
 
   renderForm() {
-    return CreateFindForm(this.props, this.query, this.formReset);
+    const { restTableData } = this.props;
+    return CreateFindForm(
+      this.props,
+      this.state.userId,
+      this.state.nickname,
+      this.query,
+      this.formReset,
+      restTableData.imageGroup,
+      this.add,
+      this.openSelectUserInfoModal
+    );
   }
 
   render() {
-    const {
-      restTableData: { pageData },
-      restTableData: { formData },
-      loading
-    } = this.props;
+    const { restTableData, loading } = this.props;
     const { selectedRows, modalVisible, modalTitle } = this.state;
-
     const columns = [
-      {
-        title: 'ID',
-        dataIndex: 'mediaImageId'
-      },
       {
         title: '分组名称',
         dataIndex: 'mediaImageGroupName'
@@ -229,17 +269,9 @@ export default class TableList extends PureComponent {
         dataIndex: 'imagePath',
         render: (text, record) => (
           <Fragment>
-            <img
-              alt=""
-              style={{ width: 100, height: 100 }}
-              src={record.domain}
-            />
+            <img alt="" style={{ width: 100, height: 100 }} src={record.domain} />
           </Fragment>
         )
-      },
-      {
-        title: '用户ID',
-        dataIndex: 'userId'
       },
       {
         title: '用户名称',
@@ -247,7 +279,8 @@ export default class TableList extends PureComponent {
       },
       {
         title: '创建时间',
-        dataIndex: 'createTime'
+        dataIndex: 'createTime',
+        render: (text, record) => <Fragment>{formatTime(text)}</Fragment>
       },
       {
         title: '操作',
@@ -267,23 +300,20 @@ export default class TableList extends PureComponent {
       closeModal: this.closeModal
     };
 
+    const parentMethodsForUserInfo = {
+      callReturn: this.callSelectUserInfoReturn,
+      closeModal: this.closeSelectUserInfoModal
+    };
+
     return (
       <PageHeaderLayout>
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
-            <div className={styles.tableListOperator}>
-              <Button
-                type="primary"
-                onClick={() => this.add()}
-              >
-                新建
-              </Button>
-            </div>
             <StandardTable
               selectedRows={selectedRows}
               loading={loading}
-              data={pageData}
+              data={restTableData.pageData}
               columns={columns}
               rowKey="mediaImageId"
               onSelectRow={this.selectRows}
@@ -294,8 +324,13 @@ export default class TableList extends PureComponent {
         <CreateEditForm
           {...parentMethods}
           modalVisible={modalVisible}
-          formData={formData}
+          formData={restTableData.formData}
           title={modalTitle}
+          imageGroup={restTableData.imageGroup}
+        />
+        <SelectUserInfo
+          {...parentMethodsForUserInfo}
+          modalVisible={this.state.userInfoModalVisible}
         />
       </PageHeaderLayout>
     );

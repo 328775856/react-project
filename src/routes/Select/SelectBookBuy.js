@@ -36,7 +36,8 @@ const FormItem = Form.Item;
 export default class SelectBookBuy extends React.Component {
   state = {
     selectedRows: [],
-    formValues: {}
+    formValues: {},
+    modalVisibleTemp: false
   };
 
   constructor(props) {
@@ -95,10 +96,6 @@ export default class SelectBookBuy extends React.Component {
     });
   };
 
-  componentDidMount() {
-    this.init();
-  }
-
   init() {
     this.initBookStyleGroup();
     this.initBookTypeGroup();
@@ -110,10 +107,12 @@ export default class SelectBookBuy extends React.Component {
     if (modalVisible === this.state.modalVisibleTemp) {
       return;
     }
-    this.setState({ modalVisibleTemp: modalVisible });
     if (modalVisible === true) {
+      const { restTableData } = this.props;
+      restTableData.pageData.list = '';
       this.query({}, { pageNo: 1, pageSize: 10 });
     }
+    this.setState({ modalVisibleTemp: modalVisible });
   }
 
   tableChange = (pagination, filtersArg, sorter) => {
@@ -158,21 +157,16 @@ export default class SelectBookBuy extends React.Component {
   }
 
   render() {
-    const { restTableData, loading, closeModal, modalVisible, addSave } = this.props;
+    const { restTableData, loading, callReturn, closeModal, modalVisible, addSave } = this.props;
+
+    const { selectedRows } = this.state;
 
     const okHandle = () => {
-      const { selectedRows } = this.state;
-      const formObject = {
-        findChannelId: 3,
-        bookUserId: selectedRows[0].bookId,
-        bookName: selectedRows[0].bookName,
-        coverPath: selectedRows[0].coverPath,
-        suggestDesc: '',
-        indexNo: 1,
-        author: selectedRows[0].bookAuthor
-      };
-      debugger;
-      addSave(formObject);
+      if (selectedRows.length < 1) {
+        message.success('请选择一条数据');
+      } else {
+        callReturn(selectedRows);
+      }
     };
 
     const columns = [
@@ -232,7 +226,7 @@ export default class SelectBookBuy extends React.Component {
         <div className={styles.tableList}>
           <div className={styles.tableListForm}>{this.renderForm()}</div>
           <Table
-            dataSource={restTableData.pageData.list}
+            dataSource={restTableData.pageData.list || []}
             columns={columns}
             rowKey="bookId"
             pagination={restTableData.pageData.pagination}

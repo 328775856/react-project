@@ -34,6 +34,11 @@ const CreateEditForm = Form.create()(props => {
     });
   };
 
+  const cancelHandle = () => {
+    form.resetFields();
+    closeModal();
+  };
+
   const formItemLayout = {
     labelCol: {
       xs: { span: 24 },
@@ -49,15 +54,13 @@ const CreateEditForm = Form.create()(props => {
 
   return (
     <Modal
+      destroyOnClose
       title={title}
       visible={modalVisible}
       onOk={okHandle}
-      onCancel={() => closeModal()}
+      onCancel={cancelHandle}
     >
-      <FormItem
-        {...formItemLayout}
-        label="名称"
-      >
+      <FormItem {...formItemLayout} label="名称">
         {form.getFieldDecorator('audioGroupName', {
           initialValue: formData.audioGroupName || '',
           rules: [
@@ -68,10 +71,7 @@ const CreateEditForm = Form.create()(props => {
           ]
         })(<Input />)}
       </FormItem>
-      <FormItem
-        {...formItemLayout}
-        label="顺序"
-      >
+      <FormItem {...formItemLayout} label="顺序">
         {form.getFieldDecorator('indexNo', {
           initialValue: formData.indexNo || '',
           rules: [
@@ -80,25 +80,19 @@ const CreateEditForm = Form.create()(props => {
               message: '请输入顺序...'
             }
           ]
-        })(<Input />)}
+        })(<InputNumber min={0} max={255} />)}
       </FormItem>
-      <FormItem
-        {...formItemLayout}
-        label="是否默认分组"
-      >
+      <FormItem {...formItemLayout} label="是否默认分组">
         {form.getFieldDecorator('isDefault', {
-          initialValue: formData.isDefault || '',
+          initialValue: formData.isDefault === undefined ? '' : `${formData.isDefault}`,
           rules: [
             {
-              required: false,
+              required: true,
               message: '请选择是否默认分组'
             }
           ]
         })(
-          <Select
-            value={formData.isDefault}
-            style={{ width: '100%' }}
-          >
+          <Select style={{ width: '100%' }}>
             <Select.Option value="1">是</Select.Option>
             <Select.Option value="0">否</Select.Option>
           </Select>

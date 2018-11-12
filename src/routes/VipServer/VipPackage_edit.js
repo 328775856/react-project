@@ -42,15 +42,19 @@ export default class CreateEditForm extends PureComponent {
 
   callSelectReturn = record => {
     if (record != null) {
-      const { dispatch } = this.props;
+      const { dispatch, form } = this.props;
       let myFormData = {};
       if (this.state.flag == 1) {
+        form.resetFields('coverPath');
+        form.resetFields('wholeCoverPath');
         myFormData = {
           coverPath: record[0].imagePath,
           wholeCoverPath: record[0].domain
         };
       }
       if (this.state.flag == 2) {
+        form.resetFields('functionImg');
+        form.resetFields('wholeFunctionImg');
         myFormData = {
           functionImg: record[0].imagePath,
           wholeFunctionImg: record[0].domain
@@ -67,7 +71,9 @@ export default class CreateEditForm extends PureComponent {
 
   callSelectArticleReturn = record => {
     if (record != null) {
-      const { dispatch } = this.props;
+      const { dispatch, form } = this.props;
+      form.resetFields('mediaArticleId');
+      form.resetFields('articleTitle');
       const myFormData = {
         mediaArticleId: record[0].mediaArticleId,
         articleTitle: record[0].articleTitle
@@ -113,7 +119,6 @@ export default class CreateEditForm extends PureComponent {
     } = this.props;
     let optionsEle = '';
     if (!isEmptyObject(this.props.options)) {
-      debugger;
       optionsEle = this.props.options.map(item => (
         <Option key={item.priPackageId}>{item.packageName}</Option>
       ));
@@ -131,6 +136,12 @@ export default class CreateEditForm extends PureComponent {
         }
       });
     };
+
+    const cancelHandle = () => {
+      form.resetFields();
+      closeModal();
+    };
+
     const parentMethods = {
       callReturn: this.callSelectReturn,
       closeModal: this.closeSelectModal
@@ -155,31 +166,20 @@ export default class CreateEditForm extends PureComponent {
     };
 
     return (
-      <Modal
-        title={title}
-        visible={modalVisible}
-        onOk={okHandle}
-        onCancel={() => closeModal()}
-      >
-        <FormItem
-          {...formItemLayout}
-          label="vip包名"
-        >
+      <Modal title={title} visible={modalVisible} onOk={okHandle} onCancel={cancelHandle}>
+        <FormItem {...formItemLayout} label="VIP包名">
           {form.getFieldDecorator('packageName', {
             initialValue: formData.packageName || '',
             rules: [
               {
                 required: true,
-                message: '请输入vip包名...'
+                message: '请输入VIP包名...'
               }
             ]
           })(<Input />)}
         </FormItem>
 
-        <FormItem
-          {...formItemLayout}
-          label="价格"
-        >
+        <FormItem {...formItemLayout} label="价格">
           {form.getFieldDecorator('upPackage', {
             initialValue: formData.upPackage || '',
             rules: [
@@ -191,10 +191,7 @@ export default class CreateEditForm extends PureComponent {
           })(<Input />)}
         </FormItem>
 
-        <FormItem
-          {...formItemLayout}
-          label="排序"
-        >
+        <FormItem {...formItemLayout} label="排序">
           {form.getFieldDecorator('indexNo', {
             initialValue: formData.indexNo || '',
             rules: [
@@ -206,11 +203,7 @@ export default class CreateEditForm extends PureComponent {
           })(<Input />)}
         </FormItem>
 
-        <FormItem
-          {...formItemLayout}
-          label="封面图"
-          style={{ display: 'none' }}
-        >
+        <FormItem {...formItemLayout} label="封面图" style={{ display: 'none' }}>
           <Row>
             <Col span={20}>
               {form.getFieldDecorator('coverPath', {
@@ -224,18 +217,12 @@ export default class CreateEditForm extends PureComponent {
               })(<Input />)}
             </Col>
             <Col>
-              <Button
-                onClick={this.selectImage1}
-                icon="search"
-              />
+              <Button onClick={this.selectImage1} icon="search" />
             </Col>
           </Row>
         </FormItem>
 
-        <FormItem
-          {...formItemLayout}
-          label="封面图显示"
-        >
+        <FormItem {...formItemLayout} label="封面图显示">
           <Row>
             <Col span={20}>
               {form.getFieldDecorator('wholeCoverPath', {
@@ -246,42 +233,25 @@ export default class CreateEditForm extends PureComponent {
                     message: '请输入课程封面(素材图片)...'
                   }
                 ]
-              })(<img
-                alt=""
-                style={{ width: 100, height: 100 }}
-                src={formData.wholeCoverPath}
-              />)}
+              })(<img alt="" style={{ width: 100, height: 100 }} src={formData.wholeCoverPath} />)}
             </Col>
             <Col>
-              <Button
-                onClick={this.selectImage1}
-                icon="search"
-              />
+              <Button onClick={this.selectImage1} icon="search" />
             </Col>
           </Row>
         </FormItem>
 
-        <FormItem
-          {...formItemLayout}
-          label="权益包"
-        >
+        <FormItem {...formItemLayout} label="权益包">
           {form.getFieldDecorator('priPackageId', {
             initialValue: formData.priPackageId == undefined ? '' : `${formData.priPackageId}`
           })(
-            <Select
-              placeholder=""
-              style={{ width: '150px' }}
-            >
+            <Select placeholder="" style={{ width: '150px' }}>
               {optionsEle}
             </Select>
           )}
         </FormItem>
 
-        <FormItem
-          {...formItemLayout}
-          label="背景图"
-          style={{ display: 'none' }}
-        >
+        <FormItem {...formItemLayout} label="背景图" style={{ display: 'none' }}>
           <Row>
             <Col span={20}>
               {form.getFieldDecorator('functionImg', {
@@ -295,18 +265,12 @@ export default class CreateEditForm extends PureComponent {
               })(<Input />)}
             </Col>
             <Col>
-              <Button
-                onClick={this.selectImage2}
-                icon="search"
-              />
+              <Button onClick={this.selectImage2} icon="search" />
             </Col>
           </Row>
         </FormItem>
 
-        <FormItem
-          {...formItemLayout}
-          label="背景图显示"
-        >
+        <FormItem {...formItemLayout} label="背景图显示">
           <Row>
             <Col span={20}>
               {form.getFieldDecorator('wholeFunctionImg', {
@@ -318,26 +282,16 @@ export default class CreateEditForm extends PureComponent {
                   }
                 ]
               })(
-                <img
-                  alt=""
-                  style={{ width: 100, height: 100 }}
-                  src={formData.wholeFunctionImg}
-                />
+                <img alt="" style={{ width: 100, height: 100 }} src={formData.wholeFunctionImg} />
               )}
             </Col>
             <Col>
-              <Button
-                onClick={this.selectImage2}
-                icon="search"
-              />
+              <Button onClick={this.selectImage2} icon="search" />
             </Col>
           </Row>
         </FormItem>
 
-        <FormItem
-          {...formItemLayout}
-          label="权益描述"
-        >
+        <FormItem {...formItemLayout} label="权益描述">
           {form.getFieldDecorator('functionDesc', {
             initialValue: formData.functionDesc || '',
             rules: [
@@ -348,11 +302,7 @@ export default class CreateEditForm extends PureComponent {
             ]
           })(<Input />)}
         </FormItem>
-        <FormItem
-          {...formItemLayout}
-          label="素材图文"
-          style={{ display: 'none' }}
-        >
+        <FormItem {...formItemLayout} label="素材图文" style={{ display: 'none' }}>
           <Row gutter={0}>
             <Col span={22}>
               {form.getFieldDecorator('mediaArticleId', {
@@ -366,18 +316,12 @@ export default class CreateEditForm extends PureComponent {
               })(<Input />)}
             </Col>
             <Col span={2}>
-              <Button
-                onClick={this.selectArticleModel}
-                icon="search"
-              />
+              <Button onClick={this.selectArticleModel} icon="search" />
             </Col>
           </Row>
         </FormItem>
 
-        <FormItem
-          {...formItemLayout}
-          label="图文标题"
-        >
+        <FormItem {...formItemLayout} label="图文标题">
           <Row gutter={0}>
             <Col span={22}>
               {form.getFieldDecorator('articleTitle', {
@@ -391,18 +335,12 @@ export default class CreateEditForm extends PureComponent {
               })(<Input />)}
             </Col>
             <Col span={2}>
-              <Button
-                onClick={this.selectArticleModel}
-                icon="search"
-              />
+              <Button onClick={this.selectArticleModel} icon="search" />
             </Col>
           </Row>
         </FormItem>
 
-        <FormItem
-          {...formItemLayout}
-          label="分享标题"
-        >
+        <FormItem {...formItemLayout} label="分享标题">
           {form.getFieldDecorator('shareTitle', {
             initialValue: formData.shareTitle || '',
             rules: [
@@ -413,10 +351,7 @@ export default class CreateEditForm extends PureComponent {
             ]
           })(<Input />)}
         </FormItem>
-        <FormItem
-          {...formItemLayout}
-          label="分享描述"
-        >
+        <FormItem {...formItemLayout} label="分享描述">
           {form.getFieldDecorator('shareDesc', {
             initialValue: formData.shareDesc || '',
             rules: [
@@ -430,10 +365,12 @@ export default class CreateEditForm extends PureComponent {
 
         <SelectImage
           {...parentMethods}
+          imagePath={this.state.flag == 1 ? formData.coverPath : formData.functionImg}
           modalVisible={this.state.modalVisible}
         />
         <SelectArticle
           {...parentMethodsForArticle}
+          mediaArticleId={formData.mediaArticleId}
           modalVisible={this.state.articleModalVisible}
         />
       </Modal>

@@ -12,7 +12,6 @@ export default class CreateEditForm extends PureComponent {
   };
 
   closeSelectModal = () => {
-    debugger;
     this.setState({
       modalVisible: false
     });
@@ -26,7 +25,9 @@ export default class CreateEditForm extends PureComponent {
 
   callSelectReturn = record => {
     if (record != null) {
-      const { dispatch } = this.props;
+      const { dispatch, form } = this.props;
+      form.resetFields('photoPath');
+      form.resetFields('wholePhotoPath');
       const myFormData = {
         photoPath: record[0].imagePath,
         wholePhotoPath: record[0].domain
@@ -41,7 +42,9 @@ export default class CreateEditForm extends PureComponent {
 
   callSelectArticleReturn = record => {
     if (record != null) {
-      const { dispatch } = this.props;
+      const { dispatch, form } = this.props;
+      form.resetFields('mediaArticleId');
+      form.resetFields('articleTitle');
       const myFormData = {
         mediaArticleId: record[0].mediaArticleId,
         articleTitle: record[0].articleTitle
@@ -80,6 +83,12 @@ export default class CreateEditForm extends PureComponent {
         }
       });
     };
+
+    const cancelHandle = () => {
+      form.resetFields();
+      closeModal();
+    };
+
     const parentMethods = {
       callReturn: this.callSelectReturn,
       closeModal: this.closeSelectModal
@@ -104,16 +113,8 @@ export default class CreateEditForm extends PureComponent {
     };
 
     return (
-      <Modal
-        title={title}
-        visible={modalVisible}
-        onOk={okHandle}
-        onCancel={() => closeModal()}
-      >
-        <FormItem
-          {...formItemLayout}
-          label="作者名字"
-        >
+      <Modal title={title} visible={modalVisible} onOk={okHandle} onCancel={cancelHandle}>
+        <FormItem {...formItemLayout} label="作者名字">
           {form.getFieldDecorator('authorName', {
             initialValue: formData.authorName || '',
             rules: [
@@ -124,11 +125,7 @@ export default class CreateEditForm extends PureComponent {
             ]
           })(<Input />)}
         </FormItem>
-        <FormItem
-          {...formItemLayout}
-          label="图片路径"
-          style={{ display: 'none' }}
-        >
+        <FormItem {...formItemLayout} label="图片路径" style={{ display: 'none' }}>
           <Row>
             <Col span={20}>
               {form.getFieldDecorator('photoPath', {
@@ -142,17 +139,11 @@ export default class CreateEditForm extends PureComponent {
               })(<Input />)}
             </Col>
             <Col>
-              <Button
-                onClick={this.selectImage}
-                icon="search"
-              />
+              <Button onClick={this.selectImage} icon="search" />
             </Col>
           </Row>
         </FormItem>
-        <FormItem
-          {...formItemLayout}
-          label="图片显示"
-        >
+        <FormItem {...formItemLayout} label="图片显示">
           <Row>
             <Col span={20}>
               {form.getFieldDecorator('wholePhotoPath', {
@@ -163,26 +154,15 @@ export default class CreateEditForm extends PureComponent {
                     message: '请输入从素材(图片信息中)引入...'
                   }
                 ]
-              })(<img
-                alt=""
-                style={{ width: 100, height: 100 }}
-                src={formData.wholePhotoPath}
-              />)}
+              })(<img alt="" style={{ width: 100, height: 100 }} src={formData.wholePhotoPath} />)}
             </Col>
             <Col>
-              <Button
-                onClick={this.selectImage}
-                icon="search"
-              />
+              <Button onClick={this.selectImage} icon="search" />
             </Col>
           </Row>
         </FormItem>
 
-        <FormItem
-          {...formItemLayout}
-          label="选择图文"
-          style={{ display: 'none' }}
-        >
+        <FormItem {...formItemLayout} label="选择图文" style={{ display: 'none' }}>
           <Row gutter={0}>
             <Col span={22}>
               {form.getFieldDecorator('mediaArticleId', {
@@ -191,17 +171,11 @@ export default class CreateEditForm extends PureComponent {
               })(<Input />)}
             </Col>
             <Col span={2}>
-              <Button
-                onClick={this.selectArticleModel}
-                icon="search"
-              />
+              <Button onClick={this.selectArticleModel} icon="search" />
             </Col>
           </Row>
         </FormItem>
-        <FormItem
-          {...formItemLayout}
-          label="图文标题"
-        >
+        <FormItem {...formItemLayout} label="图文标题">
           <Row gutter={0}>
             <Col span={22}>
               {form.getFieldDecorator('articleTitle', {
@@ -210,20 +184,19 @@ export default class CreateEditForm extends PureComponent {
               })(<Input readOnly />)}
             </Col>
             <Col span={2}>
-              <Button
-                onClick={this.selectArticleModel}
-                icon="search"
-              />
+              <Button onClick={this.selectArticleModel} icon="search" />
             </Col>
           </Row>
         </FormItem>
 
         <SelectImage
           {...parentMethods}
+          imagePath={formData.photoPath}
           modalVisible={this.state.modalVisible}
         />
         <SelectArticle
           {...parentMethodsForArticle}
+          mediaArticleId={formData.mediaArticleId}
           modalVisible={this.state.articleModalVisible}
         />
       </Modal>

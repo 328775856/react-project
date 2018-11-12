@@ -55,9 +55,22 @@ export default class DynaTopicCommentReply extends PureComponent {
     });
   };
 
+  componentWillMount() {
+    const { restTableData } = this.props;
+    restTableData.pageData.list = [];
+  }
+
   componentDidMount() {
     const { formValues, page } = this.state;
-    this.refresh(formValues, page);
+    const { restTableData } = this.props;
+    const dynaTopicCommentId = restTableData.formData.dynaTopicCommentId;
+    const dynaTopicId = restTableData.formData.dynaTopicId;
+    this.setState({
+      dynaTopicCommentId: dynaTopicCommentId,
+      dynaTopicId: dynaTopicId,
+      formValues: { dynaTopicCommentId: dynaTopicCommentId }
+    });
+    this.refresh({ dynaTopicCommentId: dynaTopicCommentId }, page);
   }
 
   tableChange = (pagination, filtersArg, sorter) => {
@@ -178,6 +191,16 @@ export default class DynaTopicCommentReply extends PureComponent {
     });
   };
 
+  back = () => {
+    const { dispatch } = this.props;
+    const { dynaTopicId } = this.state;
+    dispatch({
+      type: 'restTableData/goUrl',
+      path: '/dyna/comment',
+      payload: { dynaTopicId: dynaTopicId }
+    });
+  };
+
   renderForm() {
     return CreateFindForm(this.props, this.query, this.formReset);
   }
@@ -197,7 +220,13 @@ export default class DynaTopicCommentReply extends PureComponent {
       },
       {
         title: '回复内容',
-        dataIndex: 'replyContent'
+        dataIndex: 'replyContent',
+        render(text, record) {
+          if ((text || '.').length > 40) {
+            return `${text.substring(0, 40)}......`;
+          }
+          return text;
+        }
       },
       {
         title: '回复者',
@@ -219,8 +248,13 @@ export default class DynaTopicCommentReply extends PureComponent {
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
+            <div className={styles.tableListOperator}>
+              <Button type="default" onClick={() => this.back()}>
+                返回
+              </Button>
+            </div>
             <Table
-              dataSource={restTableData.pageData.list}
+              dataSource={restTableData.pageData.list || []}
               columns={columns}
               rowKey="dynaTopicCommentReplyId"
               pagination={restTableData.pageData.pagination}

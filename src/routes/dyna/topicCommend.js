@@ -26,6 +26,7 @@ const CommendForm = Form.create()(props => {
     form.validateFields((err, fieldsValue) => {
       if (err) return;
       form.resetFields();
+      console.log(formData.dynaTopicId);
       fieldsValue.dynaTopicId = formData.dynaTopicId;
       recommend(fieldsValue);
     });
@@ -51,10 +52,7 @@ const CommendForm = Form.create()(props => {
       onOk={okHandle}
       onCancel={() => closeModal('commendModalVisible')}
     >
-      <FormItem
-        {...formItemLayout}
-        label="排序"
-      >
+      <FormItem {...formItemLayout} label="排序">
         {form.getFieldDecorator('indexNo', {
           initialValue: formData.indexNo || '',
           rules: [

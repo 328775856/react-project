@@ -17,17 +17,18 @@ import {
   Modal,
   message,
   Badge,
-  Divider
+  Divider,
+  Table
 } from 'antd';
-import StandardTable from 'components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from '../../assets/styles.less';
 import CreateEditForm from './SysBlackBook_edit';
 import CreateFindForm from './SysBlackBook_find';
+import { defaultPage, formatTime } from '../../utils/utils.js';
 
 const FormItem = Form.Item;
-@connect(({ crud, loading }) => ({
-  crud,
+@connect(({ restTableData, loading }) => ({
+  restTableData,
   loading: loading.models.crud
 }))
 @Form.create()
@@ -36,132 +37,75 @@ export default class TableList extends PureComponent {
     modalVisible: false,
     modalTitle: '',
     selectedRows: [],
-    formValues: {}
+    formValues: {},
+    page: defaultPage()
   };
 
-  refresh() {
+  refresh = (values, page) => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'crud/list',
+      type: 'restTableData/list',
       path: 'blackBook/getBlackBookPage',
       payload: {
-        page: {
-          pageNo: 1,
-          pageSize: 10
-        }
+        data: values,
+        page
       }
     });
     this.setState({
       modalVisible: false
     });
+  };
+
+  componentWillMount() {
+    const { restTableData } = this.props;
+    restTableData.pageData.list = [];
   }
 
   componentDidMount() {
-    const { dispatch } = this.props;
-    debugger;
-    dispatch({
-      type: 'crud/list',
-      path: 'blackBook/getBlackBookPage',
-      payload: {
-        page: {
-          pageNo: 1,
-          pageSize: 10
-        }
-      }
-    });
+    const { formValues, page } = this.state;
+    this.refresh(formValues, page);
   }
 
   tableChange = (pagination, filtersArg, sorter) => {
-    debugger;
-    const { dispatch } = this.props;
     const { formValues } = this.state;
-    const params = {
-      page: {
-        pageNo: pagination.current,
-        pageSize: pagination.pageSize
-      },
-      ...formValues
+    const page = {
+      pageSize: pagination.pageSize,
+      pageNo: pagination.current
     };
-    dispatch({
-      type: 'crud/list',
-      path: 'blackBook/getBlackBookPage',
-      payload: params
-    });
+    this.setState({ page });
+    this.refresh(formValues, page);
   };
 
   formReset = () => {
-    const { form, dispatch } = this.props;
+    const { form } = this.props;
     form.resetFields();
-    this.setState({
-      formValues: {}
-    });
-    dispatch({
-      type: 'crud/list',
-      path: 'blackBook/getBlackBookPage',
-      payload: {}
-    });
   };
 
-  batchDelete = () => {
-    const { dispatch } = this.props;
-    const { selectedRows } = this.state;
-    if (selectedRows.length === 0) {
-      message.error('请选择记录');
-      return;
+  callback = () => {
+    const { restTableData } = this.props;
+    if (restTableData.status === 200) {
+      const { formValues, page } = this.state;
+      this.refresh(formValues, page);
+    } else {
+      message.success(restTableData.message);
     }
-    Modal.confirm({
-      title: '确定批量审核吗?',
-      onOk() {
-        dispatch({
-          type: 'crud/batchDelete',
-          path: 'api/crud/batchDelete',
-          payload: {
-            key: selectedRows.map(row => row.key).join(',')
-          }
-        });
-        message.success('批量审核成功');
-        dispatch({
-          type: 'crud/list',
-          path: 'blackBook/getBlackBookPage',
-          payload: {}
-        });
-      },
-      onCancel() {}
-    });
-  };
-
-  selectRows = rows => {
-    this.setState({
-      selectedRows: rows
-    });
   };
 
   query = e => {
     e.preventDefault();
     const { dispatch, form } = this.props;
-
     form.validateFields((err, fieldsValue) => {
       if (err) return;
 
       const values = {
-        data: {
-          ...fieldsValue
-        },
-        page: {
-          pageNo: 1,
-          pageSize: 10
-        }
+        ...fieldsValue
       };
-
+      const page = defaultPage();
       this.setState({
-        formValues: values
+        formValues: values,
+        page
       });
-
-      dispatch({
-        type: 'crud/list',
-        path: 'blackBook/getBlackBookPage',
-        payload: values
-      });
+      this.refresh(values, page);
     });
   };
 
@@ -173,11 +117,11 @@ export default class TableList extends PureComponent {
 
   add = fields => {
     const { dispatch } = this.props;
-    /* dispatch({
-      type: 'crud/add',
-      path:'api/crud/add',
-      payload: fields,
-    }); */
+    // dispatch({
+    //   type: 'restTableData/add',
+    //   path: 'blackBook/getDataForAdd',
+    //   payload: fields
+    // });
     this.setState({
       modalTitle: '新增黑名单书库',
       modalVisible: true
@@ -185,20 +129,19 @@ export default class TableList extends PureComponent {
   };
 
   addSave = fields => {
-    const { dispatch } = this.props;
+    const { dispatch, restTableData } = this.props;
     dispatch({
-      type: 'crud/addSave',
+      type: 'restTableData/add',
       path: 'blackBook/addBlackBook',
-      payload: fields
+      payload: fields,
+      callback: this.callback
     });
-    message.success('保存成功');
-    this.refresh();
   };
 
   update = record => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'crud/update',
+      type: 'restTableData/getData',
       path: 'blackBook/getBlackBook',
       payload: { blackBookId: record.blackBookId }
     });
@@ -209,25 +152,34 @@ export default class TableList extends PureComponent {
   };
 
   updateSave = fields => {
-    const { dispatch, formData } = this.props;
+    const { dispatch, restTableData } = this.props;
+    const payload = {
+      ...restTableData.formData,
+      ...fields
+    };
     dispatch({
-      type: 'crud/updateSave',
+      type: 'restTableData/update',
       path: 'blackBook/updateBlackBook',
-      payload: fields
+      payload,
+      callback: this.callback
     });
-    message.success('修改保存成功');
-    this.refresh();
   };
 
   delete = record => {
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'crud/delete',
-      path: 'blackBook/deleteBlackBook',
-      payload: { blackBookId: record.blackBookId }
+    const { dispatch, restTableData } = this.props;
+    const cb = this.callback;
+    Modal.confirm({
+      title: '确定删除吗?',
+      onOk() {
+        dispatch({
+          type: 'restTableData/delete',
+          path: 'blackBook/deleteBlackBook',
+          payload: { blackBookId: record.blackBookId },
+          callback: cb
+        });
+      },
+      onCancel() {}
     });
-    message.success('删除成功');
-    this.refresh();
   };
 
   renderForm() {
@@ -235,16 +187,12 @@ export default class TableList extends PureComponent {
   }
 
   render() {
-    const {
-      crud: { pageData },
-      crud: { formData },
-      loading
-    } = this.props;
+    const { restTableData, loading } = this.props;
     const { selectedRows, modalVisible, modalTitle } = this.state;
 
     const columns = [
       {
-        title: '系统id',
+        title: '系统ID',
         dataIndex: 'blackBookId'
       },
       {
@@ -253,7 +201,18 @@ export default class TableList extends PureComponent {
       },
       {
         title: '备注',
-        dataIndex: 'remark'
+        dataIndex: 'remark',
+        render(text, record) {
+          if ((text || '.').length > 40) {
+            return `${text.substring(0, 40)}......`;
+          }
+          return text;
+        }
+      },
+      {
+        title: '创建时间',
+        dataIndex: 'createTime',
+        render: (text, record) => <Fragment>{formatTime(text)}</Fragment>
       },
       {
         title: '操作',
@@ -279,19 +238,16 @@ export default class TableList extends PureComponent {
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
             <div className={styles.tableListOperator}>
-              <Button
-                type="primary"
-                onClick={() => this.add()}
-              >
+              <Button type="primary" onClick={() => this.add()}>
                 新建
               </Button>
             </div>
-            <StandardTable
-              selectedRows={selectedRows}
-              loading={loading}
-              data={pageData}
+            <Table
+              dataSource={restTableData.pageData.list || []}
               columns={columns}
-              onSelectRow={this.selectRows}
+              rowKey="blackBookId"
+              pagination={restTableData.pageData.pagination}
+              loading={loading}
               onChange={this.tableChange}
             />
           </div>
@@ -299,7 +255,7 @@ export default class TableList extends PureComponent {
         <CreateEditForm
           {...parentMethods}
           modalVisible={modalVisible}
-          formData={formData}
+          formData={restTableData.formData}
           title={modalTitle}
         />
       </PageHeaderLayout>

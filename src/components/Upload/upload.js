@@ -30,7 +30,9 @@ class GbUpload extends React.Component {
     accept: this.props.accept ? this.props.accept : 'image/*',
 
     action: this.props.action ? this.props.action : '/upload/uploadImage',
-    fileHead: this.props.fileHead ? this.props.fileHead : 'image://'
+    fileHead: this.props.fileHead ? this.props.fileHead : 'image://',
+    video: false,
+    audio: false
   };
 
   /**
@@ -138,6 +140,16 @@ class GbUpload extends React.Component {
     this.setState(newState);
   };
 
+  componentDidMount = props => {
+    this.setState({fileList:[]})
+    if (this.props.accept.indexOf('video') !== -1) {
+      this.setState({ video: true });
+    }
+    if (this.props.accept.indexOf('audio') !== -1) {
+      this.setState({ audio: true });
+    }
+  };
+
   componentWillReceiveProps = props => {
     // 组建有它自己的渲染和改变state的方式，不能这么简单粗暴的改
     // console.log(props);
@@ -159,13 +171,10 @@ class GbUpload extends React.Component {
     }
 
     // 一共有多少个图片
-    const uploadButton =
-      fileList.length >= this.props.length ? null : (
+    const uploadButton = (
         <div>
           <Icon type="plus" />
-        </div>
-      );
-
+        </div>);
     // showUploadList={false} 加了就显示不了
     const props = {
       uid: this.state.uid,
@@ -178,7 +187,6 @@ class GbUpload extends React.Component {
       onPreview: this.handlePreview,
       listType: 'picture-card'
     };
-
     return (
       <div className="clearfix">
         <Upload {...props}>{fileList.length >= this.state.length ? null : uploadButton}</Upload>
@@ -187,11 +195,24 @@ class GbUpload extends React.Component {
           footer={null}
           onCancel={this.handleCancel}
         >
-          <img
+          {!this.state.video&&!this.state.audio?<img
             alt="example"
             style={{ width: '100%' }}
             src={previewImage}
-          />
+          />:""
+          }
+          {this.state.video ?
+            <video
+width="90%" height="100%" src={this.props.fileList[0]&&`http://debugimage.geeboo.com/${this.props.fileList[0].name}`}
+                   controls
+            /> : ''
+          }
+          {this.state.audio ?
+            <audio
+width="90%" height="100%" src={this.props.fileList[0]&&`http://debugimage.geeboo.com/${this.props.fileList[0].name}`}
+controls="controls"
+            /> : ''
+          }
         </Modal>
       </div>
     );

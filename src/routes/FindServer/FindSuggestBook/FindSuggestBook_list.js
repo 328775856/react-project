@@ -17,19 +17,19 @@ import {
   message,
   Badge,
   Divider,
-  Table,
+  Table
 } from 'antd';
+import moment from 'moment';
 import PageHeaderLayout from '../../../layouts/PageHeaderLayout';
 import styles from '../../../assets/styles.less';
 import CreateFindForm from './FindSuggestBook_find';
 import CreateEditForm from './FindSuggestBook_edit';
-import { defaultPage } from '../../../utils/utils.js';
+import { defaultPage, formatDate } from '../../../utils/utils.js';
 import SelectBookShare from '../../Select/SelectBookShare';
 
-@connect(({ tableData, commonTableData, loading }) => ({
+@connect(({ tableData, loading }) => ({
   tableData,
-  commonTableData,
-  loading: loading.models.crud,
+  loading: loading.models.crud
 }))
 @Form.create()
 export default class FindSuggestBook extends PureComponent {
@@ -37,10 +37,11 @@ export default class FindSuggestBook extends PureComponent {
     modalVisible: false,
     updateModalVisible: false,
     modalTitle: '',
+    updateModalTitle: '',
     formValues: {},
     page: defaultPage(),
     options: [],
-    selectedChannel: '',
+    selectedChannel: ''
   };
 
   componentDidMount() {
@@ -52,11 +53,11 @@ export default class FindSuggestBook extends PureComponent {
     dispatch({
       type: 'tableData/getDataForUpdate',
       path: 'findSuggestBook/getDataForUpdate',
-      payload: { findSuggestBookId: record.findSuggestBookId },
+      payload: { findSuggestBookId: record.findSuggestBookId }
     });
     this.setState({
-      modalTitle: '修改图书推荐',
       updateModalVisible: true,
+      updateModalTitle: '修改'
     });
   };
 
@@ -69,14 +70,13 @@ export default class FindSuggestBook extends PureComponent {
       coverPath: selectedRows[0].coverPath,
       suggestDesc: '',
       indexNo: 1,
-      author: selectedRows[0].bookAuthor,
+      author: selectedRows[0].bookAuthor
     };
     return returnData;
   };
 
   callback = () => {
     const { tableData } = this.props;
-
     if (tableData.status === 200) {
       const { formValues, page } = this.state;
       this.refresh(formValues, page);
@@ -95,10 +95,10 @@ export default class FindSuggestBook extends PureComponent {
           type: 'tableData/remove',
           path: 'findSuggestBook/remove',
           payload: { findSuggestBookId: record.findSuggestBookId },
-          callback: cb,
+          callback: cb
         });
       },
-      onCancel() {},
+      onCancel() {}
     });
   };
 
@@ -112,12 +112,12 @@ export default class FindSuggestBook extends PureComponent {
           type: 'tableData/update',
           path: 'findSuggestBook/publish',
           payload: {
-            findSuggestBookId: record.findSuggestBookId,
+            findSuggestBookId: record.findSuggestBookId
           },
-          callback: cb,
+          callback: cb
         });
       },
-      onCancel() {},
+      onCancel() {}
     });
   };
 
@@ -131,12 +131,12 @@ export default class FindSuggestBook extends PureComponent {
           type: 'tableData/update',
           path: 'findSuggestBook/off',
           payload: {
-            findSuggestBookId: record.findSuggestBookId,
+            findSuggestBookId: record.findSuggestBookId
           },
-          callback: cb,
+          callback: cb
         });
       },
-      onCancel() {},
+      onCancel() {}
     });
   };
 
@@ -147,12 +147,12 @@ export default class FindSuggestBook extends PureComponent {
       if (err) return;
 
       const values = {
-        ...fieldsValue,
+        ...fieldsValue
       };
       const page = defaultPage();
       this.setState({
         formValues: values,
-        page,
+        page
       });
       this.refresh(values, page);
     });
@@ -161,20 +161,14 @@ export default class FindSuggestBook extends PureComponent {
   selectBook = () => {
     this.setState({
       modalVisible: true,
-      modalTitle: '选择图书',
+      modalTitle: '选择图书'
     });
   };
 
-  closeModal = key => {
-    if (!key) {
-      this.setState({
-        modalVisible: false,
-      });
-    } else {
-      const newState = {};
-      newState[key] = false;
-      this.setState(newState);
-    }
+  closeModal = () => {
+    this.setState({
+      updateModalVisible: false
+    });
   };
 
   initOptionsCallback = response => {
@@ -184,7 +178,7 @@ export default class FindSuggestBook extends PureComponent {
     this.setState({
       options: result,
       selectedChannel: result[0].findChannelId,
-      formValues: { findChannelId: result[0].findChannelId },
+      formValues: { findChannelId: result[0].findChannelId }
     });
   };
 
@@ -194,27 +188,27 @@ export default class FindSuggestBook extends PureComponent {
       type: 'tableData/initOptions',
       path: 'findSuggestBook/getDataForAdd',
       payload: {
-        channelType: 3,
+        channelType: 3
       },
-      callback: this.initOptionsCallback,
+      callback: this.initOptionsCallback
     });
   };
 
   handleChange = item => {
     this.setState({
-      selectedChannel: item,
+      selectedChannel: item
     });
     const { dispatch, form } = this.props;
     form.validateFields((err, fieldsValue) => {
       if (err) return;
       fieldsValue.findChannelId = item;
       const values = {
-        ...fieldsValue,
+        ...fieldsValue
       };
       const page = defaultPage();
       this.setState({
         formValues: values,
-        page,
+        page
       });
       this.refresh(values, page);
     });
@@ -226,7 +220,7 @@ export default class FindSuggestBook extends PureComponent {
       type: 'tableData/add',
       path: 'findSuggestBook/add',
       payload: fields,
-      callback: this.callback,
+      callback: this.callback
     });
   };
 
@@ -236,7 +230,7 @@ export default class FindSuggestBook extends PureComponent {
       type: 'tableData/add',
       path: 'findSuggestBook/add',
       payload: fields,
-      callback: this.callback,
+      callback: this.callback
     });
   };
 
@@ -244,13 +238,13 @@ export default class FindSuggestBook extends PureComponent {
     const { dispatch, tableData } = this.props;
     const payload = {
       ...tableData.formData,
-      ...fields,
+      ...fields
     };
     dispatch({
       type: 'tableData/update',
       path: 'findSuggestBook/update',
       payload,
-      callback: this.callback,
+      callback: this.callback
     });
   };
 
@@ -263,10 +257,10 @@ export default class FindSuggestBook extends PureComponent {
     const { formValues } = this.state;
     const page = {
       pageSize: pagination.pageSize,
-      pageNo: pagination.current,
+      pageNo: pagination.current
     };
     this.setState({
-      page,
+      page
     });
     this.refresh(formValues, page);
   };
@@ -278,14 +272,66 @@ export default class FindSuggestBook extends PureComponent {
       path: 'findSuggestBook/page',
       payload: {
         data: values,
-        page,
-      },
+        page
+      }
     });
     this.setState({
       modalVisible: false,
-      updateModalVisible: false,
+      updateModalVisible: false
     });
   };
+
+  publishOP = record => (
+    <Fragment>
+      <a onClick={() => this.off(record)}>取消发布</a>
+    </Fragment>
+  );
+
+  unPublishOP = record => (
+    <Fragment>
+      <a onClick={() => this.publish(record)}>发布</a>
+      <Divider type="vertical" />
+      <a onClick={() => this.remove(record)}>删除</a>
+      <Divider type="vertical" />
+      <a onClick={() => this.getDataForUpdate(record)}>修改</a>
+    </Fragment>
+  );
+
+  formatState = text => {
+    if (text == 0) {
+      return '未发布';
+    } else if (text == 1) {
+      return '已发布';
+    } else {
+      return '定时发布';
+    }
+  };
+
+  closeSelectBookShareModal = () => {
+    this.setState({
+      modalVisible: false
+    });
+  };
+
+  callSelectBookShareReturn = record => {
+    const { selectedChannel } = this.state;
+    if (record != null) {
+      const myFormData = {
+        findChannelId: selectedChannel,
+        bookUserId: record[0].bookUserId,
+        bookName: record[0].bookName,
+        coverPath: record[0].coverPath,
+        suggestDesc: '',
+        indexNo: 1,
+        author: record[0].bookAuthor
+      };
+      this.addSave(myFormData);
+    }
+    this.closeSelectBookShareModal();
+  };
+
+  renderPublishOP = record =>
+    record.publishStatus === 0 ? this.unPublishOP(record) : this.publishOP(record);
 
   renderForm() {
     const { options } = this.state;
@@ -294,12 +340,19 @@ export default class FindSuggestBook extends PureComponent {
 
   render() {
     const { tableData, loading } = this.props;
-    const { modalVisible, modalTitle, selectedChannel, updateModalVisible, options } = this.state;
+    const {
+      modalVisible,
+      modalTitle,
+      selectedChannel,
+      updateModalVisible,
+      options,
+      updateModalTitle
+    } = this.state;
 
     const columns = [
       {
-        title: '系统id',
-        dataIndex: 'findSuggestBookId',
+        title: '系统ID',
+        dataIndex: 'findSuggestBookId'
       },
       {
         title: '所属栏目',
@@ -316,55 +369,45 @@ export default class FindSuggestBook extends PureComponent {
             return res;
           };
           return <Fragment>{dict(record)}</Fragment>;
-        },
+        }
       },
       {
         title: '图书名',
-        dataIndex: 'bookName',
+        dataIndex: 'bookName'
       },
       {
         title: '图书荐语',
-        dataIndex: 'suggestDesc',
+        dataIndex: 'suggestDesc'
       },
       {
         title: '顺序',
-        dataIndex: 'indexNo',
+        dataIndex: 'indexNo'
       },
       {
         title: '发布状态',
         dataIndex: 'publishStatus',
-        render: (text, record) => (
-          <Fragment>
-            {record.publishStatus === 1
-              ? '已发布'
-              : record.publishStatus === 2
-                ? `定时发布：${record.publishDate}`
-                : '未发布'}
-          </Fragment>
-        ),
+        render: (text, record) => <Fragment>{this.formatState(text)}</Fragment>
+      },
+      {
+        title: '发布时间',
+        dataIndex: 'publishDate',
+        render: (text, record) => <Fragment>{formatDate(text)}</Fragment>
       },
       {
         title: '操作',
-        render: (text, record) => (
-          <Fragment>
-            <a onClick={() => this.publish(record)}>发布</a>
-            <Divider type="vertical" />
-            <a onClick={() => this.off(record)}>取消发布</a>
-            <Divider type="vertical" />
-            <a onClick={() => this.remove(record)}>删除</a>
-            <Divider type="vertical" />
-            <a onClick={() => this.getDataForUpdate(record)}>修改</a>
-          </Fragment>
-        ),
-      },
+        render: (text, record) => <Fragment>{this.renderPublishOP(record)}</Fragment>
+      }
     ];
 
+    const parentMethodsForBook = {
+      callReturn: this.callSelectBookShareReturn,
+      closeModal: this.closeSelectBookShareModal
+    };
+
     const parentMethods = {
-      add: this.add,
-      addSave: this.addSave,
       update: this.update,
       closeModal: this.closeModal,
-      getSelectedDate: this.getSelectedDate,
+      getSelectedDate: this.getSelectedDate
     };
     return (
       <PageHeaderLayout>
@@ -373,7 +416,7 @@ export default class FindSuggestBook extends PureComponent {
             <div className={styles.tableListForm}>{this.renderForm()}</div>
             <div className={styles.tableListOperator}>
               <Button type="primary" onClick={this.selectBook}>
-                新增
+                新建
               </Button>
             </div>
             <Table
@@ -390,10 +433,14 @@ export default class FindSuggestBook extends PureComponent {
           {...parentMethods}
           updateModalVisible={updateModalVisible}
           formData={tableData.formData}
-          title={modalTitle}
+          title={updateModalTitle}
           selectedChannel={selectedChannel}
         />
-        <SelectBookShare {...parentMethods} modalVisible={modalVisible} modalTitle={modalTitle} />
+        <SelectBookShare
+          {...parentMethodsForBook}
+          modalVisible={modalVisible}
+          modalTitle={modalTitle}
+        />
       </PageHeaderLayout>
     );
   }

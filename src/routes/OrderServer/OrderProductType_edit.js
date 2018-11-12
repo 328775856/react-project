@@ -25,13 +25,18 @@ const CreateEditForm = Form.create()(props => {
     form.validateFields((err, fieldsValue) => {
       if (err) return;
       form.resetFields();
+      const value = fieldsValue;
       if (formData.productTypeId >= 0) {
-        fieldsValue.productTypeId = formData.productTypeId;
-        update(fieldsValue);
+        value.productTypeId = formData.productTypeId;
+        update(value);
       } else {
-        add(fieldsValue);
+        add(value);
       }
     });
+  };
+  const cancelHandle = () => {
+    form.resetFields();
+    closeModal();
   };
 
   const formItemLayout = {
@@ -48,16 +53,8 @@ const CreateEditForm = Form.create()(props => {
   };
 
   return (
-    <Modal
-      title={title}
-      visible={modalVisible}
-      onOk={okHandle}
-      onCancel={() => closeModal()}
-    >
-      <FormItem
-        {...formItemLayout}
-        label="类型名称"
-      >
+    <Modal title={title} visible={modalVisible} onOk={okHandle} onCancel={cancelHandle}>
+      <FormItem {...formItemLayout} label="类型名称">
         {form.getFieldDecorator('productTypeName', {
           initialValue: formData.productTypeName || '',
           rules: [
@@ -68,10 +65,7 @@ const CreateEditForm = Form.create()(props => {
           ]
         })(<Input />)}
       </FormItem>
-      <FormItem
-        {...formItemLayout}
-        label="描述"
-      >
+      <FormItem {...formItemLayout} label="描述">
         {form.getFieldDecorator('productTypeDesc', {
           initialValue: formData.productTypeDesc || '',
           rules: [
@@ -82,10 +76,7 @@ const CreateEditForm = Form.create()(props => {
           ]
         })(<Input />)}
       </FormItem>
-      <FormItem
-        {...formItemLayout}
-        label="服务名"
-      >
+      <FormItem {...formItemLayout} label="服务名">
         {form.getFieldDecorator('callbackService', {
           initialValue: formData.callbackService || '',
           rules: [

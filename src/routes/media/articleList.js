@@ -1,5 +1,6 @@
 import React, { Fragment, PureComponent } from 'react';
 import { connect } from 'dva';
+import moment from 'moment';
 import {
   Row,
   Col,
@@ -24,7 +25,7 @@ import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from '../../assets/styles.less';
 import CreateEditForm from './articleEdit';
 import CreateFindForm from './articleFind';
-import { defaultPage } from '../../utils/utils.js';
+import { defaultPage, formatTime } from '../../utils/utils.js';
 import Ueditor from '../../components/Ueditor/Ueditor';
 
 const FormItem = Form.Item;
@@ -75,6 +76,11 @@ export default class MediaArticle extends PureComponent {
       modalVisible: false
     });
   };
+
+  componentWillMount() {
+    const { restTableData } = this.props;
+    restTableData.pageData.list = '';
+  }
 
   componentDidMount() {
     const { formValues, page } = this.state;
@@ -176,7 +182,7 @@ export default class MediaArticle extends PureComponent {
   getDataForUpdate = record => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'restTableData/getDataForUpdate',
+      type: 'restTableData/getUEData',
       path: 'media/article/getDataForUpdate',
       payload: { mediaArticleId: record.mediaArticleId }
     });
@@ -211,12 +217,12 @@ export default class MediaArticle extends PureComponent {
 
     const columns = [
       {
-        title: '系统id',
+        title: '系统ID',
         dataIndex: 'mediaArticleId'
       },
       {
-        title: '分组ID',
-        dataIndex: 'mediaArticleGroupId'
+        title: '分组',
+        dataIndex: 'mediaArticleGroupName'
       },
       {
         title: '标题',
@@ -225,6 +231,11 @@ export default class MediaArticle extends PureComponent {
       {
         title: '作者',
         dataIndex: 'articleAuthor'
+      },
+      {
+        title: '创建时间',
+        dataIndex: 'createTime',
+        render: (text, record) => <Fragment>{formatTime(text)}</Fragment>
       },
       {
         title: '操作',
@@ -250,15 +261,12 @@ export default class MediaArticle extends PureComponent {
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
             <div className={styles.tableListOperator}>
-              <Button
-                type="primary"
-                onClick={() => this.getDataForAdd()}
-              >
+              <Button type="primary" onClick={() => this.getDataForAdd()}>
                 新建
               </Button>
             </div>
             <Table
-              dataSource={restTableData.pageData.list}
+              dataSource={restTableData.pageData.list || []}
               columns={columns}
               rowKey="mediaArticleId"
               pagination={restTableData.pageData.pagination}

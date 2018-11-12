@@ -1,22 +1,5 @@
 import React from 'react';
-import {
-  Row,
-  Col,
-  Card,
-  Form,
-  Input,
-  Select,
-  Icon,
-  Button,
-  Dropdown,
-  Menu,
-  InputNumber,
-  DatePicker,
-  Modal,
-  message,
-  Badge,
-  Divider
-} from 'antd';
+import { Form, Input, Select, Modal } from 'antd';
 import GbUpload from '../../components/Upload/upload';
 
 const FormItem = Form.Item;
@@ -35,7 +18,7 @@ const CreateEditForm = Form.create()(props => {
   } = props;
   const handleUploadChange = fileList => {
     let filePath = '';
-    if (fileList.length != 0 && fileList[0].fileName) {
+    if (fileList.length !== 0 && fileList[0].fileName) {
       filePath = fileList[0].fileName;
     }
     if (filePath.length === 0) {
@@ -43,6 +26,7 @@ const CreateEditForm = Form.create()(props => {
     }
     const minute = div(fileList[0].millisecond, 60000, 0, 'floor');
     const second = div(fileList[0].millisecond - mul(minute, 60000), 1000, 0, 'round');
+    formData.videoMinute = minute;
     const values = {
       videoPath: filePath,
       videoFormat: fileList[0].format ? 1 : 0,
@@ -50,6 +34,7 @@ const CreateEditForm = Form.create()(props => {
       videoSecond: second
     };
     form.setFieldsValue(values);
+    formData.videoPath = fileList[0].fileName || formData.videoPath;
   };
   const uploadProps = {
     uid: `${formData.mediaVideoId}`,
@@ -60,7 +45,7 @@ const CreateEditForm = Form.create()(props => {
     onChange: handleUploadChange,
     fileList: [
       {
-        fileName: `${formData.videoPath}`,
+        fileName: formData.videoPath,
         name: `${formData.videoPath}`,
         format: `${formData.videoFormat}`,
         millisecond: `(${formData.videoMinute} && ${formData.videoSecond}) ? (${
@@ -75,14 +60,21 @@ const CreateEditForm = Form.create()(props => {
   const okHandle = () => {
     form.validateFields((err, fieldsValue) => {
       if (err) return;
-      form.resetFields();
+      // form.resetFields();
       if (formData.mediaVideoId >= 0) {
         fieldsValue.mediaVideoId = formData.mediaVideoId;
+        console.log(formData.filePath);
+        console.log(fieldsValue);
         update(fieldsValue);
       } else {
         add(fieldsValue);
       }
     });
+  };
+
+  const cancelHandle = () => {
+    form.resetFields();
+    closeModal();
   };
 
   const formItemLayout = {
@@ -97,20 +89,18 @@ const CreateEditForm = Form.create()(props => {
       md: { span: 13 }
     }
   };
-
   return (
     <Modal
+      destroyOnClose
       title={title}
       visible={modalVisible}
       onOk={okHandle}
-      onCancel={() => closeModal()}
+      onCancel={cancelHandle}
     >
-      <FormItem
-        {...formItemLayout}
-        label="分组"
-      >
+      <FormItem {...formItemLayout} label="分组">
         {form.getFieldDecorator('mediaVideoGroupId', {
-          initialValue: formData.mediaVideoGroupId || '',
+          initialValue:
+            formData.mediaVideoGroupId === undefined ? '' : `${formData.mediaVideoGroupId}`,
           rules: [
             {
               required: true,
@@ -118,18 +108,12 @@ const CreateEditForm = Form.create()(props => {
             }
           ]
         })(
-          <Select
-            placeholder=""
-            style={{ width: '150px' }}
-          >
+          <Select placeholder="" style={{ width: '150px' }}>
             {videoGroup || ''}
           </Select>
         )}
       </FormItem>
-      <FormItem
-        {...formItemLayout}
-        label="名称"
-      >
+      <FormItem {...formItemLayout} label="名称">
         {form.getFieldDecorator('videoName', {
           initialValue: formData.videoName || '',
           rules: [
@@ -140,20 +124,13 @@ const CreateEditForm = Form.create()(props => {
           ]
         })(<Input />)}
       </FormItem>
-      <FormItem
-        labelCol={{ span: 5 }}
-        wrapperCol={{ span: 15 }}
-        label="选择视频"
-      >
+      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="选择视频">
         {form.getFieldDecorator('fileUpload', {
-          initialValue: formData.filePath || '',
+          initialValue: formData.filePath || [{}],
           rules: [{ required: true, message: '请选择视频...' }]
         })(<GbUpload {...uploadProps} />)}
       </FormItem>
-      <FormItem
-        {...formItemLayout}
-        label="视频路径"
-      >
+      <FormItem {...formItemLayout} label="视频路径">
         {form.getFieldDecorator('videoPath', {
           initialValue: formData.videoPath || '',
           rules: [
@@ -164,10 +141,7 @@ const CreateEditForm = Form.create()(props => {
           ]
         })(<Input readOnly />)}
       </FormItem>
-      <FormItem
-        {...formItemLayout}
-        label="视频格式(字典)"
-      >
+      <FormItem {...formItemLayout} label="视频格式(字典)">
         {form.getFieldDecorator('videoFormat', {
           initialValue: formData.videoFormat || '',
           rules: [
@@ -178,24 +152,22 @@ const CreateEditForm = Form.create()(props => {
           ]
         })(<Input readOnly />)}
       </FormItem>
-      <FormItem
-        {...formItemLayout}
-        label="时长-分钟"
-      >
-        {form.getFieldDecorator('videoMinute', {
-          initialValue: formData.videoMinute || '',
-          rules: [
-            {
-              required: false,
-              message: '请输入时长-分钟...'
-            }
-          ]
-        })(<Input readOnly />)}
-      </FormItem>
-      <FormItem
-        {...formItemLayout}
-        label="时长-秒"
-      >
+      {formData.videoMinute ? (
+        <FormItem {...formItemLayout} label="时长-分钟">
+          {form.getFieldDecorator('videoMinute', {
+            initialValue: formData.videoMinute || '',
+            rules: [
+              {
+                required: false,
+                message: '请输入时长-分钟...'
+              }
+            ]
+          })(<Input readOnly />)}
+        </FormItem>
+      ) :
+        ''
+      }
+      <FormItem {...formItemLayout} label="时长-秒">
         {form.getFieldDecorator('videoSecond', {
           initialValue: formData.videoSecond || '',
           rules: [

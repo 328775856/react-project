@@ -55,6 +55,11 @@ export default class BookUserGood extends PureComponent {
     });
   };
 
+  componentWillMount() {
+    const { tableData } = this.props;
+    tableData.pageData.list = '';
+  }
+
   componentDidMount() {
     const { formValues, page } = this.state;
     this.refresh(formValues, page);
@@ -220,11 +225,7 @@ export default class BookUserGood extends PureComponent {
         dataIndex: 'wholePhotoPath',
         render: (text, record) => (
           <Fragment>
-            <img
-              alt=""
-              style={{ width: 100, height: 100 }}
-              src={record.wholePhotoPath}
-            />
+            <img alt="" style={{ width: 50, height: 50 }} src={record.wholePhotoPath} />
           </Fragment>
         )
       },

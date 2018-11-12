@@ -23,49 +23,26 @@ function CreateFindFrom(props, formQuery, formReset, articleGroup) {
   const { form } = props;
   const { getFieldDecorator } = form;
   return (
-    <Form
-      onSubmit={formQuery}
-      layout="inline"
-    >
+    <Form onSubmit={formQuery} layout="inline">
       <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
-        <Col
-          md={8}
-          sm={24}
-        >
+        <Col md={8} sm={24}>
           <FormItem label="分组">
             {form.getFieldDecorator('mediaArticleGroupId')(
-              <Select
-                placeholder=""
-                style={{ width: '150px' }}
-              >
-                {articleGroup}
-              </Select>
+              <Select placeholder="">{articleGroup}</Select>
             )}
           </FormItem>
         </Col>
-        <Col
-          md={8}
-          sm={10}
-        >
+        <Col md={8} sm={10}>
           <FormItem label="标题">
             {form.getFieldDecorator('articleTitle')(<Input placeholder="" />)}
           </FormItem>
         </Col>
-        <Col
-          md={8}
-          sm={24}
-        >
+        <Col md={8} sm={24}>
           <span>
-            <Button
-              type="primary"
-              htmlType="submit"
-            >
+            <Button type="primary" htmlType="submit">
               查询
             </Button>
-            <Button
-              style={{ marginLeft: 8 }}
-              onClick={formReset}
-            >
+            <Button style={{ marginLeft: 8 }} onClick={formReset}>
               重置
             </Button>
           </span>

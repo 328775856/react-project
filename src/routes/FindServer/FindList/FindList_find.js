@@ -15,11 +15,11 @@ import {
   Modal,
   message,
   Badge,
-  Divider,
+  Divider
 } from 'antd';
 
 const FormItem = Form.Item;
-function CreateFindFrom(props, formQuery, formReset) {
+function CreateFindFrom(props, formQuery, formReset, getDataForAdd) {
   const { form } = props;
   const { getFieldDecorator } = form;
   return (
@@ -33,7 +33,7 @@ function CreateFindFrom(props, formQuery, formReset) {
         <Col md={8} sm={24}>
           <FormItem label="发布状态">
             {form.getFieldDecorator('publishStatus')(
-              <Select style={{ width: '100%' }}>
+              <Select placeholder="全部" style={{ width: '100%' }}>
                 <Select.Option value="0">未发布</Select.Option>
                 <Select.Option value="1">已发布</Select.Option>
                 <Select.Option value="2">定时发布</Select.Option>
@@ -59,6 +59,9 @@ function CreateFindFrom(props, formQuery, formReset) {
             </Button>
             <Button style={{ marginLeft: 8 }} onClick={formReset}>
               重置
+            </Button>
+            <Button type="primary" style={{ marginLeft: 8 }} onClick={() => getDataForAdd()}>
+              新建
             </Button>
           </span>
         </Col>

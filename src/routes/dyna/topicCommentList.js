@@ -1,26 +1,7 @@
 import React, { Fragment, PureComponent } from 'react';
 import { connect } from 'dva';
-import {
-  Row,
-  Col,
-  Card,
-  Form,
-  Input,
-  Select,
-  Icon,
-  Button,
-  Dropdown,
-  Menu,
-  InputNumber,
-  DatePicker,
-  Modal,
-  message,
-  Badge,
-  Divider,
-  Table
-} from 'antd';
+import { Card, Form, Modal, message, Divider, Table, Button } from 'antd';
 import moment from 'moment';
-import StandardTable from 'components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from '../../assets/styles.less';
 import CreateEditForm from './topicCommentEdit';
@@ -62,9 +43,20 @@ export default class DynaTopicComment extends PureComponent {
     });
   };
 
+  componentWillMount() {
+    const { restTableData } = this.props;
+    restTableData.pageData.list = [];
+  }
+
   componentDidMount() {
     const { formValues, page } = this.state;
-    this.refresh(formValues, page);
+    const { restTableData } = this.props;
+    const dynaTopicId = restTableData.formData.dynaTopicId;
+    this.setState({
+      dynaTopicId: dynaTopicId,
+      formValues: { dynaTopicId: dynaTopicId }
+    });
+    this.refresh({ dynaTopicId: dynaTopicId }, page);
   }
 
   tableChange = (pagination, filtersArg, sorter) => {
@@ -92,6 +84,15 @@ export default class DynaTopicComment extends PureComponent {
     } else {
       message.success(restTableData.message);
     }
+  };
+
+  back = () => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'restTableData/goUrl',
+      path: '/dyna/topic',
+      payload: {}
+    });
   };
 
   formatTime = text => {
@@ -224,28 +225,38 @@ export default class DynaTopicComment extends PureComponent {
 
   showReply = record => {
     const { dispatch } = this.props;
+    const { dynaTopicId } = this.state;
     dispatch({
       type: 'restTableData/goUrl',
       path: '/dyna/reply',
       payload: {
-        dynaTopicCommentReplyId: record.dynaTopicCommentReplyId
+        dynaTopicCommentId: record.dynaTopicCommentId,
+        dynaTopicId
       }
     });
   };
 
   hiddenComment = record => {
-    const { dispatch, callback } = this.props;
-
+    const { dispatch } = this.props;
+    const cb = this.callback;
+    const isDel = record.isDel;
+    let title;
+    if (isDel == 1) {
+      title = '确定显示评论吗?';
+    } else {
+      title = '确定隐藏评论吗?';
+    }
     Modal.confirm({
-      title: '确定隐藏评论吗?',
+      title: title,
       onOk() {
         dispatch({
           type: 'restTableData/update',
           path: 'dyna/topicComment/hiddenComment',
           payload: {
-            dynaTopicCommentId: record.dynaTopicCommentId
+            dynaTopicCommentId: record.dynaTopicCommentId,
+            isDel: isDel == 1 ? 0 : 1
           },
-          callback
+          callback: cb
         });
       },
       onCancel() {}
@@ -307,7 +318,24 @@ export default class DynaTopicComment extends PureComponent {
       },
       {
         title: '评论内容',
-        dataIndex: 'commentContent'
+        dataIndex: 'commentContent',
+        render(text, record) {
+          if ((text || '.').length > 40) {
+            return `${text.substring(0, 40)}......`;
+          }
+          return text;
+        }
+      },
+      {
+        title: '是否隐藏',
+        dataIndex: 'isDel',
+        render: (text, record) => {
+          if (text == 1) {
+            return <Fragment>是</Fragment>;
+          } else {
+            return <Fragment>否</Fragment>;
+          }
+        }
       },
       {
         title: '发表时间',
@@ -322,7 +350,9 @@ export default class DynaTopicComment extends PureComponent {
             <Divider type="vertical" />
             <a onClick={() => this.showReply(record)}>查看回复</a>
             <Divider type="vertical" />
-            <a onClick={() => this.hiddenComment(record)}>隐藏评论</a>
+            <a onClick={() => this.hiddenComment(record)}>
+              {record.isDel == 1 ? '显示评论' : '隐藏评论'}
+            </a>
             <Divider type="vertical" />
             <a onClick={() => this.getDataForFavor(record)}>设置点赞数</a>
             <Divider type="vertical" />
@@ -343,8 +373,13 @@ export default class DynaTopicComment extends PureComponent {
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
+            <div className={styles.tableListOperator}>
+              <Button type="default" onClick={() => this.back()}>
+                返回
+              </Button>
+            </div>
             <Table
-              dataSource={restTableData.pageData.list}
+              dataSource={restTableData.pageData.list || []}
               columns={columns}
               rowKey="dynaTopicCommentId"
               pagination={restTableData.pageData.pagination}

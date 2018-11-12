@@ -19,12 +19,11 @@ import {
   Divider,
   Table
 } from 'antd';
-import StandardTable from 'components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from '../../assets/styles.less';
 import CreateEditForm from './OrderProductType_edit';
 import CreateFindForm from './OrderProductType_find';
-import { defaultPage } from '../../utils/utils.js';
+import { defaultPage, formatTime } from '../../utils/utils.js';
 
 const FormItem = Form.Item;
 @connect(({ tableData, loading }) => ({
@@ -38,6 +37,42 @@ export default class OrderProductType extends PureComponent {
     modalTitle: '',
     formValues: {},
     page: defaultPage()
+  };
+
+  componentWillMount() {
+    const { tableData } = this.props;
+    tableData.pageData.list = '';
+  }
+
+  componentDidMount() {
+    const { formValues, page } = this.state;
+    this.refresh(formValues, page);
+  }
+
+  getDataForAdd = fields => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'tableData/getDataForAdd',
+      path: 'orderProductType/getDataForAdd',
+      payload: fields
+    });
+    this.setState({
+      modalTitle: '新增',
+      modalVisible: true
+    });
+  };
+
+  getDataForUpdate = record => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'tableData/getDataForUpdate',
+      path: 'orderProductType/getDataForUpdate',
+      payload: { productTypeId: record.productTypeId }
+    });
+    this.setState({
+      modalTitle: '修改',
+      modalVisible: true
+    });
   };
 
   refresh = (values, page) => {
@@ -54,11 +89,6 @@ export default class OrderProductType extends PureComponent {
       modalVisible: false
     });
   };
-
-  componentDidMount() {
-    const { formValues, page } = this.state;
-    this.refresh(formValues, page);
-  }
 
   tableChange = (pagination, filtersArg, sorter) => {
     const { formValues } = this.state;
@@ -79,7 +109,7 @@ export default class OrderProductType extends PureComponent {
 
   callback = () => {
     const { tableData } = this.props;
-    if (tableData.status == 200) {
+    if (tableData.status === 200) {
       const { formValues, page } = this.state;
       this.refresh(formValues, page);
     } else {
@@ -128,19 +158,6 @@ export default class OrderProductType extends PureComponent {
     });
   };
 
-  getDataForAdd = fields => {
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'tableData/getDataForAdd',
-      path: 'orderProductType/getDataForAdd',
-      payload: fields
-    });
-    this.setState({
-      modalTitle: '新增',
-      modalVisible: true
-    });
-  };
-
   add = fields => {
     const { dispatch, tableData } = this.props;
     dispatch({
@@ -148,19 +165,6 @@ export default class OrderProductType extends PureComponent {
       path: 'orderProductType/add',
       payload: fields,
       callback: this.callback
-    });
-  };
-
-  getDataForUpdate = record => {
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'tableData/getDataForUpdate',
-      path: 'orderProductType/getDataForUpdate',
-      payload: { productTypeId: record.productTypeId }
-    });
-    this.setState({
-      modalTitle: '修改',
-      modalVisible: true
     });
   };
 
@@ -179,7 +183,7 @@ export default class OrderProductType extends PureComponent {
   };
 
   renderForm() {
-    return CreateFindForm(this.props, this.query, this.formReset);
+    return CreateFindForm(this.props, this.query, this.formReset, this.getDataForAdd);
   }
 
   render() {
@@ -188,7 +192,7 @@ export default class OrderProductType extends PureComponent {
 
     const columns = [
       {
-        title: '系统id',
+        title: '系统ID',
         dataIndex: 'productTypeId'
       },
       {
@@ -202,6 +206,11 @@ export default class OrderProductType extends PureComponent {
       {
         title: '服务名',
         dataIndex: 'callbackService'
+      },
+      {
+        title: '创建时间',
+        dataIndex: 'createTime',
+        render: (text, record) => <Fragment>{formatTime(text)}</Fragment>
       },
       {
         title: '操作',
@@ -225,14 +234,7 @@ export default class OrderProductType extends PureComponent {
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
-            <div className={styles.tableListOperator}>
-              <Button
-                type="primary"
-                onClick={() => this.getDataForAdd()}
-              >
-                新建
-              </Button>
-            </div>
+            <div className={styles.tableListOperator} />
             <Table
               dataSource={tableData.pageData.list}
               columns={columns}

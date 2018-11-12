@@ -10,7 +10,7 @@ export default {
   },
   externals: {
     '@antv/data-set': 'DataSet',
-    rollbar: 'rollbar',
+    // rollbar: 'rollbar',
   },
   alias: {
     components: path.resolve(__dirname, 'src/components/'),
@@ -25,9 +25,12 @@ export default {
   },
   proxy: {
     '/': {
+      // target: 'http://192.168.10.212:8765/api/GbManager_wlj/GbManager',
+      // target: 'http://192.168.10.173:8765/api/GbManager_wlj/GbManager',
       // target: 'http://192.168.10.173:8765/api/GbManager_shenwei/GbManager',
       // target: 'http://192.168.10.173:8765/api/GbManager/GbManager',
-      target: 'http://192.168.10.173:8765/api/GbManager_wlj/GbManager',
+       target: 'http://192.168.10.173:8765/api/GbManager/GbManager',
+      // target: 'http://192.168.10.173:8765/api/GbManager_lzh/GbManager',
       changeOrigin: true,
       pathRewrite: { '^/': '' },
     },

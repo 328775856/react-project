@@ -23,21 +23,15 @@ function CreateFindFrom(props, formQuery, formReset) {
   const { form } = props;
   const { getFieldDecorator } = form;
   return (
-    <Form
-      onSubmit={formQuery}
-      layout="inline"
-    >
+    <Form onSubmit={formQuery} layout="inline">
       <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
-        <Col
-          md={8}
-          sm={24}
-        >
+        <Col md={8} sm={24}>
           <FormItem label="上架状态">
-            {form.getFieldDecorator('shelfStatus')(
-              <Select
-                placeholder=""
-                style={{ width: '150px' }}
-              >
+            {form.getFieldDecorator('shelfStatus', {
+              initialValue: ''
+            })(
+              <Select placeholder="" style={{ width: '150px' }}>
+                <optionv value="">不限</optionv>
                 <Option key={0}>未上架</Option>
                 <Option key={1}>已上架</Option>
                 <Option key={2}>已下架</Option>
@@ -45,29 +39,17 @@ function CreateFindFrom(props, formQuery, formReset) {
             )}
           </FormItem>
         </Col>
-        <Col
-          md={8}
-          sm={24}
-        >
+        <Col md={8} sm={24}>
           <FormItem label="vip包名">
             {form.getFieldDecorator('packageName')(<Input placeholder="" />)}
           </FormItem>
         </Col>
-        <Col
-          md={8}
-          sm={24}
-        >
+        <Col md={8} sm={24}>
           <span>
-            <Button
-              type="primary"
-              htmlType="submit"
-            >
+            <Button type="primary" htmlType="submit">
               查询
             </Button>
-            <Button
-              style={{ marginLeft: 8 }}
-              onClick={formReset}
-            >
+            <Button style={{ marginLeft: 8 }} onClick={formReset}>
               重置
             </Button>
           </span>

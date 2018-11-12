@@ -19,12 +19,11 @@ import {
   Divider,
   Table
 } from 'antd';
-import StandardTable from 'components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from '../../assets/styles.less';
 import CreateEditForm from './CourseColumn_edit';
 import CreateFindForm from './CourseColumn_find';
-import { defaultPage } from '../../utils/utils.js';
+import { defaultPage, formatTime } from '../../utils/utils.js';
 
 const FormItem = Form.Item;
 @connect(({ tableData, loading }) => ({
@@ -54,6 +53,11 @@ export default class CourseColumn extends PureComponent {
       modalVisible: false
     });
   };
+
+  componentWillMount() {
+    const { tableData } = this.props;
+    tableData.pageData.list = [];
+  }
 
   componentDidMount() {
     const { formValues, page } = this.state;
@@ -188,7 +192,7 @@ export default class CourseColumn extends PureComponent {
 
     const columns = [
       {
-        title: '系统id',
+        title: '系统ID',
         dataIndex: 'courseColumnId'
       },
       {
@@ -200,11 +204,7 @@ export default class CourseColumn extends PureComponent {
         dataIndex: 'coverPath',
         render: (text, record) => (
           <Fragment>
-            <img
-              alt=""
-              style={{ width: 100, height: 100 }}
-              src={record.wholeCoverPath}
-            />
+            <img alt="" style={{ width: 50, height: 50 }} src={record.wholeCoverPath} />
           </Fragment>
         )
       },
@@ -230,9 +230,9 @@ export default class CourseColumn extends PureComponent {
         dataIndex: 'indexNo'
       },
       {
-        title: '是否删除',
-        render: (text, record) => <Fragment>{record.isDel === 1 ? '是' : '否'}</Fragment>,
-        dataIndex: 'isDel'
+        title: '创建时间',
+        dataIndex: 'createTime',
+        render: (text, record) => <Fragment>{formatTime(text)}</Fragment>
       },
       {
         title: '操作',
@@ -258,10 +258,7 @@ export default class CourseColumn extends PureComponent {
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
             <div className={styles.tableListOperator}>
-              <Button
-                type="primary"
-                onClick={() => this.getDataForAdd()}
-              >
+              <Button type="primary" onClick={() => this.getDataForAdd()}>
                 新建
               </Button>
             </div>

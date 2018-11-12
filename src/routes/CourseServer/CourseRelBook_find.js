@@ -1,24 +1,8 @@
 import React from 'react';
-import {
-  Row,
-  Col,
-  Card,
-  Form,
-  Input,
-  Select,
-  Icon,
-  Button,
-  Dropdown,
-  Menu,
-  InputNumber,
-  DatePicker,
-  Modal,
-  message,
-  Badge,
-  Divider
-} from 'antd';
+import { Button, Col, Form, Input, Row, DatePicker } from 'antd';
 
 const FormItem = Form.Item;
+
 function CreateFindFrom(props, formQuery, formReset) {
   const { form } = props;
   const { getFieldDecorator } = form;
@@ -32,50 +16,34 @@ function CreateFindFrom(props, formQuery, formReset) {
           md={8}
           sm={24}
         >
-          <FormItem label="课程id">
-            {form.getFieldDecorator('courseId')(<Input placeholder="" />)}
-          </FormItem>
-        </Col>
-        <Col
-          md={8}
-          sm={24}
-        >
-          <FormItem label="图书id">
-            {form.getFieldDecorator('bookUserId')(<Input placeholder="" />)}
-          </FormItem>
-        </Col>
-        <Col
-          md={8}
-          sm={24}
-        >
-          <FormItem label="顺序">
-            {form.getFieldDecorator('indexNo')(<Input placeholder="" />)}
-          </FormItem>
-        </Col>
-        <Col
-          md={8}
-          sm={24}
-        >
           <FormItem label="图书名">
             {form.getFieldDecorator('bookName')(<Input placeholder="" />)}
           </FormItem>
         </Col>
+
         <Col
           md={8}
           sm={24}
         >
-          <FormItem label="封面路径">
-            {form.getFieldDecorator('coverPath')(<Input placeholder="" />)}
+          <FormItem label="上传时间">
+            {form.getFieldDecorator('createTimeStart')(
+              <DatePicker
+                format="YYYY-MM-DD HH:mm:ss"
+                showTime={{}}
+                placeholder="开始时间"
+              />
+            )}
+            &nbsp;-&nbsp;
+            {form.getFieldDecorator('createTimeEnd')(
+              <DatePicker
+                format="YYYY-MM-DD HH:mm:ss"
+                showTime={{}}
+                placeholder="结束时间"
+              />
+            )}
           </FormItem>
         </Col>
-        <Col
-          md={8}
-          sm={24}
-        >
-          <FormItem label="作者">
-            {form.getFieldDecorator('bookAuthor')(<Input placeholder="" />)}
-          </FormItem>
-        </Col>
+
         <Col
           md={8}
           sm={24}
@@ -99,4 +67,5 @@ function CreateFindFrom(props, formQuery, formReset) {
     </Form>
   );
 }
+
 export default CreateFindFrom;

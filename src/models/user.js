@@ -18,12 +18,15 @@ export default {
       });
     },
     *fetchCurrent(_, { call, put }) {
-      const response = yield call(getUrl, '/user/getCurrentUser', {});
-      console.log(response);
+      const response = yield call(getUrl, '/user/getCurrentUser');
+      if (!response) {
+        return;
+      }
       if (response.status !== 200) {
         // eslint-disable-next-line no-undef
         yield put(routerRedux.push('/user/login'));
       } else {
+        sessionStorage.setItem('sysRoleId', response.data.sysRoleId);
         yield put({
           type: 'saveCurrentUser',
           payload: response.data

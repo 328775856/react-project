@@ -33,14 +33,28 @@ const FormItem = Form.Item;
   loading: loading.models.selectTable
 }))
 @Form.create()
-export default class SelectBookBuy extends React.Component {
+export default class SelectBookShare extends React.Component {
   state = {
     selectedRows: [],
-    formValues: {}
+    formValues: {},
+    modalVisibleTemp: false
   };
 
-  componentDidMount() {
-    this.init();
+  // componentDidMount() {
+  //   this.init();
+  // }
+
+  componentDidUpdate() {
+    const { modalVisible } = this.props;
+    if (modalVisible === this.state.modalVisibleTemp) {
+      return;
+    }
+    if (modalVisible === true) {
+      const { restTableData } = this.props;
+      restTableData.pageData.list = '';
+      this.init();
+    }
+    this.setState({ modalVisibleTemp: modalVisible });
   }
 
   onRowClick = row => {
@@ -64,7 +78,8 @@ export default class SelectBookBuy extends React.Component {
   };
 
   query = (params, page) => {
-    const { dispatch } = this.props;
+    const { dispatch, bookUserId } = this.props;
+    this.setState({ bookUserId: bookUserId });
     dispatch({
       type: 'restTableData/list',
       path: 'bookShare/queryForUser',
@@ -147,16 +162,24 @@ export default class SelectBookBuy extends React.Component {
       restTableData,
       loading,
       closeModal,
-      getSelectedDate,
       modalVisible,
-      addSave,
-      modalTitle
+      modalTitle,
+      callReturn,
+      form
     } = this.props;
+    const { selectedRows } = this.state;
 
     const okHandle = () => {
-      const { selectedRows } = this.state;
-      const formObject = getSelectedDate(selectedRows);
-      addSave(formObject);
+      if (selectedRows.length < 1) {
+        message.success('请选择一条数据');
+      } else {
+        callReturn(selectedRows);
+      }
+    };
+
+    const cancelHandle = () => {
+      form.resetFields();
+      closeModal();
     };
 
     const columns = [
@@ -169,11 +192,7 @@ export default class SelectBookBuy extends React.Component {
         dataIndex: 'wholePhotoPath',
         render: (text, record) => (
           <Fragment>
-            <img
-              alt=""
-              style={{ width: 100, height: 100 }}
-              src={record.wholePhotoPath}
-            />
+            <img alt="" style={{ width: 50, height: 50 }} src={record.wholePhotoPath} />
           </Fragment>
         )
       },
@@ -204,6 +223,7 @@ export default class SelectBookBuy extends React.Component {
       hideDefaultSelections: 'true',
       onChange: (selectedRowKeys, selectedRows) => {
         // console.log('selectedRows',selectedRows);//得到每一项的信息，也就是每一项的信息[{key: 1, name: "花骨朵", age: 18, hobby: "看书"}]
+        this.setState({ bookUserId: selectedRows[0].bookUserId });
       },
       onSelect: (record, selected, selectedRows) => {
         // console.log('selectedRows',selectedRows); //选中的每行信息，是一个数组
@@ -215,6 +235,12 @@ export default class SelectBookBuy extends React.Component {
       },
       onSelectInvert: selectedRows => {
         // console.log('selectedRows',selectedRows);
+      },
+      getCheckboxProps: record => {
+        const { bookUserId } = this.state;
+        return {
+          checked: record.bookUserId === bookUserId
+        };
       }
     };
 
@@ -224,12 +250,12 @@ export default class SelectBookBuy extends React.Component {
         visible={modalVisible}
         width="65%"
         onOk={okHandle}
-        onCancel={() => closeModal()}
+        onCancel={cancelHandle}
       >
         <div className={styles.tableList}>
           <div className={styles.tableListForm}>{this.renderForm()}</div>
           <Table
-            dataSource={restTableData.pageData.list}
+            dataSource={restTableData.pageData.list || []}
             columns={columns}
             rowKey="bookUserId"
             pagination={restTableData.pageData.pagination}

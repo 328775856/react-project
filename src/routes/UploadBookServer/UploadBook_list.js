@@ -19,13 +19,14 @@ import {
   Divider,
   Table
 } from 'antd';
+import moment from 'moment';
 import StandardTable from 'components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from '../../assets/styles.less';
 import CreateEditForm from './UploadBook_edit';
 import CreateFindForm from './UploadBook_find';
 import CreateAuditForm from './UploadBook_audit';
-import { defaultPage } from '../../utils/utils.js';
+import { defaultPage, formatTime } from '../../utils/utils.js';
 
 const FormItem = Form.Item;
 @connect(({ tableData, loading }) => ({
@@ -46,11 +47,15 @@ export default class UploadBook extends PureComponent {
 
   refresh = (values, page) => {
     const { dispatch } = this.props;
+    const paramData = {
+      bookStorageType: 0,
+      ...values
+    };
     dispatch({
       type: 'tableData/list',
       path: 'uploadBook/page',
       payload: {
-        data: values,
+        data: paramData,
         page
       }
     });
@@ -59,6 +64,11 @@ export default class UploadBook extends PureComponent {
       modalAuditVisible: false
     });
   };
+
+  componentWillMount() {
+    const { tableData } = this.props;
+    tableData.pageData.list = '';
+  }
 
   componentDidMount() {
     const { formValues, page, options } = this.state;
@@ -100,7 +110,6 @@ export default class UploadBook extends PureComponent {
   };
 
   initOptionsCallback = response => {
-    console.log(response);
     this.setState({
       options: JSON.parse(response.data)
     });
@@ -128,7 +137,12 @@ export default class UploadBook extends PureComponent {
     dispatch({
       type: 'tableData/getDataForUpdate',
       path: 'uploadBook/getDataForUpdate',
-      payload: { bookUserId: record.bookUserId }
+      payload: {
+        bookUserId: record.bookUserId,
+        tryReadContentMap: {
+          startWord: 0
+        }
+      }
     });
     this.setState({
       modalAuditTitle: '审核',
@@ -152,13 +166,19 @@ export default class UploadBook extends PureComponent {
     form.validateFields((err, fieldsValue) => {
       if (err) return;
 
-      const values = {
+      let values = {
         ...fieldsValue
       };
+      values.createTimeStart = values.createTimeStart ?
+        values.createTimeStart.format('YYYYMMDDHHmmss') :
+        '';
+      values.createTimeEnd = values.createTimeEnd ?
+        values.createTimeEnd.format('YYYYMMDDHHmmss') :
+        '';
       const page = defaultPage();
       this.setState({
         formValues: values,
-        page
+        page: page
       });
       this.refresh(values, page);
     });
@@ -199,7 +219,9 @@ export default class UploadBook extends PureComponent {
     dispatch({
       type: 'tableData/getDataForUpdate',
       path: 'uploadBook/getDataForUpdate',
-      payload: { bookUserId: record.bookUserId }
+      payload: {
+        bookUserId: record.bookUserId
+      }
     });
     this.setState({
       modalTitle: '修改',
@@ -212,7 +234,10 @@ export default class UploadBook extends PureComponent {
     dispatch({
       type: 'tableData/initOptions',
       path: 'uploadBook/getDataForAdd',
-      payload: {},
+      payload: {
+        data: {},
+        page: { pageNo: 1, pageSize: 10 }
+      },
       callback: this.initOptionsCallback
     });
   };
@@ -252,99 +277,54 @@ export default class UploadBook extends PureComponent {
   render() {
     const { tableData, loading } = this.props;
     const { modalVisible, modalTitle, modalAuditTitle, modalAuditVisible, options } = this.state;
-
     const columns = [
       {
-        title: '系统id',
+        title: '系统ID',
         dataIndex: 'bookUserId'
       },
       {
-        title: '用户id',
-        dataIndex: 'userId'
-      },
-      {
-        title: '图书id',
+        title: '图书ID',
         dataIndex: 'bookId'
       },
       {
-        title: '图书编号',
-        dataIndex: 'bookCode'
+        title: '上传用户ID',
+        dataIndex: 'userId'
+      },
+      {
+        title: '上传用户昵称',
+        dataIndex: 'uploaderName'
       },
       {
         title: '图书名',
         dataIndex: 'bookName'
       },
       {
-        title: '图书属性',
-        dataIndex: 'bookPropName'
+        title: '封面路径',
+        dataIndex: 'wholePhotoPath',
+        render: (text, record) => (
+          <Fragment>
+            <img alt="" style={{ width: 50, height: 50 }} src={record.wholePhotoPath} />
+          </Fragment>
+        )
       },
+
       {
         title: '图书格式',
         dataIndex: 'bookStyleName'
       },
       {
-        title: '封面路径',
-        dataIndex: 'wholePhotoPath',
-        render: (text, record) => (
-          <Fragment>
-            <img
-              alt=""
-              style={{ width: 100, height: 100 }}
-              src={record.wholePhotoPath}
-            />
-          </Fragment>
-        )
-      },
-      {
-        title: '图书存放类型',
-        dataIndex: 'bookStorageType',
-        render(text, record) {
-          const dict = record => {
-            let res = '';
-            if (options.dictDatas) {
-              const dictOpt = JSON.parse(options.dictDatas);
-              const myArray = dictOpt['32'];
-              for (const k in myArray) {
-                if (record.bookStorageType === myArray[k].itemNo) {
-                  res = myArray[k].itemLabel;
-                  break;
-                }
-              }
-            }
-
-            return res;
-          };
-          return <Fragment>{dict(record)}</Fragment>;
-        }
-      },
-      {
-        title: '作者',
-        dataIndex: 'bookAuthor'
-      },
-      {
-        title: '存储名',
-        dataIndex: 'bookStorageName'
-      },
-      {
-        title: '存储文件名',
-        dataIndex: 'fileName'
-      },
-      {
-        title: '资源大小',
-        dataIndex: 'fileSize'
-      },
-      {
-        title: 'file_md5',
-        dataIndex: 'fileMd5'
+        title: '上传时间',
+        dataIndex: 'createTime',
+        render: (text, record) => <Fragment>{formatTime(text)}</Fragment>
       },
       {
         title: '操作',
         render: (text, record) => (
           <Fragment>
-            <a onClick={() => this.getDataForUpdate(record)}>修改</a>
+            {/* <a onClick={() => this.getDataForUpdate(record)}>修改</a>
             <Divider type="vertical" />
             <a onClick={() => this.remove(record)}>删除</a>
-            <Divider type="vertical" />
+            <Divider type="vertical" />*/}
             <a onClick={() => this.getDataForAudit(record)}>审核</a>
           </Fragment>
         )
@@ -366,7 +346,7 @@ export default class UploadBook extends PureComponent {
             <div className={styles.tableListForm}>{this.renderForm()}</div>
             <div className={styles.tableListOperator} />
             <Table
-              dataSource={tableData.pageData.list}
+              dataSource={tableData.pageData.list || []}
               columns={columns}
               rowKey="bookUserId"
               pagination={tableData.pageData.pagination}

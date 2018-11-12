@@ -19,12 +19,11 @@ import {
   Divider,
   Table
 } from 'antd';
-import StandardTable from 'components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from '../../assets/styles.less';
 import CreateEditForm from './BookStyle_edit';
 import CreateFindForm from './BookStyle_find';
-import { defaultPage } from '../../utils/utils.js';
+import { defaultPage, formatTime } from '../../utils/utils.js';
 
 const FormItem = Form.Item;
 @connect(({ tableData, loading }) => ({
@@ -38,6 +37,80 @@ export default class BookStyle extends PureComponent {
     modalTitle: '',
     formValues: {},
     page: defaultPage()
+  };
+
+  componentWillMount() {
+    const { tableData } = this.props;
+    tableData.pageData.list = '';
+  }
+
+  componentDidMount() {
+    const { formValues, page } = this.state;
+    this.refresh(formValues, page);
+  }
+
+  /**
+   * 新建显示弹窗
+   */
+  getDataForAdd = fields => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'tableData/getDataForAdd',
+      path: 'bookStyle/getDataForAdd',
+      payload: fields
+    });
+    this.setState({
+      modalTitle: '新增',
+      modalVisible: true
+    });
+  };
+
+  /**
+   * 保存修改
+   * @param record
+   */
+  getDataForUpdate = record => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'tableData/getDataForUpdate',
+      path: 'bookStyle/getDataForUpdate',
+      payload: { bookStyleId: record.bookStyleId }
+    });
+    this.setState({
+      modalTitle: '修改',
+      modalVisible: true
+    });
+  };
+
+  /**
+   * 新增方法
+   */
+  add = fields => {
+    const { dispatch, tableData } = this.props;
+    dispatch({
+      type: 'tableData/add',
+      path: 'bookStyle/add',
+      payload: fields,
+      callback: this.callback
+    });
+  };
+
+  /**
+   * 更新方法
+   * @param fields
+   */
+  update = fields => {
+    const { dispatch, tableData } = this.props;
+    const payload = {
+      ...tableData.formData,
+      ...fields
+    };
+    dispatch({
+      type: 'tableData/update',
+      path: 'bookStyle/update',
+      payload,
+      callback: this.callback
+    });
   };
 
   refresh = (values, page) => {
@@ -54,11 +127,6 @@ export default class BookStyle extends PureComponent {
       modalVisible: false
     });
   };
-
-  componentDidMount() {
-    const { formValues, page } = this.state;
-    this.refresh(formValues, page);
-  }
 
   tableChange = (pagination, filtersArg, sorter) => {
     const { formValues } = this.state;
@@ -79,7 +147,7 @@ export default class BookStyle extends PureComponent {
 
   callback = () => {
     const { tableData } = this.props;
-    if (tableData.status == 200) {
+    if (tableData.status === 200) {
       const { formValues, page } = this.state;
       this.refresh(formValues, page);
     } else {
@@ -128,56 +196,6 @@ export default class BookStyle extends PureComponent {
     });
   };
 
-  getDataForAdd = fields => {
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'tableData/getDataForAdd',
-      path: 'bookStyle/getDataForAdd',
-      payload: fields
-    });
-    this.setState({
-      modalTitle: '新增',
-      modalVisible: true
-    });
-  };
-
-  add = fields => {
-    const { dispatch, tableData } = this.props;
-    dispatch({
-      type: 'tableData/add',
-      path: 'bookStyle/add',
-      payload: fields,
-      callback: this.callback
-    });
-  };
-
-  getDataForUpdate = record => {
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'tableData/getDataForUpdate',
-      path: 'bookStyle/getDataForUpdate',
-      payload: { bookStyleId: record.bookStyleId }
-    });
-    this.setState({
-      modalTitle: '修改',
-      modalVisible: true
-    });
-  };
-
-  update = fields => {
-    const { dispatch, tableData } = this.props;
-    const payload = {
-      ...tableData.formData,
-      ...fields
-    };
-    dispatch({
-      type: 'tableData/update',
-      path: 'bookStyle/update',
-      payload,
-      callback: this.callback
-    });
-  };
-
   renderForm() {
     return CreateFindForm(this.props, this.query, this.formReset);
   }
@@ -194,6 +212,11 @@ export default class BookStyle extends PureComponent {
       {
         title: '名称',
         dataIndex: 'styleName'
+      },
+      {
+        title: '创建时间',
+        dataIndex: 'createTime',
+        render: (text, record) => <Fragment>{formatTime(text)}</Fragment>
       },
       {
         title: '操作',
@@ -218,10 +241,7 @@ export default class BookStyle extends PureComponent {
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
             <div className={styles.tableListOperator}>
-              <Button
-                type="primary"
-                onClick={() => this.getDataForAdd()}
-              >
+              <Button type="primary" onClick={() => this.getDataForAdd()}>
                 新建
               </Button>
             </div>

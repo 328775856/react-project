@@ -102,15 +102,8 @@ export default class SelectTest extends PureComponent {
     return (
       <PageHeaderLayout>
         <Card bordered={false}>
-          <Form
-            onSubmit={this.handleSubmit}
-            hideRequiredMark
-            style={{ marginTop: 8 }}
-          >
-            <FormItem
-              {...formItemLayout}
-              label="选择图片Demo"
-            >
+          <Form onSubmit={this.handleSubmit} hideRequiredMark style={{ marginTop: 8 }}>
+            <FormItem {...formItemLayout} label="选择图片Demo">
               <Row gutter={0}>
                 <Col span={22}>
                   {getFieldDecorator('code', {
@@ -119,33 +112,16 @@ export default class SelectTest extends PureComponent {
                   })(<Input />)}
                 </Col>
                 <Col span={2}>
-                  <Button
-                    onClick={this.selectUser}
-                    icon="search"
-                  />
+                  <Button onClick={this.selectUser} icon="search" />
                 </Col>
               </Row>
             </FormItem>
-            <FormItem
-              {...formItemLayout}
-              label="图片显示"
-            >
-              <img
-                alt=""
-                style={{ width: 100, height: 100 }}
-                src={formData.fullPath}
-              />
+            <FormItem {...formItemLayout} label="图片显示">
+              <img alt="" style={{ width: 100, height: 100 }} src={formData.fullPath} />
             </FormItem>
 
-            <FormItem
-              {...submitFormLayout}
-              style={{ marginTop: 32 }}
-            >
-              <Button
-                type="primary"
-                htmlType="submit"
-                loading={submitting}
-              >
+            <FormItem {...submitFormLayout} style={{ marginTop: 32 }}>
+              <Button type="primary" htmlType="submit" loading={submitting}>
                 提交
               </Button>
               <Button style={{ marginLeft: 8 }}>返回</Button>
@@ -154,6 +130,7 @@ export default class SelectTest extends PureComponent {
         </Card>
         <SelectImage
           {...parentMethods}
+          imagePath={formData.imagePath}
           modalVisible={modalVisible}
         />
       </PageHeaderLayout>

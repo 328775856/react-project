@@ -34,6 +34,11 @@ const CreateEditForm = Form.create()(props => {
     });
   };
 
+  const cancelHandle = () => {
+    form.resetFields();
+    closeModal();
+  };
+
   const formItemLayout = {
     labelCol: {
       xs: { span: 24 },
@@ -48,16 +53,8 @@ const CreateEditForm = Form.create()(props => {
   };
 
   return (
-    <Modal
-      title={title}
-      visible={modalVisible}
-      onOk={okHandle}
-      onCancel={() => closeModal()}
-    >
-      <FormItem
-        {...formItemLayout}
-        label="评论id"
-      >
+    <Modal title={title} visible={modalVisible} onOk={okHandle} onCancel={cancelHandle}>
+      <FormItem {...formItemLayout} label="评论id">
         {form.getFieldDecorator('dynaTopicCommentId', {
           initialValue: formData.dynaTopicCommentId || '',
           rules: [
@@ -68,10 +65,7 @@ const CreateEditForm = Form.create()(props => {
           ]
         })(<Input />)}
       </FormItem>
-      <FormItem
-        {...formItemLayout}
-        label="回复内容"
-      >
+      <FormItem {...formItemLayout} label="回复内容">
         {form.getFieldDecorator('replyContent', {
           initialValue: formData.replyContent || '',
           rules: [
@@ -82,10 +76,7 @@ const CreateEditForm = Form.create()(props => {
           ]
         })(<Input />)}
       </FormItem>
-      <FormItem
-        {...formItemLayout}
-        label="回复者"
-      >
+      <FormItem {...formItemLayout} label="回复者">
         {form.getFieldDecorator('userId', {
           initialValue: formData.userId || '',
           rules: [
@@ -96,10 +87,7 @@ const CreateEditForm = Form.create()(props => {
           ]
         })(<Input />)}
       </FormItem>
-      <FormItem
-        {...formItemLayout}
-        label="创建时间"
-      >
+      <FormItem {...formItemLayout} label="创建时间">
         {form.getFieldDecorator('createTime', {
           initialValue: formData.createTime || '',
           rules: [

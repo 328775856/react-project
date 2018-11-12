@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { Button, Col, Form, Input, Modal, Row } from 'antd';
+import { Button, Col, Form, Input, InputNumber, Modal, Row } from 'antd';
 import SelectNote from '../Select/SelectNote';
 
 const FormItem = Form.Item;
@@ -17,7 +17,9 @@ export default class CreateEditForm extends PureComponent {
 
   callSelectNoteReturn = record => {
     if (record != null) {
-      const { dispatch } = this.props;
+      const { dispatch, form } = this.props;
+      form.resetFields('userReadnoteId');
+      form.resetFields('notesTitle');
       const myFormData = {
         userReadnoteId: record[0].bookReadnoteId,
         notesTitle: record[0].notesTitle
@@ -51,6 +53,11 @@ export default class CreateEditForm extends PureComponent {
       });
     };
 
+    const cancelHandle = () => {
+      form.resetFields();
+      closeModal();
+    };
+
     const parentMethodsForNote = {
       callReturn: this.callSelectNoteReturn,
       closeModal: this.closeSelectNoteModal
@@ -70,16 +77,8 @@ export default class CreateEditForm extends PureComponent {
     };
 
     return (
-      <Modal
-        title={title}
-        visible={modalVisible}
-        onOk={okHandle}
-        onCancel={() => closeModal()}
-      >
-        <FormItem
-          {...formItemLayout}
-          label="笔记id"
-        >
+      <Modal title={title} visible={modalVisible} onOk={okHandle} onCancel={cancelHandle}>
+        <FormItem {...formItemLayout} label="笔记id">
           <Row>
             <Col span={20}>
               {form.getFieldDecorator('userReadnoteId', {
@@ -90,21 +89,15 @@ export default class CreateEditForm extends PureComponent {
                     message: '请输入笔记id...'
                   }
                 ]
-              })(<Input />)}
+              })(<Input readOnly />)}
             </Col>
             <Col>
-              <Button
-                onClick={this.selectNoteModel}
-                icon="search"
-              />
+              <Button onClick={this.selectNoteModel} icon="search" />
             </Col>
           </Row>
         </FormItem>
 
-        <FormItem
-          {...formItemLayout}
-          label="笔记标题"
-        >
+        <FormItem {...formItemLayout} label="笔记标题">
           {form.getFieldDecorator('notesTitle', {
             initialValue: formData.notesTitle || '',
             rules: [
@@ -113,13 +106,10 @@ export default class CreateEditForm extends PureComponent {
                 message: '请输入名称...'
               }
             ]
-          })(<Input />)}
+          })(<Input readOnly />)}
         </FormItem>
 
-        <FormItem
-          {...formItemLayout}
-          label="顺序"
-        >
+        <FormItem {...formItemLayout} label="顺序">
           {form.getFieldDecorator('indexNo', {
             initialValue: formData.indexNo || '',
             rules: [
@@ -128,10 +118,11 @@ export default class CreateEditForm extends PureComponent {
                 message: '请输入顺序...'
               }
             ]
-          })(<Input />)}
+          })(<InputNumber min={0} max={255} />)}
         </FormItem>
         <SelectNote
           {...parentMethodsForNote}
+          bookReadnoteId={formData.userReadnoteId}
           modalVisible={this.state.noteModalVisible}
         />
       </Modal>

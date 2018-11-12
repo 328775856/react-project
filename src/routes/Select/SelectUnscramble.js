@@ -20,11 +20,8 @@ import {
   Divider,
   Table
 } from 'antd';
-import StandardTable from 'components/StandardTable';
-import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from '../../assets/styles.less';
 import CreateConditionForm from './SelectUnscramble_condition';
-import { getUrl, postUrl } from '../../services/api';
 
 const FormItem = Form.Item;
 
@@ -36,7 +33,8 @@ const FormItem = Form.Item;
 export default class SelectBookBuy extends React.Component {
   state = {
     selectedRows: [],
-    formValues: {}
+    formValues: {},
+    modalVisibleTemp: false
   };
 
   constructor(props) {
@@ -55,19 +53,19 @@ export default class SelectBookBuy extends React.Component {
     });
   };
 
-  componentDidMount() {
-    this.query({}, { pageNo: 1, pageSize: 10 });
-  }
+  // componentDidMount() {
+  //   this.query({}, { pageNo: 1, pageSize: 10 });
+  // }
 
   componentDidUpdate() {
     const { modalVisible } = this.props;
     if (modalVisible === this.state.modalVisibleTemp) {
       return;
     }
-    this.setState({ modalVisibleTemp: modalVisible });
     if (modalVisible === true) {
       this.query({}, { pageNo: 1, pageSize: 10 });
     }
+    this.setState({ modalVisibleTemp: modalVisible });
   }
 
   tableChange = (pagination, filtersArg, sorter) => {
@@ -112,7 +110,22 @@ export default class SelectBookBuy extends React.Component {
   }
 
   render() {
-    const { restTableData, loading, callReturn, closeModal, modalVisible, addSave } = this.props;
+    const { restTableData, loading, callReturn, closeModal, modalVisible, form } = this.props;
+
+    const { selectedRows } = this.state;
+
+    const okHandle = () => {
+      if (selectedRows.length < 1) {
+        message.success('请选择一条数据');
+      } else {
+        callReturn(selectedRows);
+      }
+    };
+
+    const cancelHandle = () => {
+      form.resetFields();
+      closeModal();
+    };
 
     const columns = [
       {
@@ -128,11 +141,7 @@ export default class SelectBookBuy extends React.Component {
         dataIndex: 'wholeCoverPath',
         render: (text, record) => (
           <Fragment>
-            <img
-              alt=""
-              style={{ width: 100, height: 100 }}
-              src={record.wholeCoverPath}
-            />
+            <img alt="" style={{ width: 50, height: 50 }} src={record.wholeCoverPath} />
           </Fragment>
         )
       },
@@ -145,20 +154,6 @@ export default class SelectBookBuy extends React.Component {
         dataIndex: 'upCourse'
       }
     ];
-    const okHandle = () => {
-      const { selectedRows } = this.state;
-      const formObject = {
-        findChannelId: 3,
-        courseId: selectedRows[0].courseId,
-        courseTagId: selectedRows[0].courseTagId,
-        courseName: selectedRows[0].courseName,
-        coverPath: selectedRows[0].coverPath,
-        courseIntro: selectedRows[0].courseIntro,
-        upCourse: selectedRows[0].upCourse
-      };
-      debugger;
-      addSave(formObject);
-    };
 
     const rowSelection = {
       type: 'radio',
@@ -181,18 +176,18 @@ export default class SelectBookBuy extends React.Component {
 
     return (
       <Modal
-        title="选择图书"
+        title="选择课程"
         visible={modalVisible}
         width="70%"
         onOk={okHandle}
-        onCancel={() => closeModal()}
+        onCancel={cancelHandle}
       >
         <div className={styles.tableList}>
           <div className={styles.tableListForm}>{this.renderForm()}</div>
           <Table
-            dataSource={restTableData.pageData.list}
+            dataSource={restTableData.pageData.list || []}
             columns={columns}
-            rowKey="bookId"
+            rowKey="courseId"
             pagination={restTableData.pageData.pagination}
             loading={loading}
             onChange={this.tableChange}

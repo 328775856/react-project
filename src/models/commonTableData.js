@@ -1,4 +1,5 @@
 import { routerRedux } from 'dva/router';
+import qs from 'qs';
 import { getUrl, postUrl, putUrl, deleteUrl } from '../services/api';
 
 export default {
@@ -78,6 +79,14 @@ export default {
     },
     *goUrl({ path, payload }, { call, put }) {
       yield put(routerRedux.push(path));
+      yield put({
+        type: 'loadForm',
+        payload: { data: payload }
+      });
+    },
+    *goUrlParams({ path, payload }, { call, put }) {
+      payload = qs.stringify(payload);
+      yield put(routerRedux.push(`${path}?${payload}`));
       yield put({
         type: 'loadForm',
         payload: { data: payload }

@@ -34,7 +34,9 @@ export default class CreateEditForm extends PureComponent {
 
   callSelectReturn = record => {
     if (record != null) {
-      const { dispatch } = this.props;
+      const { dispatch, form } = this.props;
+      form.resetFields('imagePath');
+      form.resetFields('wholeImagePath');
       const myFormData = {
         imagePath: record[0].imagePath,
         wholeImagePath: record[0].domain
@@ -85,6 +87,11 @@ export default class CreateEditForm extends PureComponent {
         }
       });
     };
+    const cancelHandle = () => {
+      form.resetFields();
+      closeModal();
+    };
+
     const parentMethods = {
       callReturn: this.callSelectReturn,
       closeModal: this.closeSelectModal
@@ -103,16 +110,8 @@ export default class CreateEditForm extends PureComponent {
       }
     };
     return (
-      <Modal
-        title={title}
-        visible={modalVisible}
-        onOk={okHandle}
-        onCancel={() => closeModal()}
-      >
-        <FormItem
-          {...formItemLayout}
-          label="名称"
-        >
+      <Modal title={title} visible={modalVisible} onOk={okHandle} onCancel={cancelHandle}>
+        <FormItem {...formItemLayout} label="名称">
           {form.getFieldDecorator('carouselName', {
             initialValue: formData.carouselName || '',
             rules: [
@@ -123,10 +122,7 @@ export default class CreateEditForm extends PureComponent {
             ]
           })(<Input />)}
         </FormItem>
-        <FormItem
-          {...formItemLayout}
-          label="轮播类型"
-        >
+        <FormItem {...formItemLayout} label="轮播类型">
           {form.getFieldDecorator('carouselType', {
             initialValue:
               formData.carouselType === undefined ? '-1' : `${formData.carouselType}` || '',
@@ -138,10 +134,7 @@ export default class CreateEditForm extends PureComponent {
             ]
           })(<Select style={{ width: '150px' }}>{opt1}</Select>)}
         </FormItem>
-        <FormItem
-          {...formItemLayout}
-          label="轮播顺序"
-        >
+        <FormItem {...formItemLayout} label="轮播顺序">
           {form.getFieldDecorator('indexNo', {
             initialValue: formData.indexNo || '',
             rules: [
@@ -150,12 +143,9 @@ export default class CreateEditForm extends PureComponent {
                 message: '请输入轮播顺序...'
               }
             ]
-          })(<Input />)}
+          })(<InputNumber min={0} max={255} />)}
         </FormItem>
-        <FormItem
-          {...formItemLayout}
-          label="跳转参数"
-        >
+        <FormItem {...formItemLayout} label="跳转参数">
           {form.getFieldDecorator('params', {
             initialValue: formData.params || '',
             rules: [
@@ -167,10 +157,7 @@ export default class CreateEditForm extends PureComponent {
           })(<Input />)}
         </FormItem>
 
-        <FormItem
-          {...formItemLayout}
-          label="轮播图片"
-        >
+        <FormItem {...formItemLayout} label="轮播图片">
           <Row>
             <Col span={20}>
               {form.getFieldDecorator('imagePath', {
@@ -184,25 +171,16 @@ export default class CreateEditForm extends PureComponent {
               })(<Input />)}
             </Col>
             <Col>
-              <Button
-                onClick={this.selectImage}
-                icon="search"
-              />
+              <Button onClick={this.selectImage} icon="search" />
             </Col>
           </Row>
         </FormItem>
-        <FormItem
-          {...formItemLayout}
-          label="图片显示"
-        >
-          <img
-            alt=""
-            style={{ width: 100, height: 100 }}
-            src={formData.wholeImagePath}
-          />
+        <FormItem {...formItemLayout} label="图片显示">
+          <img alt="" style={{ width: 100, height: 100 }} src={formData.wholeImagePath} />
         </FormItem>
         <SelectImage
           {...parentMethods}
+          imagePath={formData.imagePath}
           modalVisible={this.state.modalVisible}
         />
       </Modal>

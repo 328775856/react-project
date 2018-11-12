@@ -5,6 +5,7 @@ import PageHeaderLayout from '../../../layouts/PageHeaderLayout';
 import styles from '../../../assets/styles.less';
 import CreateEditForm from './FindTop_edit';
 import fetch from '../../../utils/fetch';
+import { formatTime } from '../../../utils/utils';
 
 @connect(({ tableData, loading }) => ({
   tableData,
@@ -54,17 +55,20 @@ export default class FindTop extends PureComponent {
   };
 
   refresh = values => {
+    const { tableData } = this.props;
+    const { page } = this.state;
     fetch('findTop/page', 'post', {
       data: values,
-      page: {
-        pageNo: 1,
-        pageSize: 10
-      }
+      page
     }).then(res => {
       if (res.err) {
         return;
       }
       if (res.data.status === 200) {
+        tableData.pageData.list = res.data.data.rows;
+        tableData.pageData.pagination = {
+          total: res.data.data.total
+        };
         this.setState({
           TableData: res.data.data.rows
         });
@@ -260,18 +264,14 @@ export default class FindTop extends PureComponent {
     };
 
     const columns = [
-      { title: '系统id', dataIndex: 'findTopId' },
+      { title: '系统ID', dataIndex: 'findTopId' },
       { title: '榜单名称', dataIndex: 'topName' },
       {
         title: '榜单图片',
         dataIndex: 'wholeCoverPath',
         render: (text, record) => (
           <Fragment>
-            <img
-              alt=""
-              style={{ width: 100, height: 100 }}
-              src={record.wholeCoverPath}
-            />
+            <img alt="" style={{ width: 50, height: 50 }} src={record.wholeCoverPath} />
           </Fragment>
         )
       },
@@ -294,6 +294,11 @@ export default class FindTop extends PureComponent {
         )
       },
       {
+        title: '创建时间',
+        dataIndex: 'createTime',
+        render: (text, record) => <Fragment>{formatTime(text)}</Fragment>
+      },
+      {
         title: '操作',
         render: (text, record) => <Fragment>{this.renderPublishStatus(record)}</Fragment>
       }
@@ -304,10 +309,7 @@ export default class FindTop extends PureComponent {
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListOperator}>
-              <Button
-                type="primary"
-                onClick={() => this.getDataForAdd()}
-              >
+              <Button type="primary" onClick={() => this.getDataForAdd()}>
                 新建
               </Button>
             </div>

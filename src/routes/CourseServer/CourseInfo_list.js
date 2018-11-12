@@ -19,12 +19,11 @@ import {
   Divider,
   Table
 } from 'antd';
-import StandardTable from 'components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from '../../assets/styles.less';
 import CreateEditForm from './CourseInfo_edit';
 import CreateFindForm from './CourseInfo_find';
-import { defaultPage } from '../../utils/utils.js';
+import { defaultPage, formatTime } from '../../utils/utils.js';
 
 const FormItem = Form.Item;
 @connect(({ commonTableData, loading }) => ({
@@ -53,7 +52,7 @@ export default class CourseInfo extends PureComponent {
       type: 'commonTableData/list',
       path: 'courseInfo/page',
       payload: {
-        data: values,
+        data: params,
         page
       }
     });
@@ -61,6 +60,11 @@ export default class CourseInfo extends PureComponent {
       modalVisible: false
     });
   };
+
+  componentWillMount() {
+    const { commonTableData } = this.props;
+    commonTableData.pageData.list = [];
+  }
 
   componentDidMount() {
     const { formValues, page } = this.state;
@@ -257,7 +261,7 @@ export default class CourseInfo extends PureComponent {
 
     const columns = [
       {
-        title: '系统id',
+        title: '系统ID',
         dataIndex: 'courseId'
       },
 
@@ -270,11 +274,7 @@ export default class CourseInfo extends PureComponent {
         dataIndex: 'wholeCoverPath',
         render: (text, record) => (
           <Fragment>
-            <img
-              alt=""
-              style={{ width: 100, height: 100 }}
-              src={record.wholeCoverPath}
-            />
+            <img alt="" style={{ width: 50, height: 50 }} src={record.wholeCoverPath} />
           </Fragment>
         )
       },
@@ -297,12 +297,23 @@ export default class CourseInfo extends PureComponent {
         dataIndex: 'isRecommend',
         render: (text, record) => <Fragment>{record.isRecommend === 1 ? '是' : '否'}</Fragment>
       },
-
+      {
+        title: '创建时间',
+        dataIndex: 'createTime',
+        render: (text, record) => <Fragment>{formatTime(text)}</Fragment>
+      },
       {
         title: '操作',
         render: (text, record) => (
           <Fragment>
-            <a onClick={() => this.getDataForUpdate(record)}>修改</a>
+            <a
+              style={record.shelfStatus === 1 ? { display: 'none' } : {}}
+              onClick={() => this.getDataForUpdate(record)}
+            >
+              修改
+            </a>
+            <Divider type="vertical" />
+            <a onClick={() => this.detail(record, '/courseServer/courseRelBook')}>图书明细</a>
             <Divider type="vertical" />
             <a onClick={() => this.detail(record, '/courseServer/courseRelChapter')}>章节明细</a>
             <Divider type="vertical" />
@@ -327,10 +338,7 @@ export default class CourseInfo extends PureComponent {
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
             <div className={styles.tableListOperator}>
-              <Button
-                type="primary"
-                onClick={() => this.getDataForAdd()}
-              >
+              <Button type="primary" onClick={() => this.getDataForAdd()}>
                 新建
               </Button>
             </div>

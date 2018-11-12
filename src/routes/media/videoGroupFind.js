@@ -33,7 +33,7 @@ function CreateFindFrom(props, formQuery, formReset) {
           sm={24}
         >
           <FormItem label="名称">
-            {form.getFieldDecorator('videoName')(<Input placeholder="" />)}
+            {form.getFieldDecorator('videoGroupName')(<Input placeholder="" />)}
           </FormItem>
         </Col>
         <Col

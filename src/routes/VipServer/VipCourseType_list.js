@@ -19,12 +19,11 @@ import {
   Divider,
   Table
 } from 'antd';
-import StandardTable from 'components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from '../../assets/styles.less';
 import CreateEditForm from './VipCourseType_edit';
 import CreateFindForm from './VipCourseType_find';
-import { defaultPage } from '../../utils/utils.js';
+import { defaultPage, formatTime } from '../../utils/utils.js';
 
 const FormItem = Form.Item;
 @connect(({ commonTableData, loading }) => ({
@@ -55,6 +54,11 @@ export default class VipCourseType extends PureComponent {
       modalVisible: false
     });
   };
+
+  componentWillMount() {
+    const { commonTableData } = this.props;
+    commonTableData.pageData.list = '';
+  }
 
   componentDidMount() {
     const { formValues, page } = this.state;
@@ -212,11 +216,11 @@ export default class VipCourseType extends PureComponent {
 
     const columns = [
       {
-        title: '系统id',
+        title: '系统ID',
         dataIndex: 'vipCourseTypeId'
       },
       {
-        title: 'vip包id',
+        title: 'VIP包ID',
         dataIndex: 'vipPackageId',
         render(text, record) {
           const formatterName = record => {
@@ -239,6 +243,11 @@ export default class VipCourseType extends PureComponent {
       {
         title: '顺序',
         dataIndex: 'indexNo'
+      },
+      {
+        title: '创建时间',
+        dataIndex: 'createTime',
+        render: (text, record) => <Fragment>{formatTime(text)}</Fragment>
       },
       {
         title: '操作',
@@ -264,10 +273,7 @@ export default class VipCourseType extends PureComponent {
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
             <div className={styles.tableListOperator}>
-              <Button
-                type="primary"
-                onClick={() => this.getDataForAdd()}
-              >
+              <Button type="primary" onClick={() => this.getDataForAdd()}>
                 新建
               </Button>
             </div>

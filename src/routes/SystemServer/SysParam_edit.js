@@ -16,6 +16,10 @@ const CreateEditForm = Form.create()(props => {
       }
     });
   };
+  const cancelHandle = () => {
+    form.resetFields();
+    closeModal();
+  };
 
   const formItemLayout = {
     labelCol: {
@@ -31,16 +35,8 @@ const CreateEditForm = Form.create()(props => {
   };
 
   return (
-    <Modal
-      title={title}
-      visible={modalVisible}
-      onOk={okHandle}
-      onCancel={() => closeModal()}
-    >
-      <FormItem
-        {...formItemLayout}
-        label="参数编码"
-      >
+    <Modal title={title} visible={modalVisible} onOk={okHandle} onCancel={cancelHandle}>
+      <FormItem {...formItemLayout} label="参数编码">
         {form.getFieldDecorator('sysParamId', {
           initialValue: formData.sysParamId || '',
           rules: [
@@ -49,12 +45,9 @@ const CreateEditForm = Form.create()(props => {
               message: '请输入参数编码...'
             }
           ]
-        })(<InputNumber />)}
+        })(<InputNumber min={1} />)}
       </FormItem>
-      <FormItem
-        {...formItemLayout}
-        label="参数值"
-      >
+      <FormItem {...formItemLayout} label="参数值">
         {form.getFieldDecorator('paramValue', {
           initialValue: formData.paramValue || '',
           rules: [
@@ -65,10 +58,7 @@ const CreateEditForm = Form.create()(props => {
           ]
         })(<Input />)}
       </FormItem>
-      <FormItem
-        {...formItemLayout}
-        label="备注"
-      >
+      <FormItem {...formItemLayout} label="备注">
         {form.getFieldDecorator('remark', {
           initialValue: formData.remark || '',
           rules: [

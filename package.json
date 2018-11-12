@@ -18,7 +18,8 @@
     "test": "roadhog test",
     "test:component": "roadhog test ./src/components",
     "test:all": "node ./tests/run-tests.js",
-    "prettier": "prettier --write ./src/**/**/**/*"
+    "prettier": "prettier --write ./src/**/**/**/*",
+    "clear": "rimraf node_modules"
   },
   "dependencies": {
     "@antv/data-set": "^0.8.0",

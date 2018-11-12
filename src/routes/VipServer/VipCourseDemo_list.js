@@ -19,12 +19,12 @@ import {
   Divider,
   Table
 } from 'antd';
-import StandardTable from 'components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from '../../assets/styles.less';
 import CreateEditForm from './VipCourseDemo_edit';
 import CreateFindForm from './VipCourseDemo_find';
 import { defaultPage } from '../../utils/utils.js';
+import { formatTime } from '../../utils/utils';
 
 const FormItem = Form.Item;
 @connect(({ commonTableData, loading }) => ({
@@ -55,6 +55,11 @@ export default class VipCourseDemo extends PureComponent {
       modalVisible: false
     });
   };
+
+  componentWillMount() {
+    const { commonTableData } = this.props;
+    commonTableData.pageData.list = '';
+  }
 
   componentDidMount() {
     const { formValues, page } = this.state;
@@ -212,11 +217,11 @@ export default class VipCourseDemo extends PureComponent {
 
     const columns = [
       {
-        title: '系统id',
+        title: '系统ID',
         dataIndex: 'vipCourseDemoId'
       },
       {
-        title: 'vip包id',
+        title: 'VIP包ID',
         dataIndex: 'vipPackageId',
         render(text, record) {
           const formatterName = record => {
@@ -241,13 +246,14 @@ export default class VipCourseDemo extends PureComponent {
         dataIndex: 'coverPath',
         render: (text, record) => (
           <Fragment>
-            <img
-              alt=""
-              style={{ width: 100, height: 100 }}
-              src={record.coverPath}
-            />
+            <img alt="" style={{ width: 50, height: 50 }} src={record.coverPath} />
           </Fragment>
         )
+      },
+      {
+        title: '创建时间',
+        dataIndex: 'createTime',
+        render: (text, record) => <Fragment>{formatTime(text)}</Fragment>
       },
       {
         title: '操作',
@@ -274,10 +280,7 @@ export default class VipCourseDemo extends PureComponent {
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
             <div className={styles.tableListOperator}>
-              <Button
-                type="primary"
-                onClick={() => this.getDataForAdd()}
-              >
+              <Button type="primary" onClick={() => this.getDataForAdd()}>
                 新建
               </Button>
             </div>

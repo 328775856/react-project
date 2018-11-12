@@ -31,13 +31,18 @@ const CreateEditForm = Form.create()(props => {
     form.validateFields((err, fieldsValue) => {
       if (err) return;
       form.resetFields();
-      if (formData.orderProductId >= 0) {
+      if (formData.orderProductId > 0) {
         fieldsValue.orderProductId = formData.orderProductId;
         update(fieldsValue);
       } else {
         add(fieldsValue);
       }
     });
+  };
+
+  const cancelHandle = () => {
+    form.resetFields();
+    closeModal();
   };
 
   const formItemLayout = {
@@ -54,16 +59,8 @@ const CreateEditForm = Form.create()(props => {
   };
 
   return (
-    <Modal
-      title={title}
-      visible={modalVisible}
-      onOk={okHandle}
-      onCancel={() => closeModal()}
-    >
-      <FormItem
-        {...formItemLayout}
-        label="产品名称"
-      >
+    <Modal title={title} visible={modalVisible} onOk={okHandle} onCancel={cancelHandle}>
+      <FormItem {...formItemLayout} label="产品名称">
         {form.getFieldDecorator('productName', {
           initialValue: formData.productName || '',
           rules: [
@@ -74,10 +71,7 @@ const CreateEditForm = Form.create()(props => {
           ]
         })(<Input />)}
       </FormItem>
-      <FormItem
-        {...formItemLayout}
-        label="产品单价"
-      >
+      <FormItem {...formItemLayout} label="产品单价">
         {form.getFieldDecorator('upProduct', {
           initialValue: formData.upProduct || '',
           rules: [
@@ -86,12 +80,15 @@ const CreateEditForm = Form.create()(props => {
               message: '请输入产品单价...'
             }
           ]
-        })(<Input />)}
+        })(
+          <input
+            readOnly={
+              formData.orderProductId > 0 && formData.orderProductTypeId != 3 ? 'readOnly' : ''
+            }
+          />
+        )}
       </FormItem>
-      <FormItem
-        {...formItemLayout}
-        label="产品类型"
-      >
+      <FormItem {...formItemLayout} label="产品类型">
         {form.getFieldDecorator('orderProductTypeId', {
           initialValue:
             formData.orderProductTypeId === undefined ? '' : `${formData.orderProductTypeId}`,
@@ -102,24 +99,18 @@ const CreateEditForm = Form.create()(props => {
             }
           ]
         })(
-          <Select
-            placeholder=""
-            style={{ width: '150px' }}
-          >
+          <Select placeholder="" style={{ width: '150px' }}>
             {options}
           </Select>
         )}
       </FormItem>
-      <FormItem
-        {...formItemLayout}
-        label="业务id"
-      >
+      <FormItem {...formItemLayout} label="业务ID">
         {form.getFieldDecorator('businessId', {
           initialValue: formData.businessId || '',
           rules: [
             {
               required: true,
-              message: '请输入业务id...'
+              message: '请输入业务ID...'
             }
           ]
         })(<Input />)}

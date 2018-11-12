@@ -25,7 +25,7 @@ import styles from '../../../assets/styles.less';
 import CreateEditForm from './FindSpec_edit';
 import CreateFindForm from './FindSpec_find';
 import TimingPublishModal from './FindSpec_timing';
-import { defaultPage, translateDate } from '../../../utils/utils.js';
+import { defaultPage, formatDate } from '../../../utils/utils.js';
 
 const publishStatus = { 0: '未发布', 1: '已发布', 2: '定时发布' };
 const publishTitle = { 0: '确定取消发布?', 1: '确定发布?', 2: '确定定时发布?' };
@@ -47,9 +47,15 @@ export default class FindSpec extends PureComponent {
     options: []
   };
 
+  componentWillMount() {
+    const { commonTableData } = this.props;
+    commonTableData.pageData.list = '';
+  }
+
   componentDidMount() {
-    this.refresh();
+    const { formValues, page } = this.state;
     this.initOptions();
+    this.refresh(formValues, page);
   }
 
   getDataForAdd = () => {
@@ -81,47 +87,27 @@ export default class FindSpec extends PureComponent {
     const { dispatch } = this.props;
     dispatch({
       type: 'commonTableData/initOptions',
-      path: 'findChannel/query',
-      payload: {
-        page: defaultPage()
-      },
+      path: 'findSpec/getDataForAdd',
+      payload: {},
       callback: this.initOptionsCallback
     });
   };
 
   initOptionsCallback = response => {
-    const results = response.data.rows;
-    const ops = [];
-    ops.push(
-      <Select.Option
-        key={null}
-        value={null}
-      >
-        ---------------请选择---------------
-      </Select.Option>
-    );
-    // eslint-disable-next-line no-plusplus
-    for (let i = 0; i < results.length; i++) {
-      ops.push(
-        <Select.Option
-          key={i + 1}
-          value={results[i].findChannelId}
-        >
-          {results[i].channelName}
-        </Select.Option>
-      );
-    }
-    this.setState({ options: ops });
+    const { page } = this.state;
+    const result = JSON.parse(response.data);
+    this.setState({
+      options: result
+    });
   };
 
-  refresh = () => {
+  refresh = (values, page) => {
     const { dispatch } = this.props;
-    const { page, formValues } = this.state;
     dispatch({
       type: 'commonTableData/list',
       path: 'findSpec/page',
       payload: {
-        data: formValues,
+        data: values,
         // eslint-disable-next-line react/destructuring-assignment
         page
       }
@@ -132,12 +118,13 @@ export default class FindSpec extends PureComponent {
   };
 
   tableChange = (pagination, filtersArg, sorter) => {
+    const { formValues } = this.state;
     const page = {
       pageSize: pagination.pageSize,
       pageNo: pagination.current
     };
     this.setState({ page });
-    this.refresh();
+    this.refresh(formValues, page);
   };
 
   formReset = () => {
@@ -148,7 +135,8 @@ export default class FindSpec extends PureComponent {
   callback = () => {
     const { commonTableData } = this.props;
     if (commonTableData.status === 200) {
-      this.refresh();
+      const { formValues, page } = this.state;
+      this.refresh(formValues, page);
     } else {
       message.success(commonTableData.message);
     }
@@ -161,7 +149,7 @@ export default class FindSpec extends PureComponent {
       title: '确定删除吗?',
       onOk() {
         dispatch({
-          type: 'commonTableData/delete',
+          type: 'commonTableData/remove',
           path: 'findSpec/remove',
           payload: { findSpecId: record.findSpecId },
           callback: cb
@@ -187,7 +175,7 @@ export default class FindSpec extends PureComponent {
         formValues: values,
         page
       });
-      this.refresh();
+      this.refresh(values, page);
     });
   };
 
@@ -322,30 +310,45 @@ export default class FindSpec extends PureComponent {
   renderPublishOP = record => {
     const { unPublishOP, publishOP, timingPublishOP } = this;
     switch (record.publishStatus) {
-    case 0:
-      return unPublishOP(record);
-    case 1:
-      return publishOP(record);
-    case 2:
-      return timingPublishOP(record);
-    default:
-      return null;
+      case 0:
+        return unPublishOP(record);
+      case 1:
+        return publishOP(record);
+      case 2:
+        return timingPublishOP(record);
+      default:
+        return null;
     }
   };
 
   renderForm() {
-    return CreateFindForm(this.props, this.query, this.formReset);
+    return CreateFindForm(this.props, this.query, this.formReset, this.getDataForAdd);
   }
 
   render() {
     const { dispatch, commonTableData, loading } = this.props;
     const { modalVisible, modalTitle, publishModalVisible, publishForm, options } = this.state;
     const columns = [
-      { title: '序号', render: (text, record, index) => <Fragment>{index + 1}</Fragment> },
+      {
+        title: '系统ID',
+        dataIndex: 'findSpecId'
+      },
       {
         title: '所属栏目ID',
         dataIndex: 'findChannelId',
-        render: text => <Fragment>{text}</Fragment>
+        render(text, record) {
+          const dict = () => {
+            let res = '';
+            for (let i = 0; i < options.length; i += 1) {
+              if (record.findChannelId === options[i].findChannelId) {
+                res = options[i].channelName;
+                break;
+              }
+            }
+            return res;
+          };
+          return <Fragment>{dict()}</Fragment>;
+        }
       },
       {
         title: '专题名称',
@@ -357,11 +360,7 @@ export default class FindSpec extends PureComponent {
         dataIndex: 'imagePath',
         render: (text, record) => (
           <Fragment>
-            <img
-              alt=""
-              style={{ width: 100, height: 100 }}
-              src={record.wholeCoverPath}
-            />
+            <img alt="" style={{ width: 50, height: 50 }} src={record.wholeCoverPath} />
           </Fragment>
         )
       },
@@ -369,21 +368,6 @@ export default class FindSpec extends PureComponent {
         title: '专题描述',
         dataIndex: 'specIntro',
         render: text => <Fragment>{text}</Fragment>
-      },
-      {
-        title: '推荐',
-        dataIndex: 'isRecc',
-        render: text => <Fragment>{text === 0 ? '未推荐' : '已推荐'}</Fragment>
-      },
-      {
-        title: '固定首页',
-        dataIndex: 'isIndex',
-        render: text => <Fragment>{text === 0 ? '否' : '是'}</Fragment>
-      },
-      {
-        title: '创建时间',
-        dataIndex: 'createTime',
-        render: text => <Fragment>{translateDate(text)}</Fragment>
       },
       {
         title: '发布状态',
@@ -394,7 +378,7 @@ export default class FindSpec extends PureComponent {
         title: '发布日期',
         dataIndex: 'publishDate',
         render: (text, record) => (
-          <Fragment>{record.publishStatus === 0 ? '' : translateDate(text)}</Fragment>
+          <Fragment>{record.publishStatus === 0 ? '' : formatDate(text)}</Fragment>
         )
       },
       {
@@ -409,21 +393,15 @@ export default class FindSpec extends PureComponent {
       update: this.update,
       closeModal: this.closeModal,
       publishChange: this.publishChange,
-      refresh: this.refresh
+      refresh: this.refresh,
+      getDataForAdd: this.getDataForAdd
     };
     return (
       <PageHeaderLayout>
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
-            <div className={styles.tableListOperator}>
-              <Button
-                type="primary"
-                onClick={() => this.getDataForAdd()}
-              >
-                新建
-              </Button>
-            </div>
+            <div className={styles.tableListOperator} />
             <Table
               dataSource={commonTableData.pageData.list}
               columns={columns}

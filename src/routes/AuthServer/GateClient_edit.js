@@ -33,38 +33,25 @@ const CreateEditForm = Form.create()(props => {
       }
     });
   };
+
+  const cancelHandle = () => {
+    form.resetFields();
+    closeModal();
+  };
+
   return (
-    <Modal
-      title={title}
-      visible={modalVisible}
-      onOk={okHandle}
-      onCancel={() => closeModal()}
-    >
-      <FormItem
-        labelCol={{ span: 5 }}
-        wrapperCol={{ span: 15 }}
-        label="code"
-      >
+    <Modal title={title} visible={modalVisible} onOk={okHandle} onCancel={cancelHandle}>
+      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="code">
         {form.getFieldDecorator('code', {
           initialValue: formData.code || '',
           rules: [{ required: true, message: '请输入code...' }]
-        })(<Input
-          placeholder="请输入"
-          value={formData.code}
-        />)}
+        })(<Input placeholder="请输入" value={formData.code} />)}
       </FormItem>
-      <FormItem
-        labelCol={{ span: 5 }}
-        wrapperCol={{ span: 15 }}
-        label="secret"
-      >
+      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="secret">
         {form.getFieldDecorator('secret', {
           initialValue: formData.secret || '',
           rules: [{ required: true, message: '请输入备注...' }]
-        })(<Input
-          placeholder="请输入"
-          value={formData.secret}
-        />)}
+        })(<Input placeholder="请输入" value={formData.secret} />)}
       </FormItem>
     </Modal>
   );

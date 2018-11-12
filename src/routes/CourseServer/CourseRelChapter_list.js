@@ -52,7 +52,7 @@ export default class CourseRelChapter extends PureComponent {
       type: 'commonTableData/list',
       path: 'courseRelChapter/page',
       payload: {
-        data: values,
+        data: params,
         page
       }
     });
@@ -60,6 +60,11 @@ export default class CourseRelChapter extends PureComponent {
       modalVisible: false
     });
   };
+
+  componentWillMount() {
+    const { commonTableData } = this.props;
+    commonTableData.pageData.list = [];
+  }
 
   componentDidMount() {
     const { formValues, page } = this.state;
@@ -235,11 +240,7 @@ export default class CourseRelChapter extends PureComponent {
         dataIndex: 'coverPath',
         render: (text, record) => (
           <Fragment>
-            <img
-              alt=""
-              style={{ width: 100, height: 100 }}
-              src={record.coverPath}
-            />
+            <img alt="" style={{ width: 50, height: 50 }} src={record.coverPath} />
           </Fragment>
         )
       },
@@ -267,17 +268,11 @@ export default class CourseRelChapter extends PureComponent {
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
             <div className={styles.tableListOperator}>
-              <Button
-                type="primary"
-                onClick={() => this.getDataForAdd()}
-              >
+              <Button type="primary" onClick={() => this.getDataForAdd()}>
                 新建
               </Button>
 
-              <Button
-                type="default"
-                onClick={() => this.back()}
-              >
+              <Button type="default" onClick={() => this.back()}>
                 返回
               </Button>
             </div>

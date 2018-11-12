@@ -19,12 +19,11 @@ import {
   Divider,
   Table
 } from 'antd';
-import StandardTable from 'components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from '../../assets/styles.less';
 import CreateEditForm from './OrderProduct_edit';
 import CreateFindForm from './OrderProduct_find';
-import { defaultPage } from '../../utils/utils.js';
+import { defaultPage, formatTime } from '../../utils/utils.js';
 
 const FormItem = Form.Item;
 @connect(({ tableData, loading }) => ({
@@ -56,8 +55,12 @@ export default class OrderProduct extends PureComponent {
     });
   };
 
+  componentWillMount() {
+    const { tableData } = this.props;
+    tableData.pageData.list = '';
+  }
+
   componentDidMount() {
-    debugger;
     const { formValues, page, options } = this.state;
     this.initOptions();
     this.refresh(formValues, page);
@@ -213,7 +216,7 @@ export default class OrderProduct extends PureComponent {
     debugger;
     const columns = [
       {
-        title: '系统id',
+        title: '系统ID',
         dataIndex: 'orderProductId'
       },
       {
@@ -241,8 +244,13 @@ export default class OrderProduct extends PureComponent {
         }
       },
       {
-        title: '业务id',
+        title: '业务ID',
         dataIndex: 'businessId'
+      },
+      {
+        title: '创建时间',
+        dataIndex: 'createTime',
+        render: (text, record) => <Fragment>{formatTime(text)}</Fragment>
       },
       {
         title: '操作',
@@ -268,10 +276,7 @@ export default class OrderProduct extends PureComponent {
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
             <div className={styles.tableListOperator}>
-              <Button
-                type="primary"
-                onClick={() => this.getDataForAdd()}
-              >
+              <Button type="primary" onClick={() => this.getDataForAdd()}>
                 新建
               </Button>
             </div>

@@ -28,15 +28,16 @@ import { getUrl, postUrl } from '../../services/api';
 
 const FormItem = Form.Item;
 
-@connect(({ selectData, loading }) => ({
-  selectData,
+@connect(({ restTableData, loading }) => ({
+  restTableData,
   loading: loading.models.selectTable
 }))
 @Form.create()
 export default class SelectNote extends React.Component {
   state = {
     selectedRows: [],
-    formValues: {}
+    formValues: {},
+    modalVisibleTemp: false
   };
 
   constructor(props) {
@@ -44,9 +45,10 @@ export default class SelectNote extends React.Component {
   }
 
   query = (params, page) => {
-    const { dispatch } = this.props;
+    const { dispatch, bookReadnoteId } = this.props;
+    this.setState({ bookReadnoteId: bookReadnoteId });
     dispatch({
-      type: 'selectData/query',
+      type: 'restTableData/list',
       path: 'bookReadnote/page',
       payload: {
         data: params,
@@ -55,8 +57,17 @@ export default class SelectNote extends React.Component {
     });
   };
 
-  componentDidMount() {
-    this.query({}, { pageNo: 1, pageSize: 10 });
+  componentDidUpdate() {
+    const { modalVisible } = this.props;
+    if (modalVisible === this.state.modalVisibleTemp) {
+      return;
+    }
+    if (modalVisible === true) {
+      const { restTableData } = this.props;
+      restTableData.pageData.list = '';
+      this.query({}, { pageNo: 1, pageSize: 10 });
+    }
+    this.setState({ modalVisibleTemp: modalVisible });
   }
 
   tableChange = (pagination, filtersArg, sorter) => {
@@ -95,18 +106,27 @@ export default class SelectNote extends React.Component {
     });
   };
 
-  renderForm(groupList) {
+  renderForm() {
     return CreateConditionForm(this.props, this.formSubmit, this.formReset);
   }
 
   render() {
-    const {
-      selectData: { pageData },
-      selectData: { formData },
-      callReturn,
-      closeModal,
-      modalVisible
-    } = this.props;
+    const { restTableData, callReturn, closeModal, modalVisible, form } = this.props;
+
+    const { selectedRows } = this.state;
+
+    const okHandle = () => {
+      if (selectedRows.length < 1) {
+        message.success('请选择一条数据');
+      } else {
+        callReturn(selectedRows);
+      }
+    };
+
+    const cancelHandle = () => {
+      form.resetFields();
+      closeModal();
+    };
 
     const columns = [
       {
@@ -115,11 +135,23 @@ export default class SelectNote extends React.Component {
       },
       {
         title: '原文内容',
-        dataIndex: 'bookContent'
+        dataIndex: 'bookContent',
+        render(text, record) {
+          if ((text || '.').length > 40) {
+            return `${text.substring(0, 40)}......`;
+          }
+          return text;
+        }
       },
       {
         title: '批注内容',
-        dataIndex: 'annotation'
+        dataIndex: 'annotation',
+        render(text, record) {
+          if ((text || '.').length > 40) {
+            return `${text.substring(0, 40)}......`;
+          }
+          return text;
+        }
       },
       {
         title: '昵称',
@@ -132,16 +164,24 @@ export default class SelectNote extends React.Component {
       hideDefaultSelections: 'true',
       onChange: (selectedRowKeys, selectedRows) => {
         // console.log('selectedRows',selectedRows);//得到每一项的信息，也就是每一项的信息[{key: 1, name: "花骨朵", age: 18, hobby: "看书"}]
+        this.setState({ bookReadnoteId: selectedRows[0].bookReadnoteId });
       },
       onSelect: (record, selected, selectedRows) => {
         // console.log('selectedRows',selectedRows); //选中的每行信息，是一个数组
-        callReturn(selectedRows);
+        // callReturn(selectedRows);
+        this.onRowClick(selectedRows);
       },
       onSelectAll: (selected, selectedRows, changeRows) => {
         // console.log('changeRows',changeRows);   //变化的每一项
       },
       onSelectInvert: selectedRows => {
         // console.log('selectedRows',selectedRows);
+      },
+      getCheckboxProps: record => {
+        const { bookReadnoteId } = this.state;
+        return {
+          checked: record.bookReadnoteId === bookReadnoteId
+        };
       }
     };
 
@@ -149,19 +189,19 @@ export default class SelectNote extends React.Component {
       <Modal
         title="选择笔记"
         visible={modalVisible}
-        width={650}
-        onOk={closeModal}
-        onCancel={() => closeModal()}
+        width={1000}
+        onOk={okHandle}
+        onCancel={cancelHandle}
       >
         <div className={styles.tableList}>
-          <div className={styles.tableListForm}>{this.renderForm(formData.rows)}</div>
+          <div className={styles.tableListForm}>{this.renderForm()}</div>
           <Table
-            dataSource={pageData.list}
+            dataSource={restTableData.pageData.list}
             columns={columns}
-            pagination={pageData.pagination}
+            pagination={restTableData.pageData.pagination}
             onChange={this.tableChange}
             rowSelection={rowSelection}
-            rowKey="createTime"
+            rowKey="bookReadnoteId"
           />
         </div>
       </Modal>

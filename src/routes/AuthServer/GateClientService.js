@@ -138,7 +138,6 @@ export default class TableList extends PureComponent {
   };
 
   query = e => {
-    console.log(1111111111111111111);
     e.preventDefault();
     const { dispatch, form } = this.props;
 
@@ -174,7 +173,6 @@ export default class TableList extends PureComponent {
   };
 
   add = () => {
-    debugger;
     const { dispatch } = this.props;
     dispatch({
       type: 'crud/selectOld',
@@ -292,10 +290,7 @@ export default class TableList extends PureComponent {
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
             <div className={styles.tableListOperator}>
-              <Button
-                type="primary"
-                onClick={() => this.add()}
-              >
+              <Button type="primary" onClick={() => this.add()}>
                 新建
               </Button>
             </div>

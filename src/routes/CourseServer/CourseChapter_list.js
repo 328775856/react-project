@@ -19,12 +19,11 @@ import {
   Divider,
   Table
 } from 'antd';
-import StandardTable from 'components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from '../../assets/styles.less';
 import CreateEditForm from './CourseChapter_edit';
 import CreateFindForm from './CourseChapter_find';
-import { defaultPage } from '../../utils/utils.js';
+import { defaultPage, formatTime } from '../../utils/utils.js';
 
 const FormItem = Form.Item;
 @connect(({ commonTableData, loading }) => ({
@@ -43,11 +42,6 @@ export default class CourseChapter extends PureComponent {
 
   refresh = (values, page) => {
     const { dispatch } = this.props;
-    const { paramData } = this.state;
-    const params = {
-      ...paramData,
-      ...values
-    };
     dispatch({
       type: 'commonTableData/list',
       path: 'courseChapter/page',
@@ -61,16 +55,14 @@ export default class CourseChapter extends PureComponent {
     });
   };
 
+  componentWillMount() {
+    const { commonTableData } = this.props;
+    commonTableData.pageData.list = [];
+  }
+
   componentDidMount() {
     const { formValues, page } = this.state;
-    const { commonTableData } = this.props;
-    const paramData = {
-      ...commonTableData.formData
-    };
-    this.setState({
-      paramData
-    });
-    this.refresh(paramData, page);
+    this.refresh(formValues, page);
   }
 
   tableChange = (pagination, filtersArg, sorter) => {
@@ -201,7 +193,7 @@ export default class CourseChapter extends PureComponent {
   detail = (record, uri) => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'commonTableData/goUrl',
+      type: 'commonTableData/goUrlParams',
       path: uri,
       payload: {
         courseChapterId: record.courseChapterId
@@ -219,8 +211,12 @@ export default class CourseChapter extends PureComponent {
 
     const columns = [
       {
-        title: '系统id',
+        title: '系统ID',
         dataIndex: 'courseChapterId'
+      },
+      {
+        title: '用户昵称',
+        dataIndex: 'nickName'
       },
       {
         title: '标题',
@@ -231,13 +227,14 @@ export default class CourseChapter extends PureComponent {
         dataIndex: 'coverPath',
         render: (text, record) => (
           <Fragment>
-            <img
-              alt=""
-              style={{ width: 100, height: 100 }}
-              src={record.wholeCoverPath}
-            />
+            <img alt="" style={{ width: 50, height: 50 }} src={record.wholeCoverPath} />
           </Fragment>
         )
+      },
+      {
+        title: '创建时间',
+        dataIndex: 'createTime',
+        render: (text, record) => <Fragment>{formatTime(text)}</Fragment>
       },
       {
         title: '操作',
@@ -267,10 +264,7 @@ export default class CourseChapter extends PureComponent {
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
             <div className={styles.tableListOperator}>
-              <Button
-                type="primary"
-                onClick={() => this.getDataForAdd()}
-              >
+              <Button type="primary" onClick={() => this.getDataForAdd()}>
                 新建
               </Button>
             </div>

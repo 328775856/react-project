@@ -1,25 +1,7 @@
 import React, { Fragment, PureComponent } from 'react';
 import { connect } from 'dva';
-import {
-  Row,
-  Col,
-  Card,
-  Form,
-  Input,
-  Select,
-  Icon,
-  Button,
-  Dropdown,
-  Menu,
-  InputNumber,
-  DatePicker,
-  Modal,
-  message,
-  Badge,
-  Divider,
-  Table
-} from 'antd';
-import StandardTable from 'components/StandardTable';
+import { Card, Form, Button, Modal, message, Divider, Table } from 'antd';
+import qs from 'qs';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from '../../assets/styles.less';
 import CreateEditForm from './CourseChapterAudio_edit';
@@ -43,11 +25,6 @@ export default class CourseChapterAudio extends PureComponent {
 
   refresh = (values, page) => {
     const { dispatch } = this.props;
-    const { paramData } = this.state;
-    const params = {
-      ...paramData,
-      ...values
-    };
     dispatch({
       type: 'commonTableData/list',
       path: 'courseChapterAudio/page',
@@ -61,16 +38,16 @@ export default class CourseChapterAudio extends PureComponent {
     });
   };
 
+  componentWillMount() {
+    const { commonTableData } = this.props;
+    commonTableData.pageData.list = [];
+  }
+
   componentDidMount() {
     const { formValues, page } = this.state;
-    const { commonTableData } = this.props;
-    const paramData = {
-      ...commonTableData.formData
-    };
-    this.setState({
-      paramData
-    });
-    this.refresh(paramData, page);
+    const id = this.props.location.search.replace('?', '');
+    this.setState({ paramData: qs.parse(id) });
+    this.refresh(qs.parse(id), page);
   }
 
   tableChange = (pagination, filtersArg, sorter) => {
@@ -93,8 +70,8 @@ export default class CourseChapterAudio extends PureComponent {
   callback = () => {
     const { commonTableData } = this.props;
     if (commonTableData.status == 200) {
-      const { formValues, page } = this.state;
-      this.refresh(formValues, page);
+      const { paramData, page } = this.state;
+      this.refresh(paramData, page);
     } else {
       message.success(commonTableData.message);
     }
@@ -120,11 +97,13 @@ export default class CourseChapterAudio extends PureComponent {
   query = e => {
     e.preventDefault();
     const { dispatch, form } = this.props;
+    const { paramData } = this.state;
     form.validateFields((err, fieldsValue) => {
       if (err) return;
 
       const values = {
-        ...fieldsValue
+        ...fieldsValue,
+        ...paramData
       };
       const page = defaultPage();
       this.setState({
@@ -229,6 +208,13 @@ export default class CourseChapterAudio extends PureComponent {
         dataIndex: 'indexNo'
       },
       {
+        title: '是否是试听音频',
+        dataIndex: 'isAudition',
+        render(text) {
+          return <Fragment>{text === 0 ? '否' : '是'}</Fragment>;
+        }
+      },
+      {
         title: '操作',
         render: (text, record) => (
           <Fragment>
@@ -252,17 +238,11 @@ export default class CourseChapterAudio extends PureComponent {
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
             <div className={styles.tableListOperator}>
-              <Button
-                type="primary"
-                onClick={() => this.getDataForAdd()}
-              >
+              <Button type="primary" onClick={() => this.getDataForAdd()}>
                 新建
               </Button>
 
-              <Button
-                type="default"
-                onClick={() => this.back()}
-              >
+              <Button type="default" onClick={() => this.back()}>
                 返回
               </Button>
             </div>

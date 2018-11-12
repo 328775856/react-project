@@ -19,6 +19,7 @@ import {
   Divider,
   Table
 } from 'antd';
+import moment from 'moment/moment';
 import StandardTable from 'components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from '../../assets/styles.less';
@@ -37,16 +38,22 @@ export default class CourseRelBook extends PureComponent {
     modalVisible: false,
     modalTitle: '',
     formValues: {},
-    page: defaultPage()
+    page: defaultPage(),
+    paramData: {}
   };
 
   refresh = (values, page) => {
     const { dispatch } = this.props;
+    const { paramData } = this.state;
+    const params = {
+      ...paramData,
+      ...values
+    };
     dispatch({
       type: 'commonTableData/list',
       path: 'courseRelBook/page',
       payload: {
-        data: values,
+        data: params,
         page
       }
     });
@@ -55,9 +62,21 @@ export default class CourseRelBook extends PureComponent {
     });
   };
 
+  componentWillMount() {
+    const { commonTableData } = this.props;
+    commonTableData.pageData.list = [];
+  }
+
   componentDidMount() {
     const { formValues, page } = this.state;
-    this.refresh(formValues, page);
+    const { commonTableData } = this.props;
+    const paramData = {
+      ...commonTableData.formData
+    };
+    this.setState({
+      paramData
+    });
+    this.refresh(paramData, page);
   }
 
   tableChange = (pagination, filtersArg, sorter) => {
@@ -142,11 +161,17 @@ export default class CourseRelBook extends PureComponent {
   };
 
   add = fields => {
+    debugger;
     const { dispatch, commonTableData } = this.props;
+    const { paramData } = this.state;
+    const params = {
+      ...fields,
+      ...paramData
+    };
     dispatch({
       type: 'commonTableData/add',
       path: 'courseRelBook/add',
-      payload: fields,
+      payload: params,
       callback: this.callback
     });
   };
@@ -166,9 +191,11 @@ export default class CourseRelBook extends PureComponent {
 
   update = fields => {
     const { dispatch, commonTableData } = this.props;
+    const { paramData } = this.state;
     const payload = {
       ...commonTableData.formData,
-      ...fields
+      ...fields,
+      ...paramData
     };
     dispatch({
       type: 'commonTableData/update',
@@ -176,6 +203,34 @@ export default class CourseRelBook extends PureComponent {
       payload,
       callback: this.callback
     });
+  };
+
+  back = () => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'commonTableData/goUrl',
+      path: '/courseServer/courseInfo',
+      payload: {}
+    });
+  };
+
+  formatTime = text => {
+    if (text == null || text === 0) {
+      return '';
+    } else {
+      let str = new String(text);
+      let time = {
+        year: str.substr(0, 4),
+        month: parseInt(str.substr(4, 2)) - 1,
+        date: str.substr(6, 2),
+        hour: str.substr(8, 2),
+        minute: str.substr(10, 2),
+        second: str.substr(12, 2)
+      };
+      return moment()
+        .set(time)
+        .format('YYYY-MM-DD HH:mm:ss');
+    }
   };
 
   renderForm() {
@@ -192,29 +247,23 @@ export default class CourseRelBook extends PureComponent {
         dataIndex: 'courseRelBookId'
       },
       {
-        title: '课程id',
-        dataIndex: 'courseId'
+        title: '图书名称',
+        dataIndex: 'bookName'
       },
       {
-        title: '图书id',
-        dataIndex: 'bookUserId'
+        title: '作者',
+        dataIndex: 'bookAuthor'
       },
       {
         title: '顺序',
         dataIndex: 'indexNo'
       },
       {
-        title: '图书名',
-        dataIndex: 'bookName'
+        title: '创建时间',
+        dataIndex: 'createTime',
+        render: (text, record) => <Fragment>{this.formatTime(text)}</Fragment>
       },
-      {
-        title: '封面路径',
-        dataIndex: 'coverPath'
-      },
-      {
-        title: '作者',
-        dataIndex: 'bookAuthor'
-      },
+
       {
         title: '操作',
         render: (text, record) => (
@@ -230,7 +279,8 @@ export default class CourseRelBook extends PureComponent {
     const parentMethods = {
       add: this.add,
       update: this.update,
-      closeModal: this.closeModal
+      closeModal: this.closeModal,
+      dispatch: this.props.dispatch
     };
     return (
       <PageHeaderLayout>
@@ -238,11 +288,12 @@ export default class CourseRelBook extends PureComponent {
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
             <div className={styles.tableListOperator}>
-              <Button
-                type="primary"
-                onClick={() => this.getDataForAdd()}
-              >
+              <Button type="primary" onClick={() => this.getDataForAdd()}>
                 新建
+              </Button>
+
+              <Button type="default" onClick={() => this.back()}>
+                返回
               </Button>
             </div>
             <Table

@@ -33,38 +33,37 @@ const CreateEditForm = Form.create()(props => {
       }
     });
   };
+  const cancelHandle = () => {
+    form.resetFields();
+    closeModal();
+  };
+
+  const formItemLayout = {
+    labelCol: {
+      xs: { span: 24 },
+      sm: { span: 7 },
+      md: { span: 5 }
+    },
+    wrapperCol: {
+      xs: { span: 24 },
+      sm: { span: 12 },
+      md: { span: 13 }
+    }
+  };
+
   return (
-    <Modal
-      title={title}
-      visible={modalVisible}
-      onOk={okHandle}
-      onCancel={() => closeModal()}
-    >
-      <FormItem
-        labelCol={{ span: 5 }}
-        wrapperCol={{ span: 15 }}
-        label="书名"
-      >
+    <Modal title={title} visible={modalVisible} onOk={okHandle} onCancel={cancelHandle}>
+      <FormItem {...formItemLayout} label="书名">
         {form.getFieldDecorator('bookName', {
           initialValue: formData.bookName || '',
           rules: [{ required: true, message: '请输入书名...' }]
-        })(<Input
-          placeholder="请输入"
-          value={formData.bookName}
-        />)}
+        })(<Input placeholder="请输入" />)}
       </FormItem>
-      <FormItem
-        labelCol={{ span: 5 }}
-        wrapperCol={{ span: 15 }}
-        label="备注"
-      >
+      <FormItem {...formItemLayout} label="备注">
         {form.getFieldDecorator('remark', {
           initialValue: formData.remark || '',
           rules: [{ required: true, message: '请输入备注...' }]
-        })(<Input
-          placeholder="请输入"
-          value={formData.remark}
-        />)}
+        })(<Input placeholder="请输入" />)}
       </FormItem>
     </Modal>
   );

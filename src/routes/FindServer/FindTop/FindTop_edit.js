@@ -20,16 +20,20 @@ export default class CreateEditForm extends PureComponent {
 
   callSelectReturn = record => {
     if (record != null) {
-      const { dispatch } = this.props;
+      const { dispatch, form } = this.props;
       const { flag } = this.state;
       let myFormData = {};
       if (flag === 1) {
+        form.resetFields('imagePath');
+        form.resetFields('wholeCoverPath');
         myFormData = {
           imagePath: record[0].imagePath,
           wholeCoverPath: record[0].domain
         };
       }
       if (flag === 2) {
+        form.resetFields('bgPath');
+        form.resetFields('wholeBgPath');
         myFormData = {
           bgPath: record[0].imagePath,
           wholeBgPath: record[0].domain
@@ -66,6 +70,11 @@ export default class CreateEditForm extends PureComponent {
       });
     };
 
+    const cancelHandle = () => {
+      form.resetFields();
+      closeModal();
+    };
+
     const parentMethods = {
       callReturn: this.callSelectReturn,
       closeModal: this.closeSelectModal
@@ -85,16 +94,8 @@ export default class CreateEditForm extends PureComponent {
     };
 
     return (
-      <Modal
-        title={title}
-        visible={modalVisible}
-        onOk={okHandle}
-        onCancel={() => closeModal()}
-      >
-        <FormItem
-          {...formItemLayout}
-          label="榜单名称"
-        >
+      <Modal title={title} visible={modalVisible} onOk={okHandle} onCancel={cancelHandle}>
+        <FormItem {...formItemLayout} label="榜单名称">
           {form.getFieldDecorator('topName', {
             initialValue: formData.topName || '',
             rules: [
@@ -106,11 +107,7 @@ export default class CreateEditForm extends PureComponent {
           })(<Input />)}
         </FormItem>
 
-        <FormItem
-          {...formItemLayout}
-          label="榜单图片"
-          style={{ display: 'none' }}
-        >
+        <FormItem {...formItemLayout} label="榜单图片" style={{ display: 'none' }}>
           <Row>
             <Col span={20}>
               {form.getFieldDecorator('imagePath', {
@@ -124,18 +121,12 @@ export default class CreateEditForm extends PureComponent {
               })(<Input />)}
             </Col>
             <Col>
-              <Button
-                onClick={this.selectImage}
-                icon="search"
-              />
+              <Button onClick={this.selectImage} icon="search" />
             </Col>
           </Row>
         </FormItem>
 
-        <FormItem
-          {...formItemLayout}
-          label="封面图片显示"
-        >
+        <FormItem {...formItemLayout} label="封面图片显示">
           <Row>
             <Col span={20}>
               {form.getFieldDecorator('wholeCoverPath', {
@@ -146,25 +137,15 @@ export default class CreateEditForm extends PureComponent {
                     message: '请输入课程封面(素材图片)...'
                   }
                 ]
-              })(<img
-                alt=""
-                style={{ width: 100, height: 100 }}
-                src={formData.wholeCoverPath}
-              />)}
+              })(<img alt="" style={{ width: 100, height: 100 }} src={formData.wholeCoverPath} />)}
             </Col>
             <Col>
-              <Button
-                onClick={this.selectImage}
-                icon="search"
-              />
+              <Button onClick={this.selectImage} icon="search" />
             </Col>
           </Row>
         </FormItem>
 
-        <FormItem
-          {...formItemLayout}
-          label="介绍"
-        >
+        <FormItem {...formItemLayout} label="介绍">
           {form.getFieldDecorator('intro', {
             initialValue: formData.intro,
             rules: [
@@ -175,10 +156,7 @@ export default class CreateEditForm extends PureComponent {
             ]
           })(<Input />)}
         </FormItem>
-        <FormItem
-          {...formItemLayout}
-          label="是否推荐"
-        >
+        <FormItem {...formItemLayout} label="是否推荐">
           {form.getFieldDecorator('isRecc', {
             initialValue: formData.isRecc === undefined ? '' : `${formData.isRecc}`,
             rules: [
@@ -188,19 +166,13 @@ export default class CreateEditForm extends PureComponent {
               }
             ]
           })(
-            <Select
-              placeholder=""
-              style={{ width: '150px' }}
-            >
+            <Select placeholder="" style={{ width: '150px' }}>
               <Select.Option key={0}>未推荐</Select.Option>
               <Select.Option key={1}>已推荐</Select.Option>
             </Select>
           )}
         </FormItem>
-        <FormItem
-          {...formItemLayout}
-          label="是否固定首页"
-        >
+        <FormItem {...formItemLayout} label="是否固定首页">
           {form.getFieldDecorator('isIndex', {
             // eslint-disable-next-line prefer-template
             initialValue: formData.isIndex === undefined ? '' : String(formData.isIndex),
@@ -211,10 +183,7 @@ export default class CreateEditForm extends PureComponent {
               }
             ]
           })(
-            <Select
-              placeholder=""
-              style={{ width: '150px' }}
-            >
+            <Select placeholder="" style={{ width: '150px' }}>
               <Select.Option key={0}>否</Select.Option>
               <Select.Option key={1}>是</Select.Option>
             </Select>
@@ -223,6 +192,7 @@ export default class CreateEditForm extends PureComponent {
 
         <SelectImage
           {...parentMethods}
+          imagePath={formData.imagePath}
           modalVisible={this.state.modalVisible}
         />
       </Modal>

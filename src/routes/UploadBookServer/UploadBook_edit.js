@@ -58,7 +58,9 @@ export default class CreateEditForm extends PureComponent {
 
   callSelectBookPropReturn = record => {
     if (record != null) {
-      const { dispatch } = this.props;
+      const { dispatch, form } = this.props;
+      form.resetFields('bookPropId');
+      form.resetFields('bookPropName');
       const myFormData = {
         bookPropId: record[0].bookPropId,
         bookPropName: record[0].propName
@@ -73,7 +75,9 @@ export default class CreateEditForm extends PureComponent {
 
   callSelectBookStyleReturn = record => {
     if (record != null) {
-      const { dispatch } = this.props;
+      const { dispatch, form } = this.props;
+      form.resetFields('bookStyleId');
+      form.resetFields('bookStyleName');
       const myFormData = {
         bookStyleId: record[0].bookStyleId,
         bookStyleName: record[0].styleName
@@ -88,7 +92,9 @@ export default class CreateEditForm extends PureComponent {
 
   callSelectBookStorageReturn = record => {
     if (record != null) {
-      const { dispatch } = this.props;
+      const { dispatch, form } = this.props;
+      form.resetFields('bookStorageId');
+      form.resetFields('bookStorageName');
       const myFormData = {
         bookStorageId: record[0].bookStorageId,
         bookStorageName: record[0].storageName
@@ -103,7 +109,9 @@ export default class CreateEditForm extends PureComponent {
 
   callSelectReturn = record => {
     if (record != null) {
-      const { dispatch } = this.props;
+      const { dispatch, form } = this.props;
+      form.resetFields('coverPath');
+      form.resetFields('wholePhotoPath');
       const myFormData = {
         coverPath: record[0].imagePath,
         wholePhotoPath: record[0].domain
@@ -155,7 +163,7 @@ export default class CreateEditForm extends PureComponent {
     let opt1 = [];
     const opt2 = [];
     if (!isEmptyObject(options)) {
-      console.log(options);
+      // console.log(options);
       const dictOpt = JSON.parse(options.dictDatas);
       opt1 = dictOpt['32'].map(item => <Option key={item.itemNo}>{item.itemLabel}</Option>);
     }
@@ -173,6 +181,11 @@ export default class CreateEditForm extends PureComponent {
           add(fieldsValue);
         }
       });
+    };
+
+    const cancelHandle = () => {
+      form.resetFields();
+      closeModal();
     };
 
     const parentMethods = {
@@ -216,16 +229,8 @@ export default class CreateEditForm extends PureComponent {
     };
 
     return (
-      <Modal
-        title={title}
-        visible={modalVisible}
-        onOk={okHandle}
-        onCancel={() => closeModal()}
-      >
-        <FormItem
-          {...formItemLayout}
-          label="图书属性"
-        >
+      <Modal title={title} visible={modalVisible} onOk={okHandle} onCancel={cancelHandle}>
+        <FormItem {...formItemLayout} label="图书属性">
           <Row gutter={0}>
             <Col span={22}>
               {form.getFieldDecorator('bookPropName', {
@@ -239,10 +244,7 @@ export default class CreateEditForm extends PureComponent {
               })(<Input readOnly />)}
             </Col>
             <Col span={2}>
-              <Button
-                onClick={this.selectBookPropModel}
-                icon="search"
-              />
+              <Button onClick={this.selectBookPropModel} icon="search" />
             </Col>
           </Row>
         </FormItem>
@@ -256,10 +258,7 @@ export default class CreateEditForm extends PureComponent {
             <Input />
           )}
         </FormItem>
-        <FormItem
-          {...formItemLayout}
-          label="图书编号"
-        >
+        <FormItem {...formItemLayout} label="图书编号">
           {form.getFieldDecorator('bookCode', {
             initialValue: formData.bookCode || '',
             rules: [
@@ -270,10 +269,7 @@ export default class CreateEditForm extends PureComponent {
             ]
           })(<Input />)}
         </FormItem>
-        <FormItem
-          {...formItemLayout}
-          label="图书名"
-        >
+        <FormItem {...formItemLayout} label="图书名">
           {form.getFieldDecorator('bookName', {
             initialValue: formData.bookName || '',
             rules: [
@@ -284,10 +280,7 @@ export default class CreateEditForm extends PureComponent {
             ]
           })(<Input />)}
         </FormItem>
-        <FormItem
-          {...formItemLayout}
-          label="图书存放类型"
-        >
+        <FormItem {...formItemLayout} label="图书存放类型">
           {form.getFieldDecorator('bookStorageType', {
             initialValue:
               formData.bookStorageType === undefined ? '-1' : `${formData.bookStorageType}` || '',
@@ -302,10 +295,7 @@ export default class CreateEditForm extends PureComponent {
             ]
           })(<Select style={{ width: '150px' }}>{opt10}</Select>)}
         </FormItem>
-        <FormItem
-          {...formItemLayout}
-          label="封面"
-        >
+        <FormItem {...formItemLayout} label="封面">
           <Row>
             <Col span={20}>
               {form.getFieldDecorator('coverPath', {
@@ -319,27 +309,14 @@ export default class CreateEditForm extends PureComponent {
               })(<Input />)}
             </Col>
             <Col>
-              <Button
-                onClick={this.selectImage}
-                icon="search"
-              />
+              <Button onClick={this.selectImage} icon="search" />
             </Col>
           </Row>
         </FormItem>
-        <FormItem
-          {...formItemLayout}
-          label="图片显示"
-        >
-          <img
-            alt=""
-            style={{ width: 100, height: 100 }}
-            src={formData.wholePhotoPath}
-          />
+        <FormItem {...formItemLayout} label="图片显示">
+          <img alt="" style={{ width: 100, height: 100 }} src={formData.wholePhotoPath} />
         </FormItem>
-        <FormItem
-          {...formItemLayout}
-          label="作者"
-        >
+        <FormItem {...formItemLayout} label="作者">
           {form.getFieldDecorator('bookAuthor', {
             initialValue: formData.bookAuthor || '',
             rules: [
@@ -350,10 +327,7 @@ export default class CreateEditForm extends PureComponent {
             ]
           })(<Input />)}
         </FormItem>
-        <FormItem
-          {...formItemLayout}
-          label="图书简介"
-        >
+        <FormItem {...formItemLayout} label="图书简介">
           {form.getFieldDecorator('bookIntro', {
             initialValue: formData.bookIntro || '',
             rules: [
@@ -376,10 +350,7 @@ export default class CreateEditForm extends PureComponent {
           {...parentMethodsForBookStorage}
           modalVisible={this.state.bookStorageModalVisible}
         />
-        <SelectImage
-          {...parentMethods}
-          modalVisible={this.state.modalVisible}
-        />
+        <SelectImage {...parentMethods} modalVisible={this.state.modalVisible} />
       </Modal>
     );
   }

@@ -17,7 +17,7 @@ import {
   message,
   Badge,
   Divider,
-  Table,
+  Table
 } from 'antd';
 import StandardTable from 'components/StandardTable';
 import PageHeaderLayout from '../../../layouts/PageHeaderLayout';
@@ -26,10 +26,11 @@ import CreateEditForm from './FindListBook_edit';
 import SelectBookShare from '../../Select/SelectBookShare';
 import CreateFindForm from './FindListBook_find';
 import { defaultPage } from '../../../utils/utils.js';
+
 const FormItem = Form.Item;
 @connect(({ tableData, loading }) => ({
   tableData,
-  loading: loading.models.crud,
+  loading: loading.models.crud
 }))
 @Form.create()
 export default class FindListBook extends PureComponent {
@@ -39,7 +40,7 @@ export default class FindListBook extends PureComponent {
     formValues: {},
     page: defaultPage(),
     listId: '',
-    updateModalVisible: false,
+    updateModalVisible: false
   };
 
   refresh = (values, page) => {
@@ -49,14 +50,19 @@ export default class FindListBook extends PureComponent {
       path: 'findListBook/page',
       payload: {
         data: values,
-        page: page,
-      },
+        page: page
+      }
     });
     this.setState({
       modalVisible: false,
-      updateModalVisible: false,
+      updateModalVisible: false
     });
   };
+
+  componentWillMount() {
+    const { tableData } = this.props;
+    tableData.pageData.list = [];
+  }
 
   componentDidMount() {
     const { formValues, page } = this.state;
@@ -64,7 +70,7 @@ export default class FindListBook extends PureComponent {
     let findListId = tableData.formData ? tableData.formData.listId : '';
     this.setState({
       listId: findListId,
-      formValues: { findListId: findListId },
+      formValues: { findListId: findListId }
     });
     this.refresh({ findListId: findListId }, page);
   }
@@ -73,10 +79,10 @@ export default class FindListBook extends PureComponent {
     const { formValues } = this.state;
     let page = {
       pageSize: pagination.pageSize,
-      pageNo: pagination.current,
+      pageNo: pagination.current
     };
     this.setState({
-      page: page,
+      page: page
     });
     this.refresh(formValues, page);
   };
@@ -106,12 +112,13 @@ export default class FindListBook extends PureComponent {
           type: 'tableData/remove',
           path: 'findListBook/remove',
           payload: { findListBookId: record.findListBookId },
-          callback: cb,
+          callback: cb
         });
       },
-      onCancel() {},
+      onCancel() {}
     });
   };
+
   query = e => {
     e.preventDefault();
     const { dispatch, form } = this.props;
@@ -119,12 +126,12 @@ export default class FindListBook extends PureComponent {
       if (err) return;
 
       const values = {
-        ...fieldsValue,
+        ...fieldsValue
       };
       const page = defaultPage();
       this.setState({
         formValues: values,
-        page: page,
+        page: page
       });
       this.refresh(values, page);
     });
@@ -133,14 +140,14 @@ export default class FindListBook extends PureComponent {
   selectBook = () => {
     this.setState({
       modalVisible: true,
-      modalTitle: '选择图书',
+      modalTitle: '选择图书'
     });
   };
 
   closeModal = key => {
     if (!key) {
       this.setState({
-        modalVisible: false,
+        modalVisible: false
       });
     } else {
       let newState = {};
@@ -154,11 +161,11 @@ export default class FindListBook extends PureComponent {
     dispatch({
       type: 'tableData/getDataForAdd',
       path: 'findListBook/getDataForAdd',
-      payload: fields,
+      payload: fields
     });
     this.setState({
       modalTitle: '新增',
-      modalVisible: true,
+      modalVisible: true
     });
   };
 
@@ -168,7 +175,7 @@ export default class FindListBook extends PureComponent {
       type: 'tableData/add',
       path: 'findListBook/add',
       payload: fields,
-      callback: this.callback,
+      callback: this.callback
     });
   };
 
@@ -178,7 +185,7 @@ export default class FindListBook extends PureComponent {
       type: 'tableData/add',
       path: 'findListBook/add',
       payload: fields,
-      callback: this.callback,
+      callback: this.callback
     });
   };
 
@@ -187,11 +194,11 @@ export default class FindListBook extends PureComponent {
     dispatch({
       type: 'tableData/getDataForUpdate',
       path: 'findListBook/getDataForUpdate',
-      payload: { findListBookId: record.findListBookId },
+      payload: { findListBookId: record.findListBookId }
     });
     this.setState({
       modalTitle: '修改',
-      updateModalVisible: true,
+      updateModalVisible: true
     });
   };
 
@@ -199,13 +206,13 @@ export default class FindListBook extends PureComponent {
     const { dispatch, tableData } = this.props;
     let payload = {
       ...tableData.formData,
-      ...fields,
+      ...fields
     };
     dispatch({
       type: 'tableData/update',
       path: 'findListBook/update',
       payload: payload,
-      callback: this.callback,
+      callback: this.callback
     });
   };
 
@@ -215,9 +222,38 @@ export default class FindListBook extends PureComponent {
       bookUserId: selectedRows[0].bookUserId,
       bookName: selectedRows[0].bookName,
       coverPath: selectedRows[0].coverPath,
-      indexNo: 1,
+      indexNo: 1
     };
     return returnData;
+  };
+
+  closeSelectBookShareModal = () => {
+    this.setState({
+      modalVisible: false
+    });
+  };
+
+  callSelectBookShareReturn = record => {
+    if (record != null) {
+      const myFormData = {
+        findListId: this.state.listId,
+        bookUserId: record[0].bookUserId,
+        bookName: record[0].bookName,
+        coverPath: record[0].coverPath,
+        indexNo: 1
+      };
+      this.addSave(myFormData);
+    }
+    this.closeSelectBookShareModal();
+  };
+
+  back = () => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'tableData/goUrl',
+      path: '/findServer/findList',
+      payload: {}
+    });
   };
 
   renderForm() {
@@ -233,19 +269,19 @@ export default class FindListBook extends PureComponent {
     const columns = [
       {
         title: '系统id',
-        dataIndex: 'findListBookId',
+        dataIndex: 'findListBookId'
       },
       {
         title: '所属书单',
-        dataIndex: 'findListId',
+        dataIndex: 'findListId'
       },
       {
         title: '图书用户id',
-        dataIndex: 'bookUserId',
+        dataIndex: 'bookUserId'
       },
       {
         title: '图书名称',
-        dataIndex: 'bookName',
+        dataIndex: 'bookName'
       },
       {
         title: '图书封面',
@@ -254,15 +290,15 @@ export default class FindListBook extends PureComponent {
           <Fragment>
             <img alt="" style={{ width: 50, height: 50 }} src={record.wholePhotoPath} />
           </Fragment>
-        ),
+        )
       },
       {
         title: '顺序',
-        dataIndex: 'indexNo',
+        dataIndex: 'indexNo'
       },
       {
         title: '创建时间',
-        dataIndex: 'createTime',
+        dataIndex: 'createTime'
       },
       {
         title: '操作',
@@ -272,16 +308,21 @@ export default class FindListBook extends PureComponent {
             <Divider type="vertical" />
             <a onClick={() => this.remove(record)}>删除</a>
           </Fragment>
-        ),
-      },
+        )
+      }
     ];
+
+    const parentMethodsForBook = {
+      callReturn: this.callSelectBookShareReturn,
+      closeModal: this.closeSelectBookShareModal
+    };
 
     const parentMethods = {
       add: this.add,
       addSave: this.addSave,
       getSelectedDate: this.getSelectedDate,
       update: this.update,
-      closeModal: this.closeModal,
+      closeModal: this.closeModal
     };
     return (
       <PageHeaderLayout>
@@ -291,6 +332,9 @@ export default class FindListBook extends PureComponent {
             <div className={styles.tableListOperator}>
               <Button type="primary" onClick={() => this.selectBook()}>
                 新建
+              </Button>
+              <Button type="default" onClick={() => this.back()}>
+                返回
               </Button>
             </div>
             <Table
@@ -310,7 +354,11 @@ export default class FindListBook extends PureComponent {
           title={modalTitle}
           listId={listId}
         />
-        <SelectBookShare {...parentMethods} modalVisible={modalVisible} modalTitle={modalTitle} />
+        <SelectBookShare
+          {...parentMethodsForBook}
+          modalVisible={modalVisible}
+          modalTitle={modalTitle}
+        />
       </PageHeaderLayout>
     );
   }

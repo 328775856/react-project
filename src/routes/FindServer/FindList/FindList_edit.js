@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { Button, Col, Form, Input, Modal, Row, Select } from 'antd';
+import { Button, Col, Form, Input, InputNumber, Modal, Row, Select } from 'antd';
 import SelectArticle from '../../Select/SelectArticle';
 import SelectImage from '../../Select/SelectImage';
 
@@ -9,31 +9,33 @@ const { TextArea } = Input;
 export default class CreateEditForm extends PureComponent {
   state = {
     imageModalVisible: false,
-    articleModalVisible: false,
+    articleModalVisible: false
   };
 
   closeSelectModal = () => {
     this.setState({
-      imageModalVisible: false,
+      imageModalVisible: false
     });
   };
 
   closeSelectArticleModal = () => {
     this.setState({
-      articleModalVisible: false,
+      articleModalVisible: false
     });
   };
 
   callSelectReturn = record => {
     if (record != null) {
-      const { dispatch } = this.props;
+      const { dispatch, form } = this.props;
+      form.resetFields('imagePath');
+      form.resetFields('wholePhotoPath');
       let myFormData = {
         imagePath: record[0].imagePath,
-        wholePhotoPath: record[0].domain,
+        wholePhotoPath: record[0].domain
       };
       dispatch({
         type: 'tableData/select',
-        payload: myFormData,
+        payload: myFormData
       });
     }
     this.closeSelectModal();
@@ -41,14 +43,16 @@ export default class CreateEditForm extends PureComponent {
 
   callSelectArticleReturn = record => {
     if (record != null) {
-      const { dispatch } = this.props;
+      const { dispatch, form } = this.props;
+      form.resetFields('mediaArticleId');
+      form.resetFields('articleTitle');
       let myFormData = {
         mediaArticleId: record[0].mediaArticleId,
-        articleTitle: record[0].articleTitle,
+        articleTitle: record[0].articleTitle
       };
       dispatch({
         type: 'tableData/select',
-        payload: myFormData,
+        payload: myFormData
       });
     }
     this.closeSelectArticleModal();
@@ -56,13 +60,13 @@ export default class CreateEditForm extends PureComponent {
 
   selectImage = () => {
     this.setState({
-      imageModalVisible: true,
+      imageModalVisible: true
     });
   };
 
   selectArticleModel = () => {
     this.setState({
-      articleModalVisible: true,
+      articleModalVisible: true
     });
   };
 
@@ -76,7 +80,7 @@ export default class CreateEditForm extends PureComponent {
       formData,
       title,
       dispatch,
-      options,
+      options
     } = this.props;
     const opt = options.map(item => <Option key={item.findChannelId}>{item.channelName}</Option>);
     const okHandle = () => {
@@ -92,40 +96,45 @@ export default class CreateEditForm extends PureComponent {
       });
     };
 
+    const cancelHandle = () => {
+      form.resetFields();
+      closeModal();
+    };
+
     const parentMethods = {
       callReturn: this.callSelectReturn,
-      closeModal: this.closeSelectModal,
+      closeModal: this.closeSelectModal
     };
 
     const parentMethodsForArticle = {
       callReturn: this.callSelectArticleReturn,
-      closeModal: this.closeSelectArticleModal,
+      closeModal: this.closeSelectArticleModal
     };
 
     const formItemLayout = {
       labelCol: {
         xs: { span: 24 },
         sm: { span: 7 },
-        md: { span: 5 },
+        md: { span: 5 }
       },
       wrapperCol: {
         xs: { span: 24 },
         sm: { span: 12 },
-        md: { span: 13 },
-      },
+        md: { span: 13 }
+      }
     };
 
     return (
-      <Modal title={title} visible={modalVisible} onOk={okHandle} onCancel={() => closeModal()}>
+      <Modal title={title} visible={modalVisible} onOk={okHandle} onCancel={cancelHandle}>
         <FormItem {...formItemLayout} label="书单名称">
           {form.getFieldDecorator('listName', {
             initialValue: formData.listName || '',
             rules: [
               {
                 required: true,
-                message: '请输入用户ID...',
-              },
-            ],
+                message: '请输入书单名称...'
+              }
+            ]
           })(<Input />)}
         </FormItem>
         <FormItem {...formItemLayout} label="所属栏目">
@@ -134,9 +143,9 @@ export default class CreateEditForm extends PureComponent {
             rules: [
               {
                 required: true,
-                message: '请选择分组...',
-              },
-            ],
+                message: '请选择所属栏目...'
+              }
+            ]
           })(
             <Select placeholder="" style={{ width: '150px' }}>
               {opt || ''}
@@ -151,9 +160,9 @@ export default class CreateEditForm extends PureComponent {
                 rules: [
                   {
                     required: true,
-                    message: '请输入从素材(图片信息中)引入...',
-                  },
-                ],
+                    message: '请输入从素材(图片信息中)引入...'
+                  }
+                ]
               })(<Input />)}
             </Col>
             <Col>
@@ -169,9 +178,9 @@ export default class CreateEditForm extends PureComponent {
                 rules: [
                   {
                     required: true,
-                    message: '请输入从素材(图片信息中)引入...',
-                  },
-                ],
+                    message: '请输入从素材(图片信息中)引入...'
+                  }
+                ]
               })(<img alt="" style={{ width: 100, height: 100 }} src={formData.wholePhotoPath} />)}
             </Col>
             <Col>
@@ -186,9 +195,9 @@ export default class CreateEditForm extends PureComponent {
               {
                 required: true,
                 message: '请输入长度小于75个字符的介绍...',
-                max: 75,
-              },
-            ],
+                max: 75
+              }
+            ]
           })(<TextArea autosize={{ minRows: 2, maxRows: 6 }} />)}
         </FormItem>
         <FormItem {...formItemLayout} label="是否推荐">
@@ -196,9 +205,9 @@ export default class CreateEditForm extends PureComponent {
             initialValue: formData.isRecc === undefined ? '1' : `${formData.isRecc}`,
             rules: [
               {
-                required: true,
-              },
-            ],
+                required: true
+              }
+            ]
           })(
             <Select style={{ width: '100%' }}>
               <Select.Option value="0">未推荐</Select.Option>
@@ -211,9 +220,9 @@ export default class CreateEditForm extends PureComponent {
             initialValue: formData.isIndex === undefined ? '1' : `${formData.isIndex}`,
             rules: [
               {
-                required: true,
-              },
-            ],
+                required: true
+              }
+            ]
           })(
             <Select style={{ width: '100%' }}>
               <Select.Option value="1">是</Select.Option>
@@ -229,9 +238,9 @@ export default class CreateEditForm extends PureComponent {
                 rules: [
                   {
                     required: true,
-                    message: '请输入描述(素材图文)...',
-                  },
-                ],
+                    message: '请输入描述(素材图文)...'
+                  }
+                ]
               })(<Input />)}
             </Col>
             <Col span={2}>
@@ -244,7 +253,7 @@ export default class CreateEditForm extends PureComponent {
             <Col span={22}>
               {form.getFieldDecorator('articleTitle', {
                 initialValue: formData.articleTitle || '',
-                rules: [{ required: true, message: '请选择图文!' }],
+                rules: [{ required: true, message: '请选择图文!' }]
               })(<Input readOnly />)}
             </Col>
             <Col span={2}>
@@ -258,13 +267,21 @@ export default class CreateEditForm extends PureComponent {
             rules: [
               {
                 required: true,
-                message: '请输入界面排版显示书数量...',
-              },
-            ],
-          })(<Input />)}
+                message: '请输入界面排版显示书数量...'
+              }
+            ]
+          })(<InputNumber min={0} max={255} />)}
         </FormItem>
-        <SelectImage {...parentMethods} modalVisible={this.state.imageModalVisible} />
-        <SelectArticle {...parentMethodsForArticle} modalVisible={this.state.articleModalVisible} />
+        <SelectImage
+          {...parentMethods}
+          imagePath={formData.imagePath}
+          modalVisible={this.state.imageModalVisible}
+        />
+        <SelectArticle
+          {...parentMethodsForArticle}
+          mediaArticleId={formData.mediaArticleId}
+          modalVisible={this.state.articleModalVisible}
+        />
       </Modal>
     );
   }

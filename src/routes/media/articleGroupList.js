@@ -24,7 +24,7 @@ import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from '../../assets/styles.less';
 import CreateEditForm from './articleGroupEdit';
 import CreateFindForm from './articleGroupFind';
-import { defaultPage } from '../../utils/utils.js';
+import { defaultPage, formatTime } from '../../utils/utils.js';
 
 const FormItem = Form.Item;
 @connect(({ restTableData, loading }) => ({
@@ -54,6 +54,11 @@ export default class MediaArticleGroup extends PureComponent {
       modalVisible: false
     });
   };
+
+  componentWillMount() {
+    const { restTableData } = this.props;
+    restTableData.pageData.list = '';
+  }
 
   componentDidMount() {
     const { formValues, page } = this.state;
@@ -129,7 +134,8 @@ export default class MediaArticleGroup extends PureComponent {
   };
 
   getDataForAdd = fields => {
-    const { dispatch } = this.props;
+    const { dispatch, restTableData } = this.props;
+    restTableData.formData = '';
     dispatch({
       type: 'restTableData/getDataForAdd',
       path: 'media/articleGroup/getDataForAdd',
@@ -154,7 +160,7 @@ export default class MediaArticleGroup extends PureComponent {
   getDataForUpdate = record => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'restTableData/getDataForUpdate',
+      type: 'restTableData/getData',
       path: 'media/articleGroup/getDataForUpdate',
       payload: { mediaArticleGroupId: record.mediaArticleGroupId }
     });
@@ -188,10 +194,6 @@ export default class MediaArticleGroup extends PureComponent {
 
     const columns = [
       {
-        title: '系统id',
-        dataIndex: 'mediaArticleGroupId'
-      },
-      {
         title: '名称',
         dataIndex: 'groupName'
       },
@@ -203,6 +205,11 @@ export default class MediaArticleGroup extends PureComponent {
         title: '默认分组',
         dataIndex: 'isDefault',
         render: (text, record) => <Fragment>{text === 1 ? '是' : '否'}</Fragment>
+      },
+      {
+        title: '创建时间',
+        dataIndex: 'createTime',
+        render: (text, record) => <Fragment>{formatTime(text)}</Fragment>
       },
       {
         title: '操作',
@@ -227,15 +234,12 @@ export default class MediaArticleGroup extends PureComponent {
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
             <div className={styles.tableListOperator}>
-              <Button
-                type="primary"
-                onClick={() => this.getDataForAdd()}
-              >
+              <Button type="primary" onClick={() => this.getDataForAdd()}>
                 新建
               </Button>
             </div>
             <Table
-              dataSource={restTableData.pageData.list}
+              dataSource={restTableData.pageData.list || []}
               columns={columns}
               rowKey="mediaArticleGroupId"
               pagination={restTableData.pageData.pagination}

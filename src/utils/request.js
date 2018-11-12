@@ -43,6 +43,8 @@ function checkStatus(response) {
  * @return {object}           An object containing either "data" or "err"
  */
 export default function request(url, options) {
+  // url="api/GbManager/GbManager"+url;//用于发布
+  console.log(url)
   const defaultOptions = {
     credentials: 'include'
   };

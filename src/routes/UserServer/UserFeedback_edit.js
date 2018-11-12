@@ -39,26 +39,23 @@ const CreateEditForm = Form.create()(props => {
     opt2 = options['11'].map(item => <Option key={item.itemNo}>{item.itemLabel}</Option>);
     opt3 = options['12'].map(item => <Option key={item.itemNo}>{item.itemLabel}</Option>);
   }
-  const opt10 = [];
+  let opt10 = [];
   opt10.push(<Option key="-1">请选择</Option>);
   opt10.push(opt1);
-  const opt20 = [];
+  let opt20 = [];
   opt20.push(<Option key="-1">请选择</Option>);
   opt20.push(opt2);
-  const opt30 = [];
+  let opt30 = [];
   opt30.push(<Option key="-1">请选择</Option>);
   opt30.push(opt3);
   const okHandle = () => {
-    form.validateFields((err, fieldsValue) => {
-      if (err) return;
-      form.resetFields();
-      if (formData.userFeedbackId >= 0) {
-        fieldsValue.userFeedbackId = formData.userFeedbackId;
-        update(fieldsValue);
-      } else {
-        add(fieldsValue);
-      }
-    });
+    form.resetFields();
+    closeModal();
+  };
+
+  const cancelHandle = () => {
+    form.resetFields();
+    closeModal();
   };
 
   const formItemLayout = {
@@ -85,198 +82,73 @@ const CreateEditForm = Form.create()(props => {
       title={title}
       visible={modalVisible}
       onOk={okHandle}
-      onCancel={() => closeModal()}
+      onCancel={cancelHandle}
+      footer={null}
     >
-      <FormItem
-        {...formItemLayout}
-        label="账号id"
-      >
-        {form.getFieldDecorator('userId', {
-          initialValue: formData.userId || '',
-          rules: [
-            {
-              required: true,
-              message: '请输入账号id...'
-            }
-          ]
+      <FormItem {...formItemLayout} label="昵称">
+        {form.getFieldDecorator('nickname', {
+          initialValue: formData.nickname || ''
         })(<Input />)}
       </FormItem>
-      <FormItem
-        {...formItemLayout}
-        label="藏书馆图书id"
-      >
-        {form.getFieldDecorator('bookUserId', {
-          initialValue: formData.bookUserId || '',
-          rules: [
-            {
-              required: true,
-              message: '请输入藏书馆图书id...'
-            }
-          ]
+      <FormItem {...formItemLayout} label="藏书馆图书名">
+        {form.getFieldDecorator('bookName', {
+          initialValue: formData.bookName || ''
         })(<Input />)}
       </FormItem>
-      <FormItem
-        {...formItemLayout}
-        label="错误类型"
-      >
+      <FormItem {...formItemLayout} label="错误类型">
         {form.getFieldDecorator('errorType', {
-          initialValue: formData.errorType === undefined ? '-1' : `${formData.errorType}` || '',
-          rules: [
-            {
-              required: true,
-              message: '请选择错误类型'
-            },
-            {
-              validator: checkContent.bind(this)
-            }
-          ]
+          initialValue: formData.errorType === undefined ? '-1' : `${formData.errorType}` || ''
         })(<Select style={{ width: '150px' }}>{opt20}</Select>)}
       </FormItem>
-      <FormItem
-        {...formItemLayout}
-        label="错误原因"
-      >
+      <FormItem {...formItemLayout} label="错误原因">
         {form.getFieldDecorator('errorContent', {
-          initialValue: formData.errorContent || '',
-          rules: [
-            {
-              required: true,
-              message: '请输入错误原因...'
-            }
-          ]
-        })(<Input />)}
+          initialValue: formData.errorContent || ''
+        })(<Input.TextArea style={{ height: 150 }} />)}
       </FormItem>
-      <FormItem
-        {...formItemLayout}
-        label="处理状态"
-      >
+      <FormItem {...formItemLayout} label="处理状态">
         {form.getFieldDecorator('dealStatus', {
-          initialValue: formData.dealStatus === undefined ? '0' : `${formData.dealStatus}` || '',
-          rules: [
-            {
-              required: true,
-              message: '请选择处理状态...'
-            },
-            {
-              validator: checkContent.bind(this)
-            }
-          ]
+          initialValue: formData.dealStatus === undefined ? '0' : `${formData.dealStatus}` || ''
         })(<Select style={{ width: '150px' }}>{opt10}</Select>)}
       </FormItem>
-      <FormItem
-        {...formItemLayout}
-        label="处理时间"
-      >
+      <FormItem {...formItemLayout} label="处理时间">
         {form.getFieldDecorator('dealTime', {
-          initialValue: formData.dealTime || '',
-          rules: [
-            {
-              required: true,
-              message: '请输入处理时间...'
-            }
-          ]
+          initialValue: formData.dealTime || '暂无处理时间'
         })(<Input />)}
       </FormItem>
-      <FormItem
-        {...formItemLayout}
-        label="处理内容"
-      >
+      <FormItem {...formItemLayout} label="处理内容">
         {form.getFieldDecorator('dealContent', {
-          initialValue: formData.dealContent || '',
-          rules: [
-            {
-              required: true,
-              message: '请输入处理内容...'
-            }
-          ]
+          initialValue: formData.dealContent || '暂无处理内容'
+        })(<Input.TextArea style={{ height: 150 }} />)}
+      </FormItem>
+      <FormItem {...formItemLayout} label="操作人">
+        {form.getFieldDecorator('dealByName', {
+          initialValue: formData.dealByName || '暂无处理'
         })(<Input />)}
       </FormItem>
-      <FormItem
-        {...formItemLayout}
-        label="操作人"
-      >
-        {form.getFieldDecorator('dealBy', {
-          initialValue: formData.dealBy || '',
-          rules: [
-            {
-              required: true,
-              message: '请输入操作人...'
-            }
-          ]
-        })(<Input />)}
-      </FormItem>
-      <FormItem
-        {...formItemLayout}
-        label="终端类型"
-      >
+      <FormItem {...formItemLayout} label="终端类型">
         {form.getFieldDecorator('terminalType', {
           initialValue:
-            formData.terminalType === undefined ? '-1' : `${formData.terminalType}` || '',
-          rules: [
-            {
-              required: true,
-              message: '请选择终端类型...'
-            },
-            {
-              validator: checkContent.bind(this)
-            }
-          ]
+            formData.terminalType === undefined ? '-1' : `${formData.terminalType}` || ''
         })(<Select style={{ width: '150px' }}>{opt30}</Select>)}
       </FormItem>
-      <FormItem
-        {...formItemLayout}
-        label="终端唯一"
-      >
+      <FormItem {...formItemLayout} label="终端唯一">
         {form.getFieldDecorator('terminalSn', {
-          initialValue: formData.terminalSn || '',
-          rules: [
-            {
-              required: true,
-              message: '请输入终端唯一...'
-            }
-          ]
+          initialValue: formData.terminalSn || ''
         })(<Input />)}
       </FormItem>
-      <FormItem
-        {...formItemLayout}
-        label="终端名称"
-      >
+      <FormItem {...formItemLayout} label="终端名称">
         {form.getFieldDecorator('terminalName', {
-          initialValue: formData.terminalName || '',
-          rules: [
-            {
-              required: true,
-              message: '请输入终端名称...'
-            }
-          ]
+          initialValue: formData.terminalName || ''
         })(<Input />)}
       </FormItem>
-      <FormItem
-        {...formItemLayout}
-        label="app版本号"
-      >
+      <FormItem {...formItemLayout} label="app版本号">
         {form.getFieldDecorator('appVersionNo', {
-          initialValue: formData.appVersionNo || '',
-          rules: [
-            {
-              required: true,
-              message: '请输入app版本号...'
-            }
-          ]
+          initialValue: formData.appVersionNo || ''
         })(<Input />)}
       </FormItem>
-      <FormItem
-        {...formItemLayout}
-        label="app版本名称"
-      >
+      <FormItem {...formItemLayout} label="app版本名称">
         {form.getFieldDecorator('appVersionName', {
-          initialValue: formData.appVersionName || '',
-          rules: [
-            {
-              required: true,
-              message: '请输入app版本名称...'
-            }
-          ]
+          initialValue: formData.appVersionName || ''
         })(<Input />)}
       </FormItem>
     </Modal>

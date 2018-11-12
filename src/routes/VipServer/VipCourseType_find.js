@@ -29,45 +29,25 @@ function CreateFindFrom(props, formQuery, formReset, isEmptyObject, curState) {
   const { form } = props;
   const { getFieldDecorator } = form;
   return (
-    <Form
-      onSubmit={formQuery}
-      layout="inline"
-    >
+    <Form onSubmit={formQuery} layout="inline">
       <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
-        <Col
-          md={8}
-          sm={24}
-        >
-          <FormItem label="vip包">
-            {form.getFieldDecorator('vipPackageId')(
-              <Select style={{ width: '150px' }}>{optionsEle}</Select>
-            )}
+        <Col md={8} sm={24}>
+          <FormItem label="VIP包">
+            {form.getFieldDecorator('vipPackageId')(<Select>{optionsEle}</Select>)}
           </FormItem>
         </Col>
-        <Col
-          md={8}
-          sm={24}
-        >
+        <Col md={8} sm={24}>
           <FormItem label="标签名">
             {form.getFieldDecorator('typename')(<Input placeholder="" />)}
           </FormItem>
         </Col>
 
-        <Col
-          md={8}
-          sm={24}
-        >
+        <Col md={8} sm={24}>
           <span>
-            <Button
-              type="primary"
-              htmlType="submit"
-            >
+            <Button type="primary" htmlType="submit">
               查询
             </Button>
-            <Button
-              style={{ marginLeft: 8 }}
-              onClick={formReset}
-            >
+            <Button style={{ marginLeft: 8 }} onClick={formReset}>
               重置
             </Button>
           </span>

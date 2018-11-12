@@ -55,6 +55,11 @@ const CreateEditForm = Form.create()(props => {
     });
   };
 
+  const cancelHandle = () => {
+    form.resetFields();
+    closeModal();
+  };
+
   const formItemLayout = {
     labelCol: {
       xs: { span: 24 },
@@ -69,16 +74,8 @@ const CreateEditForm = Form.create()(props => {
   };
 
   return (
-    <Modal
-      title={title}
-      visible={modalVisible}
-      onOk={okHandle}
-      onCancel={() => closeModal()}
-    >
-      <FormItem
-        {...formItemLayout}
-        label="终端名称"
-      >
+    <Modal title={title} visible={modalVisible} onOk={okHandle} onCancel={cancelHandle}>
+      <FormItem {...formItemLayout} label="终端名称">
         {form.getFieldDecorator('terminalName', {
           initialValue: formData.terminalName || '',
           rules: [
@@ -89,10 +86,7 @@ const CreateEditForm = Form.create()(props => {
           ]
         })(<Input />)}
       </FormItem>
-      <FormItem
-        {...formItemLayout}
-        label="终端路径"
-      >
+      <FormItem {...formItemLayout} label="终端路径">
         {form.getFieldDecorator('terminalPath', {
           initialValue: formData.terminalPath || '',
           rules: [
@@ -103,10 +97,7 @@ const CreateEditForm = Form.create()(props => {
           ]
         })(<Input />)}
       </FormItem>
-      <FormItem
-        {...formItemLayout}
-        label="终端ID"
-      >
+      <FormItem {...formItemLayout} label="终端ID">
         {form.getFieldDecorator('terminalId', {
           initialValue: formData.terminalId || '',
           rules: [
@@ -117,10 +108,7 @@ const CreateEditForm = Form.create()(props => {
           ]
         })(<Input />)}
       </FormItem>
-      <FormItem
-        {...formItemLayout}
-        label="终端SECRET"
-      >
+      <FormItem {...formItemLayout} label="终端SECRET">
         {form.getFieldDecorator('terminalSecret', {
           initialValue: formData.terminalSecret || '',
           rules: [
@@ -131,10 +119,7 @@ const CreateEditForm = Form.create()(props => {
           ]
         })(<Input />)}
       </FormItem>
-      <FormItem
-        {...formItemLayout}
-        label="是否检查"
-      >
+      <FormItem {...formItemLayout} label="是否检查">
         {form.getFieldDecorator('paramCheck', {
           initialValue: formData.paramCheck === undefined ? '1' : `${formData.paramCheck}` || '',
           rules: [
@@ -145,10 +130,7 @@ const CreateEditForm = Form.create()(props => {
           ]
         })(<Select style={{ width: '150px' }}>{opt1}</Select>)}
       </FormItem>
-      <FormItem
-        {...formItemLayout}
-        label="有效开始日期"
-      >
+      <FormItem {...formItemLayout} label="有效开始日期">
         {form.getFieldDecorator('beginDate', {
           initialValue: formData.beginDate ? moment(formData.beginDate, 'YYYYMMDD') : '',
           rules: [
@@ -157,12 +139,9 @@ const CreateEditForm = Form.create()(props => {
               message: '请输入有效开始日期...'
             }
           ]
-        })(<DatePicker format="YYYYMMDD" />)}
+        })(<DatePicker format="YYYY-MM-DD" />)}
       </FormItem>
-      <FormItem
-        {...formItemLayout}
-        label="有效结束日期"
-      >
+      <FormItem {...formItemLayout} label="有效结束日期">
         {form.getFieldDecorator('endDate', {
           initialValue: formData.endDate ? moment(formData.endDate, 'YYYYMMDD') : '',
           rules: [
@@ -171,7 +150,7 @@ const CreateEditForm = Form.create()(props => {
               message: '请输入有效结束日期...'
             }
           ]
-        })(<DatePicker format="YYYYMMDD" />)}
+        })(<DatePicker format="YYYY-MM-DD" />)}
       </FormItem>
     </Modal>
   );

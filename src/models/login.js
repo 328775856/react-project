@@ -16,7 +16,7 @@ export default {
   effects: {
     *login({ payload }, { call, put }) {
       const response = yield call(postUrl, '/user/login', payload);
-      console.log(response, '123');
+      // console.log(response, '123');
       yield put({
         type: 'setStatus',
         payload: response
@@ -58,9 +58,9 @@ export default {
       yield put(
         routerRedux.push({
           pathname: '/user/login',
-          search: stringify({
-            redirect: window.location.href
-          })
+          // search: stringify({
+          //   redirect: window.location.href
+          // })
         })
       );
     }

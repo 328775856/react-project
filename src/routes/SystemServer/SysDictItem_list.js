@@ -42,6 +42,11 @@ export default class SysDictItem extends PureComponent {
     });
   };
 
+  componentWillMount() {
+    const { tableData } = this.props;
+    tableData.pageData.list = [];
+  }
+
   componentDidMount() {
     const { formValues, page } = this.state;
     const { tableData } = this.props;
@@ -55,7 +60,7 @@ export default class SysDictItem extends PureComponent {
   }
 
   tableChange = (pagination, filtersArg, sorter) => {
-    const { formValues } = this.state;
+    const { paramData } = this.state;
     const page = {
       pageSize: pagination.pageSize,
       pageNo: pagination.current
@@ -63,7 +68,7 @@ export default class SysDictItem extends PureComponent {
     this.setState({
       page
     });
-    this.refresh(params, page);
+    this.refresh(paramData, page);
   };
 
   formReset = () => {
@@ -236,16 +241,10 @@ export default class SysDictItem extends PureComponent {
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
             <div className={styles.tableListOperator}>
-              <Button
-                type="primary"
-                onClick={() => this.getDataForAdd()}
-              >
+              <Button type="primary" onClick={() => this.getDataForAdd()}>
                 新建
               </Button>
-              <Button
-                type="default"
-                onClick={() => this.ret()}
-              >
+              <Button type="default" onClick={() => this.ret()}>
                 返回
               </Button>
             </div>

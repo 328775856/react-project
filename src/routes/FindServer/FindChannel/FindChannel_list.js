@@ -24,7 +24,8 @@ import PageHeaderLayout from '../../../layouts/PageHeaderLayout';
 import styles from '../../../assets/styles.less';
 import CreateEditForm from './FindChannel_edit';
 import TimingPublishModal from './FindChannel_timing';
-import { defaultPage } from '../../../utils/utils';
+import { defaultPage, formatDate } from '../../../utils/utils';
+import fetch from '../../../utils/fetch';
 
 const channelType = { 1: '专题', 2: '书单', 3: '图书推荐', 4: '好书推荐', 5: '榜单' };
 const publishStatus = { 0: '未发布', 1: '已发布', 2: '定时发布' };
@@ -44,8 +45,14 @@ export default class FindChannel extends PureComponent {
     modalVisible: false,
     publishForm: {},
     publishModalVisible: false,
-    page: defaultPage()
+    page: defaultPage(),
+    TableData: []
   };
+
+  componentWillMount() {
+    const { commonTableData } = this.props;
+    commonTableData.pageData.list = '';
+  }
 
   componentDidMount() {
     const { formValues } = this.state;
@@ -79,14 +86,23 @@ export default class FindChannel extends PureComponent {
   };
 
   refresh = values => {
-    const { dispatch } = this.props;
     const { page } = this.state;
-    dispatch({
-      type: 'commonTableData/list',
-      path: 'findChannel/query',
-      payload: {
-        data: values,
-        page
+    const { commonTableData } = this.props;
+    fetch('findChannel/query', 'post', {
+      data: values,
+      page
+    }).then(res => {
+      if (res.err) {
+        return;
+      }
+      if (res.data.status === 200) {
+        commonTableData.pageData.list = res.data.data.rows;
+        commonTableData.pageData.pagination = {
+          total: res.data.data.total
+        };
+        this.setState({
+          TableData: res.data.data.rows
+        });
       }
     });
     this.setState({
@@ -252,14 +268,14 @@ export default class FindChannel extends PureComponent {
   renderPublishOP = record => {
     const { unPublishOP, publishOP, timingPublishOP } = this;
     switch (record.publishStatus) {
-    case 0:
-      return unPublishOP(record);
-    case 1:
-      return publishOP(record);
-    case 2:
-      return timingPublishOP(record);
-    default:
-      return null;
+      case 0:
+        return unPublishOP(record);
+      case 1:
+        return publishOP(record);
+      case 2:
+        return timingPublishOP(record);
+      default:
+        return null;
     }
   };
 
@@ -275,7 +291,7 @@ export default class FindChannel extends PureComponent {
       publishChange
     } = this;
     const { loading, commonTableData } = this.props;
-    const { modalVisible, modalTitle, publishModalVisible, publishForm } = this.state;
+    const { modalVisible, modalTitle, publishModalVisible, publishForm, TableData } = this.state;
     const parentMethods = {
       add,
       update,
@@ -316,7 +332,9 @@ export default class FindChannel extends PureComponent {
       {
         title: '发布日期',
         dataIndex: 'publishDate',
-        render: (text, record) => <Fragment>{record.publishStatus === 0 ? '' : text}</Fragment>
+        render: (text, record) => (
+          <Fragment>{record.publishStatus === 0 ? '' : formatDate(text)}</Fragment>
+        )
       },
       {
         title: '操作',
@@ -329,15 +347,12 @@ export default class FindChannel extends PureComponent {
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListOperator}>
-              <Button
-                type="primary"
-                onClick={() => this.getDataForAdd()}
-              >
+              <Button type="primary" onClick={() => this.getDataForAdd()}>
                 新建
               </Button>
             </div>
             <Table
-              dataSource={commonTableData.pageData.list}
+              dataSource={TableData}
               columns={columns}
               rowKey="findChannelId"
               loading={loading}

@@ -27,12 +27,22 @@ const CreateEditForm = Form.create()(props => {
     add,
     update,
     closeModal,
+    options,
     formData,
     title,
     audioGroup,
     mul,
     div
   } = props;
+  const formatList = ['mp3', 'aac'];
+  // const getOptionId = formatName => {
+  //   for (let i = 0; i < options.length; i++) {
+  //     if (formatName === options[i].itemLabel) {
+  //       return options[i].itemNo;
+  //     }
+  //   }
+  //   return 1;
+  // };
   const handleUploadChange = fileList => {
     let filePath = '';
     if (fileList.length != 0 && fileList[0].fileName) {
@@ -42,31 +52,37 @@ const CreateEditForm = Form.create()(props => {
       return;
     }
     const minute = div(fileList[0].millisecond, 60000, 0, 'floor');
-    const second = div(fileList[0].millisecond - mul(minute, 60000), 1000, 0, 'round');
+    formData.minute = minute;
+    const second = 3;
     const values = {
       audioPath: filePath,
-      audioFormat: fileList[0].format ? 1 : 0,
+      audioFormat: formatList.indexOf(fileList[0].format) + 1,
       minute,
       second
     };
+    // debugger
+
     form.setFieldsValue(values);
+    formData.audioPath = fileList[0].fileName || formData.audioPath;
   };
-  const uploadProps = {
-    uid: `${formData.mediaVideoId}`,
+  let uploadProps = {
+    uid: formData.mediaAudioId,
     action: '/file/uploadAudio',
     length: 1,
     accept: 'audio/*',
     maxFileSize: 50,
     onChange: handleUploadChange,
-    fileList: [
-      {
-        fileName: `${formData.audioPath}`,
-        name: `${formData.audioPath}`,
-        status: 'done',
-        uid: `${formData.audioPath}`,
-        url: `${formData.domain}/${formData.audioPath}`
-      }
-    ]
+    fileList: formData.audioPath ?
+      [
+        {
+          fileName: `${formData.audioPath}`,
+          name: `${formData.audioPath}`,
+          status: 'done',
+          uid: `${formData.audioPath}`,
+          url: `${formData.domain}/${formData.audioPath}`
+        }
+      ] :
+      []
   };
   const okHandle = () => {
     form.validateFields((err, fieldsValue) => {
@@ -81,6 +97,11 @@ const CreateEditForm = Form.create()(props => {
     });
   };
 
+  const cancelHandle = () => {
+    form.resetFields();
+    closeModal();
+  };
+
   const formItemLayout = {
     labelCol: {
       xs: { span: 24 },
@@ -93,20 +114,18 @@ const CreateEditForm = Form.create()(props => {
       md: { span: 13 }
     }
   };
-
   return (
     <Modal
+      destroyOnClose
       title={title}
       visible={modalVisible}
       onOk={okHandle}
-      onCancel={() => closeModal()}
+      onCancel={cancelHandle}
     >
-      <FormItem
-        {...formItemLayout}
-        label="分组ID"
-      >
+      <FormItem {...formItemLayout} label="分组">
         {form.getFieldDecorator('mediaAudioGroupId', {
-          initialValue: formData.mediaAudioGroupId || '',
+          initialValue:
+            formData.mediaAudioGroupId === undefined ? '' : `${formData.mediaAudioGroupId}`,
           rules: [
             {
               required: true,
@@ -114,18 +133,12 @@ const CreateEditForm = Form.create()(props => {
             }
           ]
         })(
-          <Select
-            placeholder=""
-            style={{ width: '150px' }}
-          >
+          <Select placeholder="" style={{ width: '150px' }}>
             {audioGroup || ''}
           </Select>
         )}
       </FormItem>
-      <FormItem
-        {...formItemLayout}
-        label="名称"
-      >
+      <FormItem {...formItemLayout} label="名称">
         {form.getFieldDecorator('audioName', {
           initialValue: formData.audioName || '',
           rules: [
@@ -136,34 +149,24 @@ const CreateEditForm = Form.create()(props => {
           ]
         })(<Input />)}
       </FormItem>
-      <FormItem
-        labelCol={{ span: 5 }}
-        wrapperCol={{ span: 15 }}
-        label="选择音频"
-      >
+      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="选择音频">
         {form.getFieldDecorator('fileUpload', {
-          initialValue: formData.filePath || '',
+          initialValue: formData.filePath || [{}],
           rules: [{ required: true, message: '请选择音频...' }]
         })(<GbUpload {...uploadProps} />)}
       </FormItem>
-      <FormItem
-        {...formItemLayout}
-        label="描述"
-      >
+      <FormItem {...formItemLayout} label="描述">
         {form.getFieldDecorator('audioDesc', {
           initialValue: formData.audioDesc || '',
           rules: [
             {
-              required: false,
+              required: true,
               message: '请输入描述...'
             }
           ]
-        })(<Input />)}
+        })(<Input.TextArea />)}
       </FormItem>
-      <FormItem
-        {...formItemLayout}
-        label="音频路径"
-      >
+      <FormItem {...formItemLayout} label="音频路径">
         {form.getFieldDecorator('audioPath', {
           initialValue: formData.audioPath || '',
           rules: [
@@ -174,10 +177,7 @@ const CreateEditForm = Form.create()(props => {
           ]
         })(<Input readOnly />)}
       </FormItem>
-      <FormItem
-        {...formItemLayout}
-        label="音频格式"
-      >
+      <FormItem {...formItemLayout} label="音频格式">
         {form.getFieldDecorator('audioFormat', {
           initialValue: formData.audioFormat || '',
           rules: [
@@ -188,24 +188,22 @@ const CreateEditForm = Form.create()(props => {
           ]
         })(<Input readOnly />)}
       </FormItem>
-      <FormItem
-        {...formItemLayout}
-        label="时长-分钟"
-      >
-        {form.getFieldDecorator('minute', {
-          initialValue: formData.minute || '',
-          rules: [
-            {
-              required: false,
-              message: '请输入时长-分钟...'
-            }
-          ]
-        })(<Input readOnly />)}
-      </FormItem>
-      <FormItem
-        {...formItemLayout}
-        label="时长-秒"
-      >
+      {formData.minute ? (
+        <FormItem {...formItemLayout} label="时长-分钟">
+          {form.getFieldDecorator('minute', {
+            initialValue: formData.minute || '',
+            rules: [
+              {
+                required: false,
+                message: '请输入时长-分钟...'
+              }
+            ]
+          })(<Input readOnly />)}
+        </FormItem>
+      ) :
+        ''
+      }
+      <FormItem {...formItemLayout} label="时长-秒">
         {form.getFieldDecorator('second', {
           initialValue: formData.second || '',
           rules: [

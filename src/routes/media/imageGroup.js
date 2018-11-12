@@ -24,12 +24,13 @@ import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from '../../assets/styles.less';
 import CreateEditForm from './imageGroupEdit';
 import CreateFindForm from './imageGroupFind';
+import { formatTime } from '../../utils/utils';
 
 const FormItem = Form.Item;
 
-@connect(({ crud, loading }) => ({
-  crud,
-  loading: loading.models.crud
+@connect(({ restTableData, loading }) => ({
+  restTableData,
+  loading: loading.models.restTableData
 }))
 @Form.create()
 export default class TableList extends PureComponent {
@@ -43,7 +44,7 @@ export default class TableList extends PureComponent {
   refresh() {
     const { dispatch } = this.props;
     dispatch({
-      type: 'crud/list',
+      type: 'restTableData/list',
       path: 'media/imageGroup/getGroupPage',
       payload: {
         page: {
@@ -57,10 +58,15 @@ export default class TableList extends PureComponent {
     });
   }
 
+  componentWillMount() {
+    const { restTableData } = this.props;
+    restTableData.pageData.list = '';
+  }
+
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
-      type: 'crud/list',
+      type: 'restTableData/list',
       path: 'media/imageGroup/getGroupPage',
       payload: {
         page: {
@@ -81,24 +87,16 @@ export default class TableList extends PureComponent {
       ...formValues
     };
     dispatch({
-      type: 'crud/list',
+      type: 'restTableData/list',
       path: 'media/imageGroup/getGroupPage',
-      payload: params
+      payload: {
+        page: params
+      }
     });
   };
 
   formReset = () => {
-    const { form, dispatch } = this.props;
-    this.setState({
-      formValues: {}
-    });
-    console.log('000000000000000');
-    dispatch({
-      type: 'crud/list',
-      path: 'media/imageGroup/getGroupPage',
-      payload: {}
-    });
-
+    const { form } = this.props;
     form.resetFields();
   };
 
@@ -109,7 +107,6 @@ export default class TableList extends PureComponent {
   };
 
   query = e => {
-    console.log(1111111111111111111);
     e.preventDefault();
     const { dispatch, form } = this.props;
 
@@ -131,7 +128,7 @@ export default class TableList extends PureComponent {
       });
 
       dispatch({
-        type: 'crud/list',
+        type: 'restTableData/list',
         path: 'media/imageGroup/getGroupPage',
         payload: values
       });
@@ -156,18 +153,17 @@ export default class TableList extends PureComponent {
   addSave = fields => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'crud/addSave',
+      type: 'restTableData/add',
       path: 'media/imageGroup',
-      payload: fields
+      payload: fields,
+      callback: this.callback
     });
-    message.success('保存成功');
-    this.refresh();
   };
 
   update = record => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'crud/update',
+      type: 'restTableData/getData',
       path: `media/imageGroup/${record.mediaImageGroupId}`
     });
     this.setState({
@@ -179,23 +175,38 @@ export default class TableList extends PureComponent {
   updateSave = fields => {
     const { dispatch, formData } = this.props;
     dispatch({
-      type: 'crud/updateSave',
+      type: 'restTableData/update',
       path: 'media/imageGroup',
-      payload: fields
+      payload: fields,
+      callback: this.callback
     });
-    message.success('修改成功');
-    this.refresh();
+  };
+
+  callback = () => {
+    const { restTableData } = this.props;
+    if (restTableData.status === 200) {
+      // const { formValues, page } = this.state;
+      this.refresh();
+    } else {
+      message.success(restTableData.message);
+    }
   };
 
   delete = record => {
     const { dispatch } = this.props;
-    dispatch({
-      type: 'crud/delete',
-      path: 'media/imageGroup',
-      payload: { mediaImageGroupId: record.mediaImageGroupId }
+    const cb = this.callback;
+    Modal.confirm({
+      title: '确定删除吗?',
+      onOk() {
+        dispatch({
+          type: 'restTableData/delete',
+          path: 'media/imageGroup',
+          payload: { mediaImageGroupId: record.mediaImageGroupId },
+          callback: cb
+        });
+      },
+      onCancel() {}
     });
-    message.success('删除成功');
-    this.refresh();
   };
 
   renderForm() {
@@ -204,8 +215,8 @@ export default class TableList extends PureComponent {
 
   render() {
     const {
-      crud: { pageData },
-      crud: { formData },
+      restTableData: { pageData },
+      restTableData: { formData },
       loading
     } = this.props;
     const { selectedRows, modalVisible, modalTitle } = this.state;
@@ -230,7 +241,8 @@ export default class TableList extends PureComponent {
       },
       {
         title: '创建时间',
-        dataIndex: 'createTime'
+        dataIndex: 'createTime',
+        render: (text, record) => <Fragment>{formatTime(text)}</Fragment>
       },
       {
         title: '操作',
@@ -256,10 +268,7 @@ export default class TableList extends PureComponent {
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
             <div className={styles.tableListOperator}>
-              <Button
-                type="primary"
-                onClick={() => this.add()}
-              >
+              <Button type="primary" onClick={() => this.add()}>
                 新建
               </Button>
             </div>

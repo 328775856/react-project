@@ -23,8 +23,9 @@ import StandardTable from 'components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from '../../assets/styles.less';
 import CreateEditForm from './UserFeedback_edit';
+import CreateHandleForm from './UserFeedback_handle';
 import CreateFindForm from './UserFeedback_find';
-import { defaultPage } from '../../utils/utils.js';
+import { defaultPage, formatTime } from '../../utils/utils.js';
 
 const FormItem = Form.Item;
 @connect(({ tableData, loading }) => ({
@@ -35,7 +36,9 @@ const FormItem = Form.Item;
 export default class UserFeedback extends PureComponent {
   state = {
     modalVisible: false,
+    modalHandleVisible: false,
     modalTitle: '',
+    modalHandleTitle: '',
     formValues: {},
     page: defaultPage(),
     options: {}
@@ -52,9 +55,15 @@ export default class UserFeedback extends PureComponent {
       }
     });
     this.setState({
-      modalVisible: false
+      modalVisible: false,
+      modalHandleVisible: false
     });
   };
+
+  componentWillMount() {
+    const { tableData } = this.props;
+    tableData.pageData.list = '';
+  }
 
   componentDidMount() {
     const { formValues, page, options } = this.state;
@@ -87,7 +96,7 @@ export default class UserFeedback extends PureComponent {
 
   callback = () => {
     const { tableData } = this.props;
-    if (tableData.status == 200) {
+    if (tableData.status === 200) {
       const { formValues, page } = this.state;
       this.refresh(formValues, page);
     } else {
@@ -103,23 +112,6 @@ export default class UserFeedback extends PureComponent {
     });
 
     console.log(this.state);
-  };
-
-  remove = record => {
-    const { dispatch, tableData } = this.props;
-    const cb = this.callback;
-    Modal.confirm({
-      title: '确定删除吗?',
-      onOk() {
-        dispatch({
-          type: 'tableData/remove',
-          path: 'userFeedback/remove',
-          payload: { userFeedbackId: record.userFeedbackId },
-          callback: cb
-        });
-      },
-      onCancel() {}
-    });
   };
 
   query = e => {
@@ -142,7 +134,8 @@ export default class UserFeedback extends PureComponent {
 
   closeModal = () => {
     this.setState({
-      modalVisible: false
+      modalVisible: false,
+      modalHandleVisible: false
     });
   };
 
@@ -177,8 +170,21 @@ export default class UserFeedback extends PureComponent {
       payload: { userFeedbackId: record.userFeedbackId }
     });
     this.setState({
-      modalTitle: '修改',
+      modalTitle: '详情',
       modalVisible: true
+    });
+  };
+
+  getDataForHandle = record => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'tableData/getDataForUpdate',
+      path: 'userFeedback/getDataForUpdate',
+      payload: { userFeedbackId: record.userFeedbackId }
+    });
+    this.setState({
+      modalHandleTitle: '错误处理',
+      modalHandleVisible: true
     });
   };
 
@@ -198,6 +204,7 @@ export default class UserFeedback extends PureComponent {
       ...tableData.formData,
       ...fields
     };
+    debugger;
     dispatch({
       type: 'tableData/update',
       path: 'userFeedback/update',
@@ -212,29 +219,30 @@ export default class UserFeedback extends PureComponent {
 
   render() {
     const { tableData, loading } = this.props;
-    const { modalVisible, modalTitle, options } = this.state;
+    const { modalVisible, modalTitle, options, modalHandleVisible, modalHandleTitle } = this.state;
 
     const columns = [
       {
-        title: '系统id',
-        dataIndex: 'userFeedbackId'
+        title: '昵称',
+        dataIndex: 'nickname'
       },
       {
-        title: '账号id',
+        title: '用户Id',
         dataIndex: 'userId'
       },
       {
-        title: '藏书馆图书id',
-        dataIndex: 'bookUserId'
+        title: '藏书馆图书名',
+        dataIndex: 'bookName'
       },
       {
         title: '错误类型',
         dataIndex: 'errorType',
         render(text, record) {
-          const dict = record => {
-            let res = '';
-            const myArray = options['11'];
-            for (const k in myArray) {
+          var dict = record => {
+            var res = '';
+            var myArray = options['11'];
+            // eslint-disable-next-line vars-on-top
+            for (var k in myArray) {
               if (record.errorType === myArray[k].itemNo) {
                 res = myArray[k].itemLabel;
                 break;
@@ -253,10 +261,11 @@ export default class UserFeedback extends PureComponent {
         title: '处理状态',
         dataIndex: 'dealStatus',
         render(text, record) {
-          const dict = record => {
-            let res = '';
-            const myArray = options['5'];
-            for (const k in myArray) {
+          var dict = record => {
+            var res = '';
+            var myArray = options['5'];
+            // eslint-disable-next-line vars-on-top
+            for (var k in myArray) {
               if (record.dealStatus === myArray[k].itemNo) {
                 res = myArray[k].itemLabel;
                 break;
@@ -269,57 +278,32 @@ export default class UserFeedback extends PureComponent {
       },
       {
         title: '处理时间',
-        dataIndex: 'dealTime'
-      },
-      {
-        title: '处理内容',
-        dataIndex: 'dealContent'
-      },
-      {
-        title: '操作人',
-        dataIndex: 'dealBy'
-      },
-      {
-        title: '终端类型',
-        dataIndex: 'terminalType',
+        dataIndex: 'dealTime',
         render(text, record) {
-          const dict = record => {
-            let res = '';
-            const myArray = options['12'];
-            for (const k in myArray) {
-              if (record.terminalType === myArray[k].itemNo) {
-                res = myArray[k].itemLabel;
-                break;
-              }
-            }
-            return res;
-          };
-          return <Fragment>{dict(record)}</Fragment>;
+          return <Fragment>{text === 0 ? '暂无处理时间' : formatTime(text)}</Fragment>;
         }
       },
       {
-        title: '终端唯一',
-        dataIndex: 'terminalSn'
+        title: '处理内容',
+        dataIndex: 'dealContent',
+        render(text, record) {
+          return <Fragment>{text === '' ? '暂无处理内容' : text}</Fragment>;
+        }
       },
       {
-        title: '终端名称',
-        dataIndex: 'terminalName'
-      },
-      {
-        title: 'app版本号',
-        dataIndex: 'appVersionNo'
-      },
-      {
-        title: 'app版本名称',
-        dataIndex: 'appVersionName'
+        title: '操作人',
+        dataIndex: 'dealByName',
+        render(text, record) {
+          return <Fragment>{text === undefined ? '暂无处理人' : text}</Fragment>;
+        }
       },
       {
         title: '操作',
         render: (text, record) => (
           <Fragment>
-            <a onClick={() => this.getDataForUpdate(record)}>修改</a>
+            <a onClick={() => this.getDataForUpdate(record)}>详情</a>
             <Divider type="vertical" />
-            <a onClick={() => this.remove(record)}>删除</a>
+            <a onClick={() => this.getDataForHandle(record)}>处理</a>
           </Fragment>
         )
       }
@@ -336,14 +320,6 @@ export default class UserFeedback extends PureComponent {
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
-            <div className={styles.tableListOperator}>
-              <Button
-                type="primary"
-                onClick={() => this.getDataForAdd()}
-              >
-                新建
-              </Button>
-            </div>
             <Table
               dataSource={tableData.pageData.list}
               columns={columns}
@@ -359,6 +335,13 @@ export default class UserFeedback extends PureComponent {
           modalVisible={modalVisible}
           formData={tableData.formData}
           title={modalTitle}
+          options={options}
+        />
+        <CreateHandleForm
+          {...parentMethods}
+          modalVisible={modalHandleVisible}
+          formData={tableData.formData}
+          title={modalHandleTitle}
           options={options}
         />
       </PageHeaderLayout>

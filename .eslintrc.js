@@ -47,9 +47,9 @@ module.exports = {
     'no-implicit-coercion': 1, //禁止隐式转换
     'no-implied-eval': 2, //禁止使用隐式eval
     'no-inline-comments': 0, //禁止行内备注
-    'no-inner-declarations': [2, 'functions'], //禁止在块语句中使用声明（变量或函数）
+    'no-inner-declarations': [1, 'functions'], //禁止在块语句中使用声明（变量或函数）
     'no-invalid-regexp': 2, //禁止无效的正则表达式
-    'no-invalid-this': 1, //禁止无效的this，只能用在构造器，类，对象字面量
+    'no-invalid-this': 0, //禁止无效的this，只能用在构造器，类，对象字面量
     'no-irregular-whitespace': 2, //不能有不规则的空格
     'no-iterator': 2, //禁止使用__iterator__ 属性
     'no-label-var': 2, //label名不能与var声明的变量名相同
@@ -101,9 +101,9 @@ module.exports = {
     'no-undefined': 0, //不能使用undefined
     'no-unexpected-multiline': 2, //避免多行表达式
     'no-underscore-dangle': 1, //标识符不能以_开头或结尾
-    'no-unneeded-ternary': 2, //禁止不必要的嵌套 var isYes = answer === 1 ? true : false;
+    'no-unneeded-ternary': 1, //禁止不必要的嵌套 var isYes = answer === 1 ? true : false;
     'no-unreachable': 2, //不能有无法执行的代码
-    'no-unused-expressions': 2, //禁止无用的表达式
+    'no-unused-expressions': 1, //禁止无用的表达式
     'no-unused-vars': [1, { vars: 'all', args: 'after-used' }], //不能有声明后未被使用的变量或参数
     'no-use-before-define': 1, //未定义前不能使用
     'no-useless-call': 2, //禁止不必要的call和apply
@@ -124,7 +124,7 @@ module.exports = {
     camelcase: 2, //强制驼峰法命名
     'comma-dangle': [1, 'never'], //对象字面量项尾不能有逗号
     'comma-spacing': 0, //逗号前后的空格
-    'comma-style': [1, 'last'], //逗号风格，换行时在行首还是行尾
+    'comma-style': [1], //逗号风格，换行时在行首还是行尾
     complexity: [0, 11], //循环复杂度
     'computed-property-spacing': [0, 'never'], //是否允许计算后的键名什么的
     'consistent-return': 0, //return 后面是否允许省略
@@ -142,7 +142,7 @@ module.exports = {
     'guard-for-in': 0, //for in循环要用if语句过滤
     'handle-callback-err': 0, //nodejs 处理错误
     'id-length': 0, //变量名长度
-    indent: [1, 2], //缩进风格
+    indent: [1], //缩进风格
     'init-declarations': 0, //声明时必须赋初值
     'key-spacing': [0, { beforeColon: false, afterColon: true }], //对象字面量中冒号的前后空格
     'lines-around-comment': 0, //行前/行后备注
@@ -187,15 +187,16 @@ module.exports = {
     'wrap-iife': [2, 'inside'], //立即执行函数表达式的小括号风格
     'wrap-regex': 0, //正则表达式字面量用小括号包起来
     yoda: [2, 'never'], //禁止尤达条件
-    'jsx-quotes': [2, 'prefer-double'], //强制在JSX属性（jsx-quotes）中一致使用双引号
+    'jsx-quotes': [1, 'prefer-double'], //强制在JSX属性（jsx-quotes）中一致使用双引号
     'react/display-name': 0, //防止在React组件定义中丢失displayName
     'react/forbid-prop-types': [2, { forbid: ['any'] }], //禁止某些propTypes
     'react/jsx-boolean-value': 2, //在JSX中强制布尔属性符号
     'react/jsx-closing-bracket-location': 1, //在JSX中验证右括号位置
     'react/jsx-curly-spacing': [2, { when: 'never', children: true }], //在JSX属性和表达式中加强或禁止大括号内的空格。
     'react/jsx-indent-props': [0, 4], //验证JSX中的props缩进
+    'react/jsx-indent': [0], //验证JSX中的props缩进
     'react/jsx-key': 2, //在数组或迭代器中验证JSX具有key属性
-    'react/jsx-max-props-per-line': [1, { maximum: 1 }], // 限制JSX中单行上的props的最大数量
+    'react/jsx-max-props-per-line': [4, { maximum: 4 }], // 限制JSX中单行上的props的最大数量
     'react/jsx-no-bind': 0, //JSX中不允许使用箭头函数和bind
     'react/jsx-no-duplicate-props': 1, //防止在JSX中重复的props
     'react/jsx-no-literals': 0, //防止使用未包装的JSX字符串
@@ -242,6 +243,9 @@ module.exports = {
     'arrow-body-style': 1,
     'no-useless-escape': 1,
     'prefer-template': 1,
+    'react/jsx-tag-spacing': 1,
+    'react/jsx-first-prop-new-line': 1,
+    'react/jsx-closing-tag-location': 1,
   },
   parserOptions: {
     ecmaFeatures: {

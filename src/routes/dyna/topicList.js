@@ -20,14 +20,13 @@ import {
   Table
 } from 'antd';
 import moment from 'moment';
-import StandardTable from 'components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from '../../assets/styles.less';
 import CreateEditForm from './topicEdit';
 import CreateFindForm from './topicFind';
 import CommendForm from './topicCommend';
 import TimeToPublishForm from './topicTimeToPublish';
-import { defaultPage } from '../../utils/utils.js';
+import { defaultPage, formatTime } from '../../utils/utils.js';
 
 const FormItem = Form.Item;
 @connect(({ restTableData, loading }) => ({
@@ -61,6 +60,11 @@ export default class DynaTopic extends PureComponent {
       timeToPushModalVisible: false
     });
   };
+
+  componentWillMount() {
+    const { restTableData } = this.props;
+    restTableData.pageData.list = [];
+  }
 
   componentDidMount() {
     const { formValues, page } = this.state;
@@ -199,7 +203,8 @@ export default class DynaTopic extends PureComponent {
   };
 
   publish = record => {
-    const { dispatch, callback } = this.props;
+    const { dispatch } = this.props;
+    const cb = this.callback;
     Modal.confirm({
       title: '确定上架吗?',
       onOk() {
@@ -207,7 +212,7 @@ export default class DynaTopic extends PureComponent {
           type: 'restTableData/update',
           path: 'dyna/topic/publish',
           payload: { dynaTopicId: record.dynaTopicId },
-          callback
+          callback: cb
         });
       },
       onCancel() {}
@@ -215,7 +220,8 @@ export default class DynaTopic extends PureComponent {
   };
 
   off = record => {
-    const { dispatch, callback } = this.props;
+    const { dispatch } = this.props;
+    const cb = this.callback;
     Modal.confirm({
       title: '确定下架吗?',
       onOk() {
@@ -223,7 +229,7 @@ export default class DynaTopic extends PureComponent {
           type: 'restTableData/update',
           path: 'dyna/topic/off',
           payload: { dynaTopicId: record.dynaTopicId },
-          callback
+          callback: cb
         });
       },
       onCancel() {}
@@ -322,27 +328,49 @@ export default class DynaTopic extends PureComponent {
     }
     if (text == 1) {
       return '已发布';
+    } else if (text == 2) {
+      return '定时发布';
     }
-    return '定时发布';
   };
 
-  formatTime = text => {
-    if (text == null || text === 0) {
-      return '';
-    }
-    const str = new String(text);
-    const time = {
-      year: str.substr(0, 4),
-      month: parseInt(str.substr(4, 2)) + 1,
-      date: str.substr(6, 2),
-      hour: str.substr(8, 2),
-      minute: str.substr(10, 2),
-      second: str.substr(12, 2)
-    };
-    return moment()
-      .set(time)
-      .format('YYYY-MM-DD HH:mm:ss');
-  };
+  publishOP = record => (
+    <Fragment>
+      <a onClick={() => this.off(record)}>下架</a>
+      <Divider type="vertical" />
+      <a onClick={() => this.showComment(record)}>查看评论</a>
+    </Fragment>
+  );
+
+  unPublishOP = record => (
+    <Fragment>
+      <a onClick={() => this.publish(record)}>发布</a>
+      <Divider type="vertical" />
+      <a onClick={() => this.getDataForTimeToPublish(record)}>定时发布</a>
+      <Divider type="vertical" />
+      <a onClick={() => this.getDataForRecommend(record)}>推荐</a>
+      <Divider type="vertical" />
+      <a onClick={() => this.showComment(record)}>查看评论</a>
+      <Divider type="vertical" />
+      <a onClick={() => this.getDataForUpdate(record)}>修改</a>
+      <Divider type="vertical" />
+      <a onClick={() => this.delete(record)}>删除</a>
+    </Fragment>
+  );
+
+  timingPublishOP = record => (
+    <Fragment>
+      <a onClick={() => this.off(record)}>下架</a>
+      <Divider type="vertical" />
+      <a onClick={() => this.showComment(record)}>查看评论</a>
+    </Fragment>
+  );
+
+  renderPublishOP = record =>
+    record.publishStatus === 0 ?
+      this.unPublishOP(record) :
+      record.publishStatus === 1 ?
+        this.publishOP(record) :
+        this.timingPublishOP(record);
 
   renderForm() {
     return CreateFindForm(this.props, this.query, this.formReset);
@@ -354,7 +382,7 @@ export default class DynaTopic extends PureComponent {
 
     const columns = [
       {
-        title: '系统id',
+        title: '系统ID',
         dataIndex: 'dynaTopicId'
       },
       {
@@ -363,7 +391,17 @@ export default class DynaTopic extends PureComponent {
       },
       {
         title: '话题类型',
-        dataIndex: 'topicType'
+        dataIndex: 'topicType',
+        render: (text, record) => {
+          //话题类型(字典:1话题,2活动,3投票 默认为1)
+          if (text == 1) {
+            return <Fragment>话题</Fragment>;
+          } else if (text == 2) {
+            return <Fragment>活动</Fragment>;
+          } else if (text == 3) {
+            return <Fragment>投票</Fragment>;
+          }
+        }
       },
       {
         title: '浏览数',
@@ -385,7 +423,7 @@ export default class DynaTopic extends PureComponent {
       {
         title: '发布时间',
         dataIndex: 'publishTime',
-        render: (text, record) => <Fragment>{this.formatTime(text)}</Fragment>
+        render: (text, record) => <Fragment>{formatTime(text)}</Fragment>
       },
       {
         title: '排序(0为不启用推荐)',
@@ -393,23 +431,7 @@ export default class DynaTopic extends PureComponent {
       },
       {
         title: '操作',
-        render: (text, record) => (
-          <Fragment>
-            <a onClick={() => this.publish(record)}>发布</a>
-            <Divider type="vertical" />
-            <a onClick={() => this.off(record)}>下架</a>
-            <Divider type="vertical" />
-            <a onClick={() => this.getDataForRecommend(record)}>推荐</a>
-            <Divider type="vertical" />
-            <a onClick={() => this.getDataForUpdate(record)}>修改</a>
-            <Divider type="vertical" />
-            <a onClick={() => this.delete(record)}>删除</a>
-            <Divider type="vertical" />
-            <a onClick={() => this.getDataForTimeToPublish(record)}>定时发布</a>
-            <Divider type="vertical" />
-            <a onClick={() => this.showComment(record)}>查看评论</a>
-          </Fragment>
-        )
+        render: (text, record) => <Fragment>{this.renderPublishOP(record)}</Fragment>
       }
     ];
 
@@ -426,15 +448,12 @@ export default class DynaTopic extends PureComponent {
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
             <div className={styles.tableListOperator}>
-              <Button
-                type="primary"
-                onClick={() => this.getDataForAdd()}
-              >
+              <Button type="primary" onClick={() => this.getDataForAdd()}>
                 新建
               </Button>
             </div>
             <Table
-              dataSource={restTableData.pageData.list}
+              dataSource={restTableData.pageData.list || []}
               columns={columns}
               rowKey="dynaTopicId"
               pagination={restTableData.pageData.pagination}
