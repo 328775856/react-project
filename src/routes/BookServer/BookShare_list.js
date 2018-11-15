@@ -203,7 +203,7 @@ export default class BookShare extends PureComponent {
     dispatch({
       type: 'tableData/getDataForUpdate',
       path: 'bookShare/getDataForUpdate',
-      payload: { bookId: record.bookId }
+      payload: { bookId: record.bookId, bookUserId: record.bookUserId }
     });
     this.setState({
       modalTitle: '修改',

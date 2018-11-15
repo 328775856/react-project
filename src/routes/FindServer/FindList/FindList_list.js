@@ -376,15 +376,15 @@ export default class FindList extends PureComponent {
         title: '推荐人',
         dataIndex: 'nickname'
       },
-      {
-        title: '书单图片',
-        dataIndex: 'wholePhotoPath',
-        render: (text, record) => (
-          <Fragment>
-            <img alt="" style={{ width: 50, height: 50 }} src={record.wholePhotoPath} />
-          </Fragment>
-        )
-      },
+      // {
+      //   title: '书单图片',
+      //   dataIndex: 'wholePhotoPath',
+      //   render: (text, record) => (
+      //     <Fragment>
+      //       <img alt="" style={{ width: 50, height: 50 }} src={record.wholePhotoPath} />
+      //     </Fragment>
+      //   )
+      // },
       {
         title: '书单介绍',
         dataIndex: 'listIntro'

@@ -29,20 +29,20 @@ import { defaultPage, mul, div, formatTime } from '../../utils/utils.js';
 
 const FormItem = Form.Item;
 
-const formatList = ['aac','mp3']
+const formatList = ['aac', 'mp3'];
 @connect(({ restTableData, loading }) => ({
   restTableData,
   loading: loading.models.crud
 }))
 @Form.create()
-
 export default class MediaAudio extends PureComponent {
   state = {
     modalVisible: false,
     modalTitle: '',
     formValues: {},
     page: defaultPage(),
-    options: {}
+    options: {},
+    isNew:false
   };
 
   initGroup = () => {
@@ -171,7 +171,7 @@ export default class MediaAudio extends PureComponent {
   };
 
   initOptionsCallback = response => {
-    console.log(response)
+    console.log(response);
     this.setState({
       options: JSON.parse(response.data)
     });
@@ -186,7 +186,8 @@ export default class MediaAudio extends PureComponent {
     });
     this.setState({
       modalTitle: '新增',
-      modalVisible: true
+      modalVisible: true,
+      isNew:true
     });
   };
 
@@ -209,7 +210,8 @@ export default class MediaAudio extends PureComponent {
     });
     this.setState({
       modalTitle: '修改',
-      modalVisible: true
+      modalVisible: true,
+      isNew:false
     });
   };
 
@@ -253,7 +255,7 @@ export default class MediaAudio extends PureComponent {
         title: '音频格式',
         dataIndex: 'audioFormat',
         render(text, record) {
-          return <Fragment>{formatList[text-1]}</Fragment>;
+          return <Fragment>{formatList[text - 1]}</Fragment>;
         }
       },
       {
@@ -274,8 +276,6 @@ export default class MediaAudio extends PureComponent {
         render: (text, record) => (
           <Fragment>
             <a onClick={() => this.getDataForUpdate(record)}>修改</a>
-            <Divider type="vertical" />
-            <a onClick={() => this.delete(record)}>删除</a>
           </Fragment>
         )
       }
@@ -311,6 +311,7 @@ export default class MediaAudio extends PureComponent {
           modalVisible={modalVisible}
           formData={restTableData.formData}
           title={modalTitle}
+          isNew={this.state.isNew}
           audioGroup={restTableData.audioGroup}
           mul={mul}
           div={div}

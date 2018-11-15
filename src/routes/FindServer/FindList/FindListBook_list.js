@@ -235,14 +235,17 @@ export default class FindListBook extends PureComponent {
 
   callSelectBookShareReturn = record => {
     if (record != null) {
-      const myFormData = {
-        findListId: this.state.listId,
-        bookUserId: record[0].bookUserId,
-        bookName: record[0].bookName,
-        coverPath: record[0].coverPath,
-        indexNo: 1
-      };
-      this.addSave(myFormData);
+      //Todo 此处应该可以 传入数组，需后台接口支持
+      for (let i = 0; i < record.length; i++) {
+        const myFormData = {
+          findListId: this.state.listId,
+          bookUserId: record[i].bookUserId,
+          bookName: record[i].bookName,
+          coverPath: record[i].coverPath,
+          indexNo: 1
+        };
+        this.addSave(myFormData);
+      }
     }
     this.closeSelectBookShareModal();
   };

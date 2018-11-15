@@ -34,7 +34,7 @@ function CreateConditionForm(props, formQuery, formReset, options) {
             {getFieldDecorator('imageName')(<Input placeholder="" />)}
           </FormItem>
         </Col>
-        <Col md={6} sm={12}>
+        <Col md={8} sm={12}>
           <FormItem label="分组">
             {getFieldDecorator('mediaImageGroupId')(<Select placeholder="">{groupOptions}</Select>)}
           </FormItem>

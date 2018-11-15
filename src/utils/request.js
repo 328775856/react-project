@@ -43,8 +43,10 @@ function checkStatus(response) {
  * @return {object}           An object containing either "data" or "err"
  */
 export default function request(url, options) {
+  if(process.env.NODE_ENV ==='production'){
+    url="api/GbManager/GbManager/"+url;
+  }
   // url="api/GbManager/GbManager"+url;//用于发布
-  console.log(url)
   const defaultOptions = {
     credentials: 'include'
   };

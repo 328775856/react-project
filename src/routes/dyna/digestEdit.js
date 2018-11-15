@@ -28,14 +28,10 @@ export default class CreateEditForm extends PureComponent {
       const { dispatch, form } = this.props;
       form.resetFields('bookUserId');
       form.resetFields('bookName');
-      form.resetFields('imagePath');
-      form.resetFields('wholeImagePath');
       form.resetFields('bookPropId');
       const myFormData = {
         bookUserId: record[0].bookUserId,
         bookName: record[0].bookName,
-        imagePath: record[0].coverPath,
-        wholeImagePath: record[0].wholePhotoPath,
         bookPropId: record[0].bookPropId
       };
       dispatch({

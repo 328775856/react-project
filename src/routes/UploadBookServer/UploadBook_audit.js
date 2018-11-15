@@ -9,7 +9,6 @@ const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
 const CreateAuditForm = Form.create()(props => {
   const { modalVisible, form, audit, closeModal, formData, title, isEmptyObject, options } = props;
-  // console.log(formData, '2');
   let opt1 = [];
   let opt2 = [];
   let opt3 = [];
@@ -30,7 +29,6 @@ const CreateAuditForm = Form.create()(props => {
     if (formData.tryReadContentMap.endWord) {
       endWord = formData.tryReadContentMap.endWord;
     }
-
   }
   if (!isEmptyObject(options)) {
     const dictOpt = JSON.parse(options.dictDatas);
@@ -87,7 +85,7 @@ const CreateAuditForm = Form.create()(props => {
     });
   };
 
-  const keyWordChange = curKeyWord => {
+  const keyWordChange = val => {
     const { dispatch } = props;
     dispatch({
       type: 'tableData/getDataForUpdate',
@@ -96,7 +94,7 @@ const CreateAuditForm = Form.create()(props => {
         bookUserId: formData.bookUserId,
         tryReadContentMap: {
           startWord: 0,
-          keyWord: curKeyWord
+          keyWord: val
         }
       }
     });
@@ -132,25 +130,31 @@ const CreateAuditForm = Form.create()(props => {
       >
         <div className={styles.container} style={{}}>
           <div>
-            <select style={{}} size="13">
+            <Select
+              value={
+                formData.tryReadContentMap && formData.tryReadContentMap.keyWord ?
+                  formData.tryReadContentMap.keyWord :
+                  ''
+              }
+              getPopupContainer={triggerNode => triggerNode.parentNode}
+              style={{ width: 120 }}
+              onSelect={val => {
+                keyWordChange(val);
+              }}
+              open={modalVisible}
+            >
               {opt3.map((el, index) => (
-                <option
-                  key={index}
-                  value={el.key}
-                  onClick={() => {
-                    keyWordChange(el.key);
-                  }}
-                >
+                <Option key={index} value={el.key}>
                   {el.key}({el.count})
-                </option>
+                </Option>
               ))}
-            </select>
+            </Select>
           </div>
           <div style={{}}>
             <div className={styles.prev} onClick={prev}>
               上一页
             </div>
-            <div className={styles.content}>{content}</div>
+            <div className={styles.content} dangerouslySetInnerHTML={{ __html: content }} />
             <div className={styles.next} onClick={next}>
               下一页
             </div>
@@ -183,7 +187,7 @@ const CreateAuditForm = Form.create()(props => {
                   ]
                 })(<Select style={{ width: '150px' }}>{opt11}</Select>)}
               </FormItem>
-             {/* <Button>选择</Button>*/}
+              {/* <Button>选择</Button>*/}
             </div>
             <FormItem {...formItemLayout} label="">
               {form.getFieldDecorator('isPass', {
@@ -199,8 +203,8 @@ const CreateAuditForm = Form.create()(props => {
                 initialValue: formData.isPass === undefined ? '-1' : `${formData.isPass}` || ''
               })(
                 <RadioGroup>
-                  <RadioButton value="0">审核通过</RadioButton>
-                  <RadioButton value="1">审核不通过</RadioButton>
+                  <RadioButton value="1">审核通过</RadioButton>
+                  <RadioButton value="0">审核不通过</RadioButton>
                   <RadioButton value="2">黑名单</RadioButton>
                 </RadioGroup>
               )}

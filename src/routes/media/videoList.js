@@ -38,7 +38,8 @@ export default class MediaVideo extends PureComponent {
     modalVisible: false,
     modalTitle: '',
     formValues: {},
-    page: defaultPage()
+    page: defaultPage(),
+    isNew:false
   };
 
   initGroup = () => {
@@ -164,7 +165,8 @@ export default class MediaVideo extends PureComponent {
     });
     this.setState({
       modalTitle: '新增',
-      modalVisible: true
+      modalVisible: true,
+      isNew:true
     });
   };
 
@@ -187,7 +189,8 @@ export default class MediaVideo extends PureComponent {
     });
     this.setState({
       modalTitle: '修改',
-      modalVisible: true
+      modalVisible: true,
+      isNew:false
     });
   };
 
@@ -290,6 +293,7 @@ export default class MediaVideo extends PureComponent {
           videoGroup={restTableData.videoGroup}
           mul={mul}
           div={div}
+          isNew={this.state.isNew}
         />
       </PageHeaderLayout>
     );

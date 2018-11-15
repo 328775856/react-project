@@ -1,7 +1,6 @@
 import React, { PureComponent } from 'react';
 import moment from 'moment';
 import { connect } from 'dva';
-import { Link } from 'dva/router';
 import { Row, Col, Card, List, Avatar } from 'antd';
 
 import { Radar } from 'components/Charts';
@@ -9,7 +8,7 @@ import EditableLinkGroup from 'components/EditableLinkGroup';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 
 import styles from './Workplace.less';
-
+@connect(({ user }) => ({ user }))
 export default class Workplace extends PureComponent {
   componentDidMount() {}
 
@@ -25,7 +24,9 @@ export default class Workplace extends PureComponent {
           />
         </div>
         <div className={styles.content}>
-          <div className={styles.contentTitle}>XXX，祝你开心每一天！</div>
+          <div className={styles.contentTitle}>
+            {this.props.user.currentUser.userName}，祝你开心每一天！
+          </div>
           <div>运营部</div>
         </div>
       </div>

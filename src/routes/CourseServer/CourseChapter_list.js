@@ -247,6 +247,8 @@ export default class CourseChapter extends PureComponent {
             <a onClick={() => this.detail(record, '/courseServer/courseChapterNote')}>笔记明细</a>
             <Divider type="vertical" />
             <a onClick={() => this.detail(record, '/courseServer/courseChapterVideo')}>视频明细</a>
+            <Divider type="vertical" />
+            <a onClick={() => this.remove(record)}>删除</a>
           </Fragment>
         )
       }

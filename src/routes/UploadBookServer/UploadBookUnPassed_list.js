@@ -310,19 +310,20 @@ export default class UploadBook extends PureComponent {
         title: '上传时间',
         dataIndex: 'createTime',
         render: (text, record) => <Fragment>{formatTime(text)}</Fragment>
-      },
+      }
+      /*,
       {
         title: '操作',
         render: (text, record) => (
           <Fragment>
-            {/* <a onClick={() => this.getDataForUpdate(record)}>修改</a>
+            {/!* <a onClick={() => this.getDataForUpdate(record)}>修改</a>
             <Divider type="vertical" />
             <a onClick={() => this.remove(record)}>删除</a>
-            <Divider type="vertical" />*/}
+            <Divider type="vertical" />*!/}
             <a onClick={() => this.getDataForAudit(record)}>审核</a>
           </Fragment>
         )
-      }
+      }*/
     ];
 
     const parentMethods = {

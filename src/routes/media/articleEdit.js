@@ -37,7 +37,7 @@ const CreateEditForm = Form.create()(props => {
       if (err) return;
       form.resetFields();
       const content = UE.getEditor('content').getContent();
-      console.log(UE.getEditor('content').getContent(), 'sdf');
+      // console.log(UE.getEditor('content').getContent(), 'sdf');
       // console.log(content)
       fieldsValue.content = content;
       if (formData.mediaArticleId >= 0) {

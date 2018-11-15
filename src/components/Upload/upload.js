@@ -120,6 +120,9 @@ class GbUpload extends React.Component {
   };
 
   resetState = props => {
+    if(process.env.NODE_ENV=== 'production'){
+      this.setState({action:`api/GbManager/GbManager${this.props.action}`});
+    }
     const newState = {
       uid: props.uid,
       previewVisible: false,
@@ -134,14 +137,19 @@ class GbUpload extends React.Component {
           [],
       accept: props.accept ? props.accept : 'image/*',
 
-      action: props.action ? props.action : '/upload/uploadImage',
+      action: this.state.action||'/upload/uploadImage',
       fileHead: props.fileHead ? props.fileHead : 'image://'
     };
     this.setState(newState);
   };
 
-  componentDidMount = props => {
-    this.setState({fileList:[]})
+  componentDidMount = () => {
+    if(process.env.NODE_ENV=== 'production'){
+      this.setState({action:`api/GbManager/GbManager${this.props.action}`});
+    }
+    if(this.props.isNew){
+      this.setState({fileList:[]});
+    }
     if (this.props.accept.indexOf('video') !== -1) {
       this.setState({ video: true });
     }
@@ -162,6 +170,7 @@ class GbUpload extends React.Component {
   render() {
     const { previewVisible, previewImage } = this.state;
     const fileList = this.state.fileList;
+    // console.log(this.state.fileList)
     if (fileList.length > 0) {
       fileList.map((file, i) => {
         if (!file.url || !file.url.startsWith('http://')) {
@@ -199,7 +208,7 @@ class GbUpload extends React.Component {
             alt="example"
             style={{ width: '100%' }}
             src={previewImage}
-          />:""
+          />:''
           }
           {this.state.video ?
             <video

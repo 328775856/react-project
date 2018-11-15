@@ -219,28 +219,21 @@ export default class SelectBookShare extends React.Component {
     ];
 
     const rowSelection = {
-      type: 'radio',
+      type: 'checkbox',
       hideDefaultSelections: 'true',
       onChange: (selectedRowKeys, selectedRows) => {
         // console.log('selectedRows',selectedRows);//得到每一项的信息，也就是每一项的信息[{key: 1, name: "花骨朵", age: 18, hobby: "看书"}]
-        this.setState({ bookUserId: selectedRows[0].bookUserId });
+        this.setState({ selectedRows: selectedRows });
       },
       onSelect: (record, selected, selectedRows) => {
         // console.log('selectedRows',selectedRows); //选中的每行信息，是一个数组
         // callReturn(selectedRows);
-        this.onRowClick(selectedRows);
       },
       onSelectAll: (selected, selectedRows, changeRows) => {
         // console.log('changeRows',changeRows);   //变化的每一项
       },
       onSelectInvert: selectedRows => {
         // console.log('selectedRows',selectedRows);
-      },
-      getCheckboxProps: record => {
-        const { bookUserId } = this.state;
-        return {
-          checked: record.bookUserId === bookUserId
-        };
       }
     };
 

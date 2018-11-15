@@ -367,7 +367,12 @@ export default class FindSpec extends PureComponent {
       {
         title: '专题描述',
         dataIndex: 'specIntro',
-        render: text => <Fragment>{text}</Fragment>
+        render(text, record) {
+          if ((text || '.').length > 40) {
+            return `${text.substring(0, 40)}......`;
+          }
+          return text;
+        }
       },
       {
         title: '发布状态',

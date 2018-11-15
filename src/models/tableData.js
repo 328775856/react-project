@@ -128,10 +128,20 @@ export default {
       return myState;
     },
     loadSelect(state, action) {
-      const myFormData = {
-        ...state.formData,
-        ...action.payload
-      };
+      //公用model，传入为string或object
+      let lastFormData; let myFormData;
+      if (typeof state.formData === 'string') {
+        lastFormData = state.formData;
+        myFormData = {
+          lastFormData,
+          ...action.payload
+        };
+      } else {
+        myFormData = {
+          ...state.formData,
+          ...action.payload
+        };
+      }
       const myState = {
         ...state,
         formData: myFormData

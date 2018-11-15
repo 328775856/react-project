@@ -14,7 +14,8 @@ const CreateEditForm = Form.create()(props => {
     title,
     videoGroup,
     mul,
-    div
+    div,
+    isNew
   } = props;
   const handleUploadChange = fileList => {
     let filePath = '';
@@ -38,7 +39,7 @@ const CreateEditForm = Form.create()(props => {
   };
   const uploadProps = {
     uid: `${formData.mediaVideoId}`,
-    action: '/file/uploadVideo',
+    action:'/file/uploadVideo',
     length: 1,
     accept: 'video/*',
     maxFileSize: 50,
@@ -60,7 +61,7 @@ const CreateEditForm = Form.create()(props => {
   const okHandle = () => {
     form.validateFields((err, fieldsValue) => {
       if (err) return;
-      // form.resetFields();
+      form.resetFields();
       if (formData.mediaVideoId >= 0) {
         fieldsValue.mediaVideoId = formData.mediaVideoId;
         console.log(formData.filePath);
@@ -128,7 +129,7 @@ const CreateEditForm = Form.create()(props => {
         {form.getFieldDecorator('fileUpload', {
           initialValue: formData.filePath || [{}],
           rules: [{ required: true, message: '请选择视频...' }]
-        })(<GbUpload {...uploadProps} />)}
+        })(<GbUpload {...uploadProps} isNew={isNew} />)}
       </FormItem>
       <FormItem {...formItemLayout} label="视频路径">
         {form.getFieldDecorator('videoPath', {

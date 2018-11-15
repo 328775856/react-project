@@ -156,7 +156,7 @@ export default class CreateEditForm extends PureComponent {
           <Row>
             <Col span={20}>
               {form.getFieldDecorator('imagePath', {
-                initialValue: formData.imagePath || '',
+                initialValue: formData.imagePath || '1',
                 rules: [
                   {
                     required: true,
@@ -170,11 +170,11 @@ export default class CreateEditForm extends PureComponent {
             </Col>
           </Row>
         </FormItem>
-        <FormItem {...formItemLayout} label="图片显示">
+        <FormItem {...formItemLayout} label="图片显示" style={{ display: 'none' }}>
           <Row>
             <Col span={20}>
               {form.getFieldDecorator('wholePhotoPath', {
-                initialValue: formData.wholePhotoPath || '',
+                initialValue: formData.wholePhotoPath || '1',
                 rules: [
                   {
                     required: true,

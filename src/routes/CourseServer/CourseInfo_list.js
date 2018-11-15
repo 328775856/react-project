@@ -298,6 +298,10 @@ export default class CourseInfo extends PureComponent {
         render: (text, record) => <Fragment>{record.isRecommend === 1 ? '是' : '否'}</Fragment>
       },
       {
+        title: '顺序',
+        dataIndex: 'indexNo'
+      },
+      {
         title: '创建时间',
         dataIndex: 'createTime',
         render: (text, record) => <Fragment>{formatTime(text)}</Fragment>

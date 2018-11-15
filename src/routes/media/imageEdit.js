@@ -39,6 +39,7 @@ const CreateEditForm = Form.create()(props => {
     }
     form.setFieldsValue({ imagePath });
   };
+
   const uploadProps = {
     uid: `${formData.mediaImageId}`,
     action: '/file/uploadImage',

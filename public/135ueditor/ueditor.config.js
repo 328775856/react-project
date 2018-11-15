@@ -30,7 +30,7 @@
 
     // 服务器统一请求接口路径
     serverUrl: '/file/uploadImage',
-    // , serverUrl: "http://192.168.10.102:8765/api/GbManager/GbManager/file/uploadImage"
+    // serverUrl: '/api/GbManager/GbManager/file/uploadImage',
     configUrl: '135ueditor/config.json',
 
     //工具栏上的所有的功能按钮和下拉框，可以在new编辑器的实例时选择自己需要的从新定义

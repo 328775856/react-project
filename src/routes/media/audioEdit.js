@@ -32,17 +32,10 @@ const CreateEditForm = Form.create()(props => {
     title,
     audioGroup,
     mul,
-    div
+    div,
+    isNew
   } = props;
   const formatList = ['mp3', 'aac'];
-  // const getOptionId = formatName => {
-  //   for (let i = 0; i < options.length; i++) {
-  //     if (formatName === options[i].itemLabel) {
-  //       return options[i].itemNo;
-  //     }
-  //   }
-  //   return 1;
-  // };
   const handleUploadChange = fileList => {
     let filePath = '';
     if (fileList.length != 0 && fileList[0].fileName) {
@@ -56,12 +49,11 @@ const CreateEditForm = Form.create()(props => {
     const second = 3;
     const values = {
       audioPath: filePath,
-      audioFormat: formatList.indexOf(fileList[0].format) + 1,
+      audioFormat: fileList[0].format,
       minute,
       second
     };
     // debugger
-
     form.setFieldsValue(values);
     formData.audioPath = fileList[0].fileName || formData.audioPath;
   };
@@ -86,6 +78,11 @@ const CreateEditForm = Form.create()(props => {
   };
   const okHandle = () => {
     form.validateFields((err, fieldsValue) => {
+      if (isNew) {
+        fieldsValue.audioFormat = formatList.indexOf(fieldsValue.audioFormat) + 1;
+      } else {
+        fieldsValue.audioFormat = formData.audioFormat;
+      }
       if (err) return;
       form.resetFields();
       if (formData.mediaAudioId >= 0) {
@@ -153,7 +150,7 @@ const CreateEditForm = Form.create()(props => {
         {form.getFieldDecorator('fileUpload', {
           initialValue: formData.filePath || [{}],
           rules: [{ required: true, message: '请选择音频...' }]
-        })(<GbUpload {...uploadProps} />)}
+        })(<GbUpload {...uploadProps} isNew={isNew} />)}
       </FormItem>
       <FormItem {...formItemLayout} label="描述">
         {form.getFieldDecorator('audioDesc', {
@@ -179,7 +176,7 @@ const CreateEditForm = Form.create()(props => {
       </FormItem>
       <FormItem {...formItemLayout} label="音频格式">
         {form.getFieldDecorator('audioFormat', {
-          initialValue: formData.audioFormat || '',
+          initialValue: formatList[formData.audioFormat] || '',
           rules: [
             {
               required: false,
